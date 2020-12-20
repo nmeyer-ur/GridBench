@@ -1,14 +1,18 @@
 /*
  * rearranged PF
  *
- * cycles per single site;      riri: 238.5   cy
+ * cycles per single site
  *
  * gcc -O1
- *                rrii 190 - 220 cy
+ *                rrii 190 - 220 cy    (riri: 238 cy)
  *
  *
  * armclang -O3
- *                rrii 195 - 220  cy
+ *                rrii 195 - 220  cy   (riri: 225 cy)
+ *
+ *
+ * fcc clang mode -Nclang -Kfast
+ *                rrii 178 - 180 cy    (riri: 175 cy)
  */
 
 #include <stdio.h>

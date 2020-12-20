@@ -6,6 +6,25 @@
 // float* typecast     (float64_t*)
 // simd type           svfloat64_t
 
+#include <arm_sve.h>
+    
+/*
+ * rearranged PF
+ *
+ * cycles per single site
+ *
+ * gcc -O1
+ *                rrii 190 - 220 cy    (riri: 238 cy)
+ *
+ *
+ * armclang -O3
+ *                rrii 195 - 220  cy   (riri: 225 cy)
+ *
+ *
+ * fcc clang mode -Nclang -Kfast
+ *                rrii 178 - 180 cy    (riri: 175 cy)
+ */
+
 #include <stdio.h>
 #include <arm_sve.h>
 
@@ -561,13 +580,16 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
+  pf_L1  = nbr[ss*8+DIR+1];				\
+  pf_L2  = nbr[ssn*8+DIR-1];				\
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
   if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
-  synchronise(); 					\
+  PREFETCH_CHIMU_L2; 					\
+  PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
   RECON;
 
@@ -598,6 +620,28 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2)), result_32_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2 + 1)), result_32_im);\
   }
+
+#define PREFETCH_CHIMU_L2  \
+{ const SiteSpinor & ref (in[pf_L2]);	base = (uint64_t)ref; \
+  svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL2STRM); \
+}
+
+#define PREFETCH_CHIMU_L1  \
+{ const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)ref;   \
+    svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL1STRM); \
+}
+
+
 
 #define HAND_DECLARATIONS(Simd)			\
     svfloat64_t result_00_re;\
@@ -690,18 +734,30 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 
 /*
-#define Chimu_00 Chi_00
-#define Chimu_01 Chi_01
-#define Chimu_02 Chi_02
-#define Chimu_10 Chi_10
-#define Chimu_11 Chi_11
-#define Chimu_12 Chi_12
-#define Chimu_20 UChi_00
-#define Chimu_21 UChi_01
-#define Chimu_22 UChi_02
-#define Chimu_30 UChi_10
-#define Chimu_31 UChi_11
-#define Chimu_32 UChi_12
+#define Chimu_00_re Chi_00_re
+#define Chimu_00_im Chi_00_im
+#define Chimu_01_re Chi_01_re
+#define Chimu_01_im Chi_01_im
+#define Chimu_02_re Chi_02_re
+#define Chimu_02_im Chi_02_im
+#define Chimu_10_re Chi_10_re
+#define Chimu_10_im Chi_10_im
+#define Chimu_11_re Chi_11_re
+#define Chimu_11_im Chi_11_im
+#define Chimu_12_re Chi_12_re
+#define Chimu_12_im Chi_12_im
+#define Chimu_20_re UChi_00_re
+#define Chimu_20_im UChi_00_im
+#define Chimu_21_re UChi_01_re
+#define Chimu_21_im UChi_01_im
+#define Chimu_22_re UChi_02_re
+#define Chimu_22_im UChi_02_im
+#define Chimu_30_re UChi_10_re
+#define Chimu_30_im UChi_10_im
+#define Chimu_31_re UChi_11_re
+#define Chimu_31_im UChi_11_im
+#define Chimu_32_re UChi_12_re
+#define Chimu_32_im UChi_12_im
 */
 
 #ifndef GRID_SYCL
@@ -759,6 +815,9 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     uint64_t base;
     uint64_t sU = ssite;
     uint64_t ss = sU*Ls;
+    uint64_t ssn = ss + 1; // for prefetching to L2
+      if (ssn == nsite) ssn = 0;
+    uint64_t pf_L1, pf_L2; // pf addresses
     for(uint64_t s=0;s<Ls;s++){
       HAND_STENCIL_LEG(XM_PROJ,3,Xp,XM_RECON);
       HAND_STENCIL_LEG(YM_PROJ,2,Yp,YM_RECON_ACCUM);
