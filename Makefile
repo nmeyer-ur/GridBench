@@ -1,21 +1,22 @@
 
 SIMPLEDATA := arch/sse/static_data.cc
 
-OMP:=-std=c++11  -O3 -DSVM
+OMP:=-std=c++11  -O1 -DSVM
+#OMP:=-std=c++11  -O3 -fno-schedule-insns -fno-schedule-insns2 -fno-sched-interblock -DSVM
 #OMP:=-std=c++11 -O3
 
 #CXX       := mpicxx-openmpi-devel-clang40
 #CXX       := mpiicpc
 #CXX       := g++-7
-CXX        := dpcpp
-#CXX       := g++
+#CXX        := dpcpp
+CXX       := g++
 #CXX       := mpicxx
 #CXX       := clang++-mp-6.0
 #CXXCL     := clang++-mp-7.0
-#CXXCL     := ${HOME}/QCD/build/bin/clang++ 
+#CXXCL     := ${HOME}/QCD/build/bin/clang++
 CXXCL     := dpcpp
-CXXFLAGSCL:= 
-LDFLAGSCL:= 
+CXXFLAGSCL:=
+LDFLAGSCL:=
 CXXFLAGS  := $(OMP)
 
 AVX512_DATA   := arch/avx512/static_data.cc
@@ -43,6 +44,14 @@ AVX_CXXFLAGS     := -DAVX1  -mavx $(OMP)
 SSE_CXXFLAGS     := -DSSE4  -msse4.2  $(OMP)
 RRII_CXXFLAGS     := -DRRII  -mavx2 -mfma  $(OMP) -DGEN_SIMD_WIDTH=64
 RIRI_CXXFLAGS     := -DRIRI  -mavx2 -mfma  $(OMP) -DGEN_SIMD_WIDTH=64 -g
+RRII_CXXFLAGSXX   := -DRRII  -march=knl  $(OMP) -DGEN_SIMD_WIDTH=128
+
+
+RRII_CXXFLAGS_SVE_GCC               := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64
+RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+#RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -march=armv8-a+sve $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -mcpu=a64fx $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+RRII_CXXFLAGS_SVE_INTRIN_FCC        := -DRRII  -Nclang -Kfast -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 
 #############################################
 # G++
@@ -61,19 +70,19 @@ GENERIC_DATA      := arch/sse/static_data.cc
 ################################################################################
 
 # VOLTA
-GPUARCH    := --relocatable-device-code=true -gencode arch=compute_70,code=sm_70 
+GPUARCH    := --relocatable-device-code=true -gencode arch=compute_70,code=sm_70
 
 # PASCAL
-#GPUARCH    := --relocatable-device-code=true -gencode arch=compute_60,code=sm_60 
+#GPUARCH    := --relocatable-device-code=true -gencode arch=compute_60,code=sm_60
 
-GPUCC      := nvcc 
+GPUCC      := nvcc
 GPULINK    := nvcc $(GPUARCH)
 GPU_CXXFLAGS  := -x cu -DVGPU -DGEN_SIMD_WIDTH=64 -I. -O3 -ccbin g++ -std=c++11 --expt-relaxed-constexpr --expt-extended-lambda $(GPUARCH)  -Xcompiler -fno-strict-aliasing
 GPU_LDFLAGS  := -link -ccbin g++
 GPU_DATA      := arch/avx512/static_data.cc
 ################################################################################
 LDLIBS    := -lm
-LDFLAGS   := 
+LDFLAGS   :=
 
 all: bench.avx512 bench.avx2 bench.avx bench.sse bench.gen bench.simple bench.sycl \
 	bench.rrii.omp.cpu bench.rrii.sycl.cpu bench.rrii.sycl.cpu.simt  bench.rrii.sycl.gpu bench.rrii.sycl.gpu.simt bench.riri.sycl.gpu.simt
@@ -85,7 +94,24 @@ bench.avx2: bench.cc $(AVX2_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(AVX2_CXXFLAGS) bench.cc $(AVX2_DATA) $(LDLIBS) $(LDFLAGS) -o bench.avx2
 
 bench.rrii.omp.cpu: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RRII_CXXFLAGS) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu 
+	$(CXX) $(RRII_CXXFLAGS) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu
+
+
+
+# SVE:
+bench.rrii.omp.cpu.sve.gnuvectors.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
+	$(CXX) $(RRII_CXXFLAGS_SVE_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.gnuvectors.gcc
+
+bench.rrii.omp.cpu.sve.intrinsics.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.intrinsics.gcc
+
+bench.rrii.omp.cpu.sve.intrinsics.armclang: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.intrinsics.armclang
+
+bench.rrii.omp.cpu.sve.intrinsics.fcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_FCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.intrinsics.fcc
+
+
 
 bench.rrii.sycl.cpu: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(RRII_CXXFLAGS) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sycl.cpu -DGRID_SYCL
@@ -103,7 +129,7 @@ bench.riri.sycl.gpu.simt: bench.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(RIRI_CXXFLAGS) bench.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sycl.gpu.simt -DGRID_SYCL -DGRID_SYCL_SIMT -DGRID_SYCL_GPU
 
 bench.riri.sycl.cpu.simt: bench.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RIRI_CXXFLAGS) bench.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sycl.cpu.simt -DGRID_SYCL -DGRID_SYCL_SIMT 
+	$(CXX) $(RIRI_CXXFLAGS) bench.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sycl.cpu.simt -DGRID_SYCL -DGRID_SYCL_SIMT
 
 bench.avx: bench.cc $(AVX_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(AVX_CXXFLAGS) bench.cc $(AVX_DATA) $(LDLIBS) $(LDFLAGS) -o bench.avx
@@ -114,7 +140,7 @@ bench.sse: bench.cc $(SSE_DATA)  WilsonKernelsHand.h Makefile
 bench.gen: bench.cc $(GENERIC_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(GENERIC_CXXFLAGS) bench.cc $(GENERIC_DATA) $(LDLIBS) $(LDFLAGS) -o bench.gen
 
-#	nvcc -x cu -DVGPU -DGEN_SIMD_WIDTH=64 -I. -O3 -ccbin g++ -std=c++11 -Xcompiler -Wno-deprecated-gpu-targets --expt-relaxed-constexpr --expt-extended-lambda --relocatable-device-code=true -gencode arch=compute_60,code=sm_60  -Xcompiler -fno-strict-aliasing -c bench.cc -o bench.gpu.o 
+#	nvcc -x cu -DVGPU -DGEN_SIMD_WIDTH=64 -I. -O3 -ccbin g++ -std=c++11 -Xcompiler -Wno-deprecated-gpu-targets --expt-relaxed-constexpr --expt-extended-lambda --relocatable-device-code=true -gencode arch=compute_60,code=sm_60  -Xcompiler -fno-strict-aliasing -c bench.cc -o bench.gpu.o
 bench.gpu: bench.cc $(GPU_DATA)  WilsonKernelsHand.h Makefile
 	$(GPUCC) $(GPU_CXXFLAGS) -c bench.cc -o bench.gpu.o
 	$(GPUCC) $(GPU_CXXFLAGS) -c $(GPU_DATA) -o data.gpu.o
@@ -138,4 +164,3 @@ clean:
 	rm -f  bench.avx512 bench.avx2 bench.avx bench.sse bench.gen  bench.simple TableGenerate bench.gpu bench.sycl bench.rrii*
 	rm -rf  *.dSYM*
 	rm -f  *~
-

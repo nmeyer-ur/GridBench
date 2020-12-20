@@ -1,4 +1,13 @@
+// Using only 3 U matrix elements at a time for u * chi
+//
+// register usage
+//
+// uchi = u * chi
+//
+// 12     6   12   // 30 registers total
+
 #include <stdio.h>
+#include <arm_sve.h>
 
 #pragma once
 
@@ -16,7 +25,7 @@
 
 #if defined(GRID_SYCL_SIMT) || defined(GRID_NVCC)
 #define LOAD_CHIMU(ptype)		\
-  {const SiteSpinor & ref (in[offset]);	\
+  { const SiteSpinor & ref (in[offset]);	\
     Chimu_00=coalescedReadPermute<ptype>(ref[0][0],perm,mylane);	\
     Chimu_01=coalescedReadPermute<ptype>(ref[0][1],perm,mylane);	\
     Chimu_02=coalescedReadPermute<ptype>(ref[0][2],perm,mylane);	\
@@ -28,13 +37,13 @@
     Chimu_22=coalescedReadPermute<ptype>(ref[2][2],perm,mylane);	\
     Chimu_30=coalescedReadPermute<ptype>(ref[3][0],perm,mylane);	\
     Chimu_31=coalescedReadPermute<ptype>(ref[3][1],perm,mylane);	\
-    Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);	}
+    Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane); }
 
 #define PERMUTE_DIR(dir) ;
 
 #else
 #define LOAD_CHIMU(ptype)		\
-  {const SiteSpinor & ref (in[offset]);	\
+  { const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
     Chimu_00=coalescedRead(ref[0][0],mylane);	\
     Chimu_01=coalescedRead(ref[0][1],mylane);	\
     Chimu_02=coalescedRead(ref[0][2],mylane);	\
@@ -46,7 +55,7 @@
     Chimu_22=coalescedRead(ref[2][2],mylane);	\
     Chimu_30=coalescedRead(ref[3][0],mylane);	\
     Chimu_31=coalescedRead(ref[3][1],mylane);	\
-    Chimu_32=coalescedRead(ref[3][2],mylane);	}
+    Chimu_32=coalescedRead(ref[3][2],mylane); }
 
 /*
 #define PERMUTE_DIR(dir)			\
@@ -64,34 +73,34 @@
 
 
 #define MULT_2SPIN(A)\
-  {auto & ref(U[sU][A]);					\
-    U_00=coalescedRead(ref[0][0],mylane);				\
-    U_10=coalescedRead(ref[1][0],mylane);				\
-    U_20=coalescedRead(ref[2][0],mylane);								\
-    U_01=coalescedRead(ref[0][1],mylane);				\
-    U_11=coalescedRead(ref[1][1],mylane);				\
-    U_21=coalescedRead(ref[2][1],mylane);				\
-    UChi_00 = U_00*Chi_00;					\
-    UChi_10 = U_00*Chi_10;					\
-    UChi_01 = U_10*Chi_00;					\
-    UChi_11 = U_10*Chi_10;					\
-    UChi_02 = U_20*Chi_00;					\
-    UChi_12 = U_20*Chi_10;					\
-    UChi_00+= U_01*Chi_01;					\
-    UChi_10+= U_01*Chi_11;					\
-    UChi_01+= U_11*Chi_01;					\
-    UChi_11+= U_11*Chi_11;					\
-    UChi_02+= U_21*Chi_01;					\
-    UChi_12+= U_21*Chi_11;					\
-    U_00=coalescedRead(ref[0][2],mylane);				\
-    U_10=coalescedRead(ref[1][2],mylane);				\
-    U_20=coalescedRead(ref[2][2],mylane);				\
-    UChi_00+= U_00*Chi_02;					\
-    UChi_10+= U_00*Chi_12;					\
-    UChi_01+= U_10*Chi_02;					\
-    UChi_11+= U_10*Chi_12;					\
-    UChi_02+= U_20*Chi_02;					\
-    UChi_12+= U_20*Chi_12;}
+  { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
+    U_0=coalescedRead(ref[0][0],mylane);				\
+    U_1=coalescedRead(ref[1][0],mylane);				\
+    U_2=coalescedRead(ref[2][0],mylane);				\
+    UChi_00 = U_0*Chi_00;					\
+    UChi_10 = U_0*Chi_10;					\
+    UChi_01 = U_1*Chi_00;					\
+    UChi_11 = U_1*Chi_10;					\
+    UChi_02 = U_2*Chi_00;					\
+    UChi_12 = U_2*Chi_10;					\
+    U_0=coalescedRead(ref[0][1],mylane);				\
+    U_1=coalescedRead(ref[1][1],mylane);				\
+    U_2=coalescedRead(ref[2][1],mylane);				\
+    UChi_00+= U_0*Chi_01;					\
+    UChi_10+= U_0*Chi_11;					\
+    UChi_01+= U_1*Chi_01;					\
+    UChi_11+= U_1*Chi_11;					\
+    UChi_02+= U_2*Chi_01;					\
+    UChi_12+= U_2*Chi_11;					\
+    U_0=coalescedRead(ref[0][2],mylane);				\
+    U_1=coalescedRead(ref[1][2],mylane);				\
+    U_2=coalescedRead(ref[2][2],mylane);				\
+    UChi_00+= U_0*Chi_02;					\
+    UChi_10+= U_0*Chi_12;					\
+    UChi_01+= U_1*Chi_02;					\
+    UChi_11+= U_1*Chi_12;					\
+    UChi_02+= U_2*Chi_02;					\
+    UChi_12+= U_2*Chi_12;}
 
 //      hspin(0)=fspin(0)+timesI(fspin(3));
 //      hspin(1)=fspin(1)+timesI(fspin(2));
@@ -166,6 +175,7 @@
 //      fspin(1)=hspin(1);
 //      fspin(2)=timesMinusI(hspin(1));
 //      fspin(3)=timesMinusI(hspin(0));
+
 #define XP_RECON\
   result_00 = UChi_00;\
   result_01 = UChi_01;\
@@ -306,14 +316,12 @@
   result_31-= UChi_11;	\
   result_32-= UChi_12;
 
-//
-
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
-  if ( perm) {						\
+  if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
   synchronise(); 					\
@@ -321,8 +329,7 @@
   RECON;
 
 #define HAND_RESULT(ss)				\
-  {						\
-    SiteSpinor & ref (out[ss]);			\
+  {	SiteSpinor & ref (out[ss]);	base = (uint64_t)ref;		\
     coalescedWrite(ref[0][0],result_00,mylane);		\
     coalescedWrite(ref[0][1],result_01,mylane);		\
     coalescedWrite(ref[0][2],result_02,mylane);		\
@@ -362,13 +369,27 @@
   Simd UChi_10;					\
   Simd UChi_11;					\
   Simd UChi_12;					\
-  Simd U_00;					\
-  Simd U_10;					\
-  Simd U_20;					\
-  Simd U_01;					\
-  Simd U_11;					\
-  Simd U_21;
+  Simd U_0;					\
+  Simd U_1;					\
+  Simd U_2;					\
+  Simd Chimu_00;      \
+  Simd Chimu_01;      \
+  Simd Chimu_02;      \
+  Simd Chimu_10;      \
+  Simd Chimu_11;      \
+  Simd Chimu_12;      \
+  Simd Chimu_20;      \
+  Simd Chimu_21;      \
+  Simd Chimu_22;      \
+  Simd Chimu_30;      \
+  Simd Chimu_31;      \
+  Simd Chimu_32;      \
+  svbool_t pg1 = svptrue_b64();
 
+
+
+
+/*
 #define Chimu_00 Chi_00
 #define Chimu_01 Chi_01
 #define Chimu_02 Chi_02
@@ -381,6 +402,7 @@
 #define Chimu_30 UChi_10
 #define Chimu_31 UChi_11
 #define Chimu_32 UChi_12
+*/
 
 #ifndef GRID_SYCL
 #define GRID_OMP_THREAD
@@ -430,9 +452,11 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   for(uint64_t ssite=0;ssite<nsite;ssite++){
 
 
+    //HAND_DECLARATIONS(svfloat64_t);
     HAND_DECLARATIONS(Simd);
     int mylane=0;
     int offset,perm;
+    uint64_t base;
     uint64_t sU = ssite;
     uint64_t ss = sU*Ls;
     for(uint64_t s=0;s<Ls;s++){

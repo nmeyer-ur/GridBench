@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <arm_sve.h>
 
 #pragma once
 
@@ -16,7 +17,7 @@
 
 #if defined(GRID_SYCL_SIMT) || defined(GRID_NVCC)
 #define LOAD_CHIMU(ptype)		\
-  {const SiteSpinor & ref (in[offset]);	\
+  { const SiteSpinor & ref (in[offset]);	\
     Chimu_00=coalescedReadPermute<ptype>(ref[0][0],perm,mylane);	\
     Chimu_01=coalescedReadPermute<ptype>(ref[0][1],perm,mylane);	\
     Chimu_02=coalescedReadPermute<ptype>(ref[0][2],perm,mylane);	\
@@ -28,13 +29,13 @@
     Chimu_22=coalescedReadPermute<ptype>(ref[2][2],perm,mylane);	\
     Chimu_30=coalescedReadPermute<ptype>(ref[3][0],perm,mylane);	\
     Chimu_31=coalescedReadPermute<ptype>(ref[3][1],perm,mylane);	\
-    Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);	}
+    Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane); }
 
 #define PERMUTE_DIR(dir) ;
 
 #else
 #define LOAD_CHIMU(ptype)		\
-  {const SiteSpinor & ref (in[offset]);	\
+  { const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
     Chimu_00=coalescedRead(ref[0][0],mylane);	\
     Chimu_01=coalescedRead(ref[0][1],mylane);	\
     Chimu_02=coalescedRead(ref[0][2],mylane);	\
@@ -46,7 +47,7 @@
     Chimu_22=coalescedRead(ref[2][2],mylane);	\
     Chimu_30=coalescedRead(ref[3][0],mylane);	\
     Chimu_31=coalescedRead(ref[3][1],mylane);	\
-    Chimu_32=coalescedRead(ref[3][2],mylane);	}
+    Chimu_32=coalescedRead(ref[3][2],mylane); }
 
 /*
 #define PERMUTE_DIR(dir)			\
@@ -64,10 +65,10 @@
 
 
 #define MULT_2SPIN(A)\
-  {auto & ref(U[sU][A]);					\
+  { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
     U_00=coalescedRead(ref[0][0],mylane);				\
     U_10=coalescedRead(ref[1][0],mylane);				\
-    U_20=coalescedRead(ref[2][0],mylane);								\
+    U_20=coalescedRead(ref[2][0],mylane);				\
     U_01=coalescedRead(ref[0][1],mylane);				\
     U_11=coalescedRead(ref[1][1],mylane);				\
     U_21=coalescedRead(ref[2][1],mylane);				\
@@ -166,6 +167,7 @@
 //      fspin(1)=hspin(1);
 //      fspin(2)=timesMinusI(hspin(1));
 //      fspin(3)=timesMinusI(hspin(0));
+
 #define XP_RECON\
   result_00 = UChi_00;\
   result_01 = UChi_01;\
@@ -306,14 +308,12 @@
   result_31-= UChi_11;	\
   result_32-= UChi_12;
 
-//
-
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
-  if ( perm) {						\
+  if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
   synchronise(); 					\
@@ -321,8 +321,7 @@
   RECON;
 
 #define HAND_RESULT(ss)				\
-  {						\
-    SiteSpinor & ref (out[ss]);			\
+  {	SiteSpinor & ref (out[ss]);	base = (uint64_t)ref;		\
     coalescedWrite(ref[0][0],result_00,mylane);		\
     coalescedWrite(ref[0][1],result_01,mylane);		\
     coalescedWrite(ref[0][2],result_02,mylane);		\
@@ -336,6 +335,42 @@
     coalescedWrite(ref[3][1],result_31,mylane);		\
     coalescedWrite(ref[3][2],result_32,mylane);		\
   }
+
+#define LOAD_T		\
+  { const SiteSpinor & ref (in[0]);	base = (uint64_t)ref; \
+    DEBUG1=coalescedRead(ref[0][0],mylane);	\
+    DEBUG2=coalescedRead(ref[0][1],mylane);	\
+    DEBUG3=coalescedRead(ref[0][2],mylane);	\
+    DEBUG4=coalescedRead(ref[1][0],mylane);	}
+
+#define STORE_T				\
+  {	SiteSpinor & ref (out[0]);	base = (uint64_t)ref;		\
+    coalescedWrite(ref[0][0],DEBUG1,mylane);		\
+    coalescedWrite(ref[0][1],DEBUG2,mylane);		\
+    coalescedWrite(ref[0][2],DEBUG3,mylane);		\
+    coalescedWrite(ref[1][0],DEBUG4,mylane);		\
+  }
+
+#define PRINT_T				\
+  {	SiteSpinor & ref (out[0]);	base = (uint64_t)ref;		\
+    std::cout << ref[0][0] << std::endl;		\
+    std::cout << ref[0][1] << std::endl;		\
+    std::cout << ref[0][2] << std::endl;		\
+    std::cout << ref[1][0] << std::endl;		\
+  }
+
+  #define STOREPRINT_T				\
+    {	SiteSpinor & ref (out[0]);	base = (uint64_t)ref;		\
+      coalescedWrite(ref[0][0],DEBUG1,mylane);		\
+      coalescedWrite(ref[0][1],DEBUG2,mylane);		\
+      coalescedWrite(ref[0][2],DEBUG3,mylane);		\
+      coalescedWrite(ref[1][0],DEBUG4,mylane);		\
+      std::cout << "XX " << ref[0][0] << std::endl;		\
+      std::cout << "XX " << ref[0][1] << std::endl;		\
+      std::cout << "XX " << ref[0][2] << std::endl;		\
+      std::cout << "XX " << ref[1][0] << std::endl;		\
+    }
+
 
 #define HAND_DECLARATIONS(Simd)			\
   Simd result_00;				\
@@ -367,8 +402,29 @@
   Simd U_20;					\
   Simd U_01;					\
   Simd U_11;					\
-  Simd U_21;
+  Simd U_21;          \
+  Simd Chimu_00;      \
+  Simd Chimu_01;      \
+  Simd Chimu_02;      \
+  Simd Chimu_10;      \
+  Simd Chimu_11;      \
+  Simd Chimu_12;      \
+  Simd Chimu_20;      \
+  Simd Chimu_21;      \
+  Simd Chimu_22;      \
+  Simd Chimu_30;      \
+  Simd Chimu_31;      \
+  Simd Chimu_32;      \
+  Simd DEBUG1;      \
+  Simd DEBUG2;      \
+  Simd DEBUG3;      \
+  Simd DEBUG4;      \
+  svbool_t pg1 = svptrue_b64();
 
+
+
+
+/*
 #define Chimu_00 Chi_00
 #define Chimu_01 Chi_01
 #define Chimu_02 Chi_02
@@ -381,6 +437,7 @@
 #define Chimu_30 UChi_10
 #define Chimu_31 UChi_11
 #define Chimu_32 UChi_12
+*/
 
 #ifndef GRID_SYCL
 #define GRID_OMP_THREAD
@@ -427,28 +484,83 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   #pragma omp parallel for
   #endif
 #endif
-  for(uint64_t ssite=0;ssite<nsite;ssite++){
 
+    // Debug
 
     HAND_DECLARATIONS(Simd);
     int mylane=0;
-    int offset,perm;
+    int offset=0,perm;
+    uint64_t base;
+    uint64_t ssite=0;
     uint64_t sU = ssite;
     uint64_t ss = sU*Ls;
-    for(uint64_t s=0;s<Ls;s++){
-      HAND_STENCIL_LEG(XM_PROJ,3,Xp,XM_RECON);
-      HAND_STENCIL_LEG(YM_PROJ,2,Yp,YM_RECON_ACCUM);
-      HAND_STENCIL_LEG(ZM_PROJ,1,Zp,ZM_RECON_ACCUM);
-      HAND_STENCIL_LEG(TM_PROJ,0,Tp,TM_RECON_ACCUM);
-      HAND_STENCIL_LEG(XP_PROJ,3,Xm,XP_RECON_ACCUM);
-      HAND_STENCIL_LEG(YP_PROJ,2,Ym,YP_RECON_ACCUM);
-      HAND_STENCIL_LEG(ZP_PROJ,1,Zm,ZP_RECON_ACCUM);
-      HAND_STENCIL_LEG(TP_PROJ,0,Tm,TP_RECON_ACCUM);
-      HAND_RESULT(ss);
-      ss++;
-      }
-    }
+
+    LOAD_T;
+
+    std::cout << "XX Load/store" << std::endl;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG4" << std::endl;
+    DEBUG1 = DEBUG4;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2*DEBUG3" << std::endl;
+    DEBUG1 = DEBUG2*DEBUG3;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 += DEBUG2*DEBUG3" << std::endl;
+    DEBUG1 += DEBUG2*DEBUG3;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2-DEBUG3" << std::endl;
+    DEBUG1 = DEBUG2-DEBUG3;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 -= DEBUG2" << std::endl;
+    DEBUG1 -= DEBUG2;
+    STOREPRINT_T;
+        
+    std::cout << "XX DEBUG1 = DEBUG2+DEBUG3" << std::endl;
+    DEBUG1 = DEBUG2+DEBUG3;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 += DEBUG2" << std::endl;
+    DEBUG1 += DEBUG2;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = timesI(DEBUG2)" << std::endl;
+    DEBUG1 = timesI(DEBUG2);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2+timesI(DEBUG3)" << std::endl;
+    DEBUG1 = DEBUG2+timesI(DEBUG3);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2-timesI(DEBUG3)" << std::endl;
+    DEBUG1 = DEBUG2-timesI(DEBUG3);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 += timesI(DEBUG2)" << std::endl;
+    DEBUG1 += timesI(DEBUG2);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 -= timesI(DEBUG2)" << std::endl;
+    DEBUG1 -= timesI(DEBUG2);
+    STOREPRINT_T;
+
+    std::cout << "XX " << std::endl;
+    DEBUG1 = timesMinusI(DEBUG2);
+    STOREPRINT_T;
+
+    std::cout << "XX " << std::endl;
+    STOREPRINT_T;
+
+    std::cout << "XX " << std::endl;
+    STOREPRINT_T;
+
+    break; // exit loop
   }
+
   Usecs elapsed =std::chrono::duration_cast<Usecs>(Clock::now()-start);
   usec = elapsed.count();
   return usec;

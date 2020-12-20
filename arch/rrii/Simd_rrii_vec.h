@@ -1,6 +1,6 @@
-#include <CL/sycl.hpp>
-#include <CL/sycl/usm.hpp>
-#if 0
+//#include <CL/sycl.hpp>
+//#include <CL/sycl/usm.hpp>
+#if 1
 typedef float     vfloat  __attribute__ ((vector_size (EXPAND_SIMD*sizeof(float))));
 typedef double    vdouble __attribute__ ((vector_size (EXPAND_SIMD*sizeof(double))));
 typedef Integer vinteger  __attribute__ ((vector_size (EXPAND_SIMD*sizeof(uint32_t))));

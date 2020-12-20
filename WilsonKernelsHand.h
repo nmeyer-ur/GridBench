@@ -20,7 +20,29 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
   return dslash_kernel_gpu(nrep,Up,outp,inp,nbr,nsite,Ls,prm);
 }
 #else
-#include "WilsonKernelsHandCpu.h"
+#ifdef RRII
+
+  #ifdef INTRIN
+    #ifdef SVE
+      #pragma message ("RRII kernel using SVE ACLE")
+      #include "WilsonKernelsHandCpuSVE1.h"
+      //#include "WilsonKernelsHandCpuSVETemplate.h"
+      //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
+      //#include "WilsonKernelsHandCpuSVETemplateDebug1.h"
+    #else
+      #pragma message ("RRII kernel undefined")
+      #pragma error
+    #endif
+  #else
+    #pragma message ("RRII kernel using GNU vectors")
+    #include "WilsonKernelsHandCpu.h"
+    //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
+  #endif
+
+#else
+  #pragma message ("RIRI kernel")
+  #include "WilsonKernelsHandCpu.h"
+#endif
 
 template<class Simd>
 double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm)

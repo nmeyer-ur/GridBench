@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <arm_sve.h>
 
 #pragma once
 
@@ -16,7 +17,7 @@
 
 #if defined(GRID_SYCL_SIMT) || defined(GRID_NVCC)
 #define LOAD_CHIMU(ptype)		\
-  {const SiteSpinor & ref (in[offset]);	\
+  { const SiteSpinor & ref (in[offset]);	\
     Chimu_00=coalescedReadPermute<ptype>(ref[0][0],perm,mylane);	\
     Chimu_01=coalescedReadPermute<ptype>(ref[0][1],perm,mylane);	\
     Chimu_02=coalescedReadPermute<ptype>(ref[0][2],perm,mylane);	\
@@ -28,13 +29,13 @@
     Chimu_22=coalescedReadPermute<ptype>(ref[2][2],perm,mylane);	\
     Chimu_30=coalescedReadPermute<ptype>(ref[3][0],perm,mylane);	\
     Chimu_31=coalescedReadPermute<ptype>(ref[3][1],perm,mylane);	\
-    Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);	}
+    Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane); }
 
 #define PERMUTE_DIR(dir) ;
 
 #else
 #define LOAD_CHIMU(ptype)		\
-  {const SiteSpinor & ref (in[offset]);	\
+  { const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
     Chimu_00=coalescedRead(ref[0][0],mylane);	\
     Chimu_01=coalescedRead(ref[0][1],mylane);	\
     Chimu_02=coalescedRead(ref[0][2],mylane);	\
@@ -46,7 +47,7 @@
     Chimu_22=coalescedRead(ref[2][2],mylane);	\
     Chimu_30=coalescedRead(ref[3][0],mylane);	\
     Chimu_31=coalescedRead(ref[3][1],mylane);	\
-    Chimu_32=coalescedRead(ref[3][2],mylane);	}
+    Chimu_32=coalescedRead(ref[3][2],mylane); }
 
 /*
 #define PERMUTE_DIR(dir)			\
@@ -64,10 +65,10 @@
 
 
 #define MULT_2SPIN(A)\
-  {auto & ref(U[sU][A]);					\
+  { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
     U_00=coalescedRead(ref[0][0],mylane);				\
     U_10=coalescedRead(ref[1][0],mylane);				\
-    U_20=coalescedRead(ref[2][0],mylane);								\
+    U_20=coalescedRead(ref[2][0],mylane);				\
     U_01=coalescedRead(ref[0][1],mylane);				\
     U_11=coalescedRead(ref[1][1],mylane);				\
     U_21=coalescedRead(ref[2][1],mylane);				\
@@ -166,6 +167,7 @@
 //      fspin(1)=hspin(1);
 //      fspin(2)=timesMinusI(hspin(1));
 //      fspin(3)=timesMinusI(hspin(0));
+
 #define XP_RECON\
   result_00 = UChi_00;\
   result_01 = UChi_01;\
@@ -306,23 +308,23 @@
   result_31-= UChi_11;	\
   result_32-= UChi_12;
 
-//
-
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
+  pf_L1  = nbr[ss*8+DIR+1];				\
+  pf_L2  = nbr[ssn*8+DIR-1];				\
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
-  if ( perm) {						\
+  if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
-  synchronise(); 					\
+  PREFETCH_CHIMU_L2; 					\
   MULT_2SPIN(DIR);					\
+  PREFETCH_CHIMU_L1;        \
   RECON;
 
 #define HAND_RESULT(ss)				\
-  {						\
-    SiteSpinor & ref (out[ss]);			\
+  {	SiteSpinor & ref (out[ss]);	base = (uint64_t)ref;		\
     coalescedWrite(ref[0][0],result_00,mylane);		\
     coalescedWrite(ref[0][1],result_01,mylane);		\
     coalescedWrite(ref[0][2],result_02,mylane);		\
@@ -336,6 +338,28 @@
     coalescedWrite(ref[3][1],result_31,mylane);		\
     coalescedWrite(ref[3][2],result_32,mylane);		\
   }
+
+#define PREFETCH_CHIMU_L2  \
+{ const SiteSpinor & ref (in[pf_L2]);	base = (uint64_t)ref; \
+  svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL2STRM); \
+  svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL2STRM); \
+}
+
+#define PREFETCH_CHIMU_L1  \
+{ const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)ref;   \
+    svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL1STRM); \
+    svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL1STRM); \
+}
+
+
 
 #define HAND_DECLARATIONS(Simd)			\
   Simd result_00;				\
@@ -367,8 +391,25 @@
   Simd U_20;					\
   Simd U_01;					\
   Simd U_11;					\
-  Simd U_21;
+  Simd U_21;          \
+  Simd Chimu_00;      \
+  Simd Chimu_01;      \
+  Simd Chimu_02;      \
+  Simd Chimu_10;      \
+  Simd Chimu_11;      \
+  Simd Chimu_12;      \
+  Simd Chimu_20;      \
+  Simd Chimu_21;      \
+  Simd Chimu_22;      \
+  Simd Chimu_30;      \
+  Simd Chimu_31;      \
+  Simd Chimu_32;      \
+  svbool_t pg1 = svptrue_b64();
 
+
+
+
+/*
 #define Chimu_00 Chi_00
 #define Chimu_01 Chi_01
 #define Chimu_02 Chi_02
@@ -381,6 +422,7 @@
 #define Chimu_30 UChi_10
 #define Chimu_31 UChi_11
 #define Chimu_32 UChi_12
+*/
 
 #ifndef GRID_SYCL
 #define GRID_OMP_THREAD
@@ -430,11 +472,16 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   for(uint64_t ssite=0;ssite<nsite;ssite++){
 
 
+    //HAND_DECLARATIONS(svfloat64_t);
     HAND_DECLARATIONS(Simd);
     int mylane=0;
     int offset,perm;
+    uint64_t base;
     uint64_t sU = ssite;
     uint64_t ss = sU*Ls;
+    uint64_t ssn = ss + 1; // for prefetching to L2
+      if (ssn == nsite) ssn = 0;
+    uint64_t pf_L1, pf_L2; // pf addresses
     for(uint64_t s=0;s<Ls;s++){
       HAND_STENCIL_LEG(XM_PROJ,3,Xp,XM_RECON);
       HAND_STENCIL_LEG(YM_PROJ,2,Yp,YM_RECON_ACCUM);
