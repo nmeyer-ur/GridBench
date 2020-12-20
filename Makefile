@@ -1,7 +1,10 @@
 
 SIMPLEDATA := arch/sse/static_data.cc
 
-OMP:=-std=c++11  -O1 -DSVM
+CXXFLAGS_SVE_O1 := -O1
+CXXFLAGS_SVE_O3 := -O3
+
+OMP:=-std=c++11 -DSVM
 #OMP:=-std=c++11  -O3 -fno-schedule-insns -fno-schedule-insns2 -fno-sched-interblock -DSVM
 #OMP:=-std=c++11 -O3
 
@@ -99,17 +102,17 @@ bench.rrii.omp.cpu: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 
 
 # SVE:
-bench.rrii.omp.cpu.sve.gnuvectors.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RRII_CXXFLAGS_SVE_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.gnuvectors.gcc
+bench.rrii.sve.gnuvectors.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
+	$(CXX) $(CXXFLAGS_SVE_O1) $(CXX) $(RRII_CXXFLAGS_SVE_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.gnuvectors.gcc
 
-bench.rrii.omp.cpu.sve.intrinsics.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
-	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.intrinsics.gcc
+bench.rrii.sve.intrinsics.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
+	$(CXX) $(CXXFLAGS_SVE_O1) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.gcc
 
-bench.rrii.omp.cpu.sve.intrinsics.armclang: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
-	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.intrinsics.armclang
+bench.rrii.sve.intrinsics.armclang: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
+	$(CXX) $(CXXFLAGS_SVE_O3) $(RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.armclang
 
-bench.rrii.omp.cpu.sve.intrinsics.fcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
-	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_FCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu.sve.intrinsics.fcc
+bench.rrii.sve.intrinsics.fcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_FCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.fcc
 
 
 
