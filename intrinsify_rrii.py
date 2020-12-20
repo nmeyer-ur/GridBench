@@ -357,7 +357,7 @@ class Emitter:
         self._collect(i)
         self._emit()
 
-    def cRead(self, op1, row, col, offset=False):
+    def cRead(self, op1, row, col, offset=True):
         """Emit complex load"""
         if self._isGauge:
             off_r  = f'2 * 3 * {row} + 2 * {col}'
@@ -382,7 +382,7 @@ class Emitter:
         self._collect(i)
         self._emit()
 
-    def cWrite(self, op1, row, col, offset=False):
+    def cWrite(self, op1, row, col, offset=True):
         """Emit complex store"""
         if self._isGauge:
             off_r  = f'2 * 3 * {row} + 2 * {col}'
