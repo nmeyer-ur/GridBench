@@ -15,7 +15,19 @@
 #include "Simd.h"
 #include "WilsonKernelsHand.h"
 
+#ifdef OMP
+#include <omp.h>
+// some OMP function calls don't work on my laptop, use alternative
+int omp_thread_count() {
+    int n = 0;
+    #pragma omp parallel reduction(+:n)
+    n += 1;
+    return n;
+}
+#endif
+
 #define FREQ 1.8 // frequency in GHz
+#define REPLICAS 1
 
 #ifdef __x86_64__
 #define __SSC_MARK(A) __asm__ __volatile__ ("movl %0, %%ebx; .byte 0x64, 0x67, 0x90 " ::"i"(A):"%ebx")
@@ -62,7 +74,7 @@ int main(int argc, char* argv[])
   ////////////////////////////////////////////////////////////////////
   // Option 2: copy from static arrays
   ////////////////////////////////////////////////////////////////////
-  uint64_t nreplica = 1;
+  uint64_t nreplica = uint64_t(REPLICAS);
   uint64_t nbrmax = nsite*Ls*8;
 
   uint64_t umax   = nsite*18*8 *vComplexD::Nsimd();
@@ -85,7 +97,7 @@ int main(int argc, char* argv[])
   int threads = 1;
 //#ifdef _OPENMP
 #ifdef OMP
-printf("Getting thread number, max = %d\n", omp_get_max_threads());
+//printf("Getting thread number, max = %d\n", omp_get_max_threads());
 //omp_set_num_threads(omp_get_max_threads());
 //threads = omp_get_num_threads();
 threads = omp_thread_count();
@@ -225,7 +237,7 @@ threads = omp_thread_count();
   std::cout <<"YY\t"<< gflops_per_s/FREQ << " Flops/cycle DP; kernel per vector site "<< usec_per_Ls <<" usec / " << cycles_per_Ls << " cycles" <<std::endl;
   std::cout <<"ZZ\t"<< gflops_per_s/FREQ/threads << " Flops/cycle DP per thread; kernel per vector site "<< usec_per_Ls * threads <<" usec / " << cycles_per_Ls * threads << " cycles" <<std::endl;
   std::cout <<std::endl;
-  std::cout <<"XX\t"<< gflops_per_s / EXPAND_SIMD << " GFlops/s DP; kernel per single site "<< usec_per_Ls / EXPAND_SIMD <<" usec / " << cycles_per_Ls / EXPAND_SIMD << " cycles" <<std::endl;
+  std::cout <<"XX\t"<< gflops_per_s/FREQ/threads/ EXPAND_SIMD << " Flops/cycle DP per thread; kernel per vector site "<< usec_per_Ls * threads/ EXPAND_SIMD <<" usec / " << cycles_per_Ls * threads / EXPAND_SIMD<< " cycles" <<std::endl;
 
   std::cout << std::endl;
   std::cout <<"\t"<< percent_peak << " % peak" << std::endl;
