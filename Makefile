@@ -103,13 +103,13 @@ bench.rrii.omp.cpu: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 
 # SVE:
 bench.rrii.sve.gnuvectors.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(CXXFLAGS_SVE_O1) $(CXX) $(RRII_CXXFLAGS_SVE_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.gnuvectors.gcc
+	$(CXX) $(RRII_CXXFLAGS_SVE_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.gnuvectors.gcc
 
 bench.rrii.sve.intrinsics.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
-	$(CXX) $(CXXFLAGS_SVE_O1) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.gcc
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.gcc
 
 bench.rrii.sve.intrinsics.armclang: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
-	$(CXX) $(CXXFLAGS_SVE_O3) $(RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.armclang
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG) $(CXXFLAGS_SVE_O3) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.armclang
 
 bench.rrii.sve.intrinsics.fcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h WilsonKernelsHandCpuSVE1.h Makefile
 	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_FCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.fcc

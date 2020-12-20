@@ -4,11 +4,11 @@
  * cycles per single site;      riri: 238.5   cy
  *
  * gcc -O1
- *                rrii 189.803 cy
+ *                rrii 190 - 220 cy
  *
  *
  * armclang -O3
- *                rrii 220.572 cy
+ *                rrii 195 - 220  cy
  */
 
 #include <stdio.h>
