@@ -4,7 +4,8 @@ SIMPLEDATA := arch/sse/static_data.cc
 CXXFLAGS_SVE_O1 := -O1
 CXXFLAGS_SVE_O3 := -O3
 
-OMP:=-std=c++11 -DSVM -DOMP
+OMP:=-std=c++11 -DSVM
+#OMP:=-std=c++11 -DSVM -DOMP
 #OMP:=-std=c++11  -O3 -fno-schedule-insns -fno-schedule-insns2 -fno-sched-interblock -DSVM
 #OMP:=-std=c++11 -O3
 
