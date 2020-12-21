@@ -623,22 +623,22 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define PREFETCH_CHIMU_L2  \
 { const SiteSpinor & ref (in[pf_L2]);	base = (uint64_t)ref; \
-  svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(0), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(4), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(8), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(12), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(16), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(20), SV_PLDL2STRM); \
 }
 
 #define PREFETCH_CHIMU_L1  \
 { const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)ref;   \
-    svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL1STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(0), SV_PLDL1STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(4), SV_PLDL1STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(8), SV_PLDL1STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(12), SV_PLDL1STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(16), SV_PLDL1STRM); \
+  svprfd_vnum(pg1, (long*)(base), (int64_t)(20), SV_PLDL1STRM); \
 }
 
 
@@ -882,7 +882,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   SimdVec * Usvm  =(SimdVec *) malloc_shared(_umax*sizeof(SimdVec),q);
   SimdVec * insvm =(SimdVec *) malloc_shared(_fmax*sizeof(SimdVec),q);
   SimdVec * outsvm=(SimdVec *) malloc_shared(_fmax*sizeof(SimdVec),q);
-  uint64_t* nbrsvm=(uint64_t *) malloc_shared(_nbrmax*sizeof(uint64_t),q);
+  uvoid* nbrsvm=(uint64_t *) malloc_shared(_nbrmax*sizeof(uint64_t),q);
   uint8_t * prmsvm=(uint8_t  *) malloc_shared(_nbrmax*sizeof(uint8_t),q);
   std::cout << "SVM allocated arrays for SIMD "<<Nsimd <<std::endl;
   for(uint64_t n=0;n<_umax;n++) Usvm[n] = Up[n];
