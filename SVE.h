@@ -18,10 +18,11 @@
  *               rrii^     riri     rrii vs riri
  *              (split)  (interleaved)
  *
- * gcc           190       238         +19%
+ * gcc           190       238         +25%
  * armclang      195       225         +15%
- * fcc           178       175          ~    (baseline)
+ * fcc           180       175          ~    (baseline)
  *
+ * ^vnum disabled
  */
 
 #include <stdio.h>
