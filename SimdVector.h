@@ -22,7 +22,7 @@
 #endif
 #if defined RRII
 #include "arch/rrii/Simd_rrii_vec.h"
-#define SIMT
+//#define SIMT
 #endif
 #if defined RIRI
 #include "arch/riri/Simd_riri_vec.h"

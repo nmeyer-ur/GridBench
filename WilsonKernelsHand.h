@@ -35,8 +35,12 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
     #endif
   #else
     #pragma message ("RRII kernel using GNU vectors")
-    #include "WilsonKernelsHandCpu.h"
-    //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
+    #ifdef SVE
+      //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
+      #include "SVEGNUVectorsPF.h"
+    #else
+      #include "WilsonKernelsHandCpu.h"
+    #endif
   #endif
 
 #else
