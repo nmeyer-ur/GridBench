@@ -212,7 +212,7 @@ class Emitter:
 
     def _emit(self):
         """Emit intrinsics"""
-        print(self._collection)
+        #print(self._collection)
 
         instructions = len(self._collection)
         if instructions == 1:

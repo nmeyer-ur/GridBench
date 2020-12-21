@@ -94,119 +94,92 @@
 
 #define MULT_2SPIN(A)\
   { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
-['U_00_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0)))', 'U_00_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0 + 1)))']
     U_00_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0)));\
     U_00_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0 + 1)));\
-['U_10_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0)))', 'U_10_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0 + 1)))']
     U_10_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0)));\
     U_10_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0 + 1)));\
-['U_20_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0)))', 'U_20_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0 + 1)))']
     U_20_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0)));\
     U_20_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0 + 1)));\
-['U_01_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1)))', 'U_01_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1 + 1)))']
     U_01_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1)));\
     U_01_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1 + 1)));\
-['U_11_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1)))', 'U_11_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1 + 1)))']
     U_11_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1)));\
     U_11_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1 + 1)));\
-['U_21_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1)))', 'U_21_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1 + 1)))']
     U_21_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1)));\
     U_21_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1 + 1)));\
-['UChi_00_re = svmul_x(pg1, U_00_re, Chi_00_re)', 'UChi_00_im = svmul_x(pg1, U_00_re, Chi_00_im)', 'UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_00_im)', 'UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_im, Chi_00_re)']
     UChi_00_re = svmul_x(pg1, U_00_re, Chi_00_re);\
     UChi_00_im = svmul_x(pg1, U_00_re, Chi_00_im);\
     UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_00_im);\
     UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_im, Chi_00_re);\
-['UChi_10_re = svmul_x(pg1, U_00_re, Chi_10_re)', 'UChi_10_im = svmul_x(pg1, U_00_re, Chi_10_im)', 'UChi_10_re = svmls_x(pg1, UChi_10_re, U_00_im, Chi_10_im)', 'UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_im, Chi_10_re)']
     UChi_10_re = svmul_x(pg1, U_00_re, Chi_10_re);\
     UChi_10_im = svmul_x(pg1, U_00_re, Chi_10_im);\
     UChi_10_re = svmls_x(pg1, UChi_10_re, U_00_im, Chi_10_im);\
     UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_im, Chi_10_re);\
-['UChi_01_re = svmul_x(pg1, U_10_re, Chi_00_re)', 'UChi_01_im = svmul_x(pg1, U_10_re, Chi_00_im)', 'UChi_01_re = svmls_x(pg1, UChi_01_re, U_10_im, Chi_00_im)', 'UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_im, Chi_00_re)']
     UChi_01_re = svmul_x(pg1, U_10_re, Chi_00_re);\
     UChi_01_im = svmul_x(pg1, U_10_re, Chi_00_im);\
     UChi_01_re = svmls_x(pg1, UChi_01_re, U_10_im, Chi_00_im);\
     UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_im, Chi_00_re);\
-['UChi_11_re = svmul_x(pg1, U_10_re, Chi_10_re)', 'UChi_11_im = svmul_x(pg1, U_10_re, Chi_10_im)', 'UChi_11_re = svmls_x(pg1, UChi_11_re, U_10_im, Chi_10_im)', 'UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_im, Chi_10_re)']
     UChi_11_re = svmul_x(pg1, U_10_re, Chi_10_re);\
     UChi_11_im = svmul_x(pg1, U_10_re, Chi_10_im);\
     UChi_11_re = svmls_x(pg1, UChi_11_re, U_10_im, Chi_10_im);\
     UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_im, Chi_10_re);\
-['UChi_02_re = svmul_x(pg1, U_20_re, Chi_00_re)', 'UChi_02_im = svmul_x(pg1, U_20_re, Chi_00_im)', 'UChi_02_re = svmls_x(pg1, UChi_02_re, U_20_im, Chi_00_im)', 'UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_im, Chi_00_re)']
     UChi_02_re = svmul_x(pg1, U_20_re, Chi_00_re);\
     UChi_02_im = svmul_x(pg1, U_20_re, Chi_00_im);\
     UChi_02_re = svmls_x(pg1, UChi_02_re, U_20_im, Chi_00_im);\
     UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_im, Chi_00_re);\
-['UChi_12_re = svmul_x(pg1, U_20_re, Chi_10_re)', 'UChi_12_im = svmul_x(pg1, U_20_re, Chi_10_im)', 'UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_10_im)', 'UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_im, Chi_10_re)']
     UChi_12_re = svmul_x(pg1, U_20_re, Chi_10_re);\
     UChi_12_im = svmul_x(pg1, U_20_re, Chi_10_im);\
     UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_10_im);\
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_im, Chi_10_re);\
-['UChi_00_re = svmla_x(pg1, UChi_00_re, U_01_re, Chi_01_re)', 'UChi_00_im = svmla_x(pg1, UChi_00_im, U_01_re, Chi_01_im)', 'UChi_00_re = svmls_x(pg1, UChi_00_re, U_01_im, Chi_01_im)', 'UChi_00_im = svmla_x(pg1, UChi_00_im, U_01_im, Chi_01_re)']
     UChi_00_re = svmla_x(pg1, UChi_00_re, U_01_re, Chi_01_re);\
     UChi_00_im = svmla_x(pg1, UChi_00_im, U_01_re, Chi_01_im);\
     UChi_00_re = svmls_x(pg1, UChi_00_re, U_01_im, Chi_01_im);\
     UChi_00_im = svmla_x(pg1, UChi_00_im, U_01_im, Chi_01_re);\
-['UChi_10_re = svmla_x(pg1, UChi_10_re, U_01_re, Chi_11_re)', 'UChi_10_im = svmla_x(pg1, UChi_10_im, U_01_re, Chi_11_im)', 'UChi_10_re = svmls_x(pg1, UChi_10_re, U_01_im, Chi_11_im)', 'UChi_10_im = svmla_x(pg1, UChi_10_im, U_01_im, Chi_11_re)']
     UChi_10_re = svmla_x(pg1, UChi_10_re, U_01_re, Chi_11_re);\
     UChi_10_im = svmla_x(pg1, UChi_10_im, U_01_re, Chi_11_im);\
     UChi_10_re = svmls_x(pg1, UChi_10_re, U_01_im, Chi_11_im);\
     UChi_10_im = svmla_x(pg1, UChi_10_im, U_01_im, Chi_11_re);\
-['UChi_01_re = svmla_x(pg1, UChi_01_re, U_11_re, Chi_01_re)', 'UChi_01_im = svmla_x(pg1, UChi_01_im, U_11_re, Chi_01_im)', 'UChi_01_re = svmls_x(pg1, UChi_01_re, U_11_im, Chi_01_im)', 'UChi_01_im = svmla_x(pg1, UChi_01_im, U_11_im, Chi_01_re)']
     UChi_01_re = svmla_x(pg1, UChi_01_re, U_11_re, Chi_01_re);\
     UChi_01_im = svmla_x(pg1, UChi_01_im, U_11_re, Chi_01_im);\
     UChi_01_re = svmls_x(pg1, UChi_01_re, U_11_im, Chi_01_im);\
     UChi_01_im = svmla_x(pg1, UChi_01_im, U_11_im, Chi_01_re);\
-['UChi_11_re = svmla_x(pg1, UChi_11_re, U_11_re, Chi_11_re)', 'UChi_11_im = svmla_x(pg1, UChi_11_im, U_11_re, Chi_11_im)', 'UChi_11_re = svmls_x(pg1, UChi_11_re, U_11_im, Chi_11_im)', 'UChi_11_im = svmla_x(pg1, UChi_11_im, U_11_im, Chi_11_re)']
     UChi_11_re = svmla_x(pg1, UChi_11_re, U_11_re, Chi_11_re);\
     UChi_11_im = svmla_x(pg1, UChi_11_im, U_11_re, Chi_11_im);\
     UChi_11_re = svmls_x(pg1, UChi_11_re, U_11_im, Chi_11_im);\
     UChi_11_im = svmla_x(pg1, UChi_11_im, U_11_im, Chi_11_re);\
-['UChi_02_re = svmla_x(pg1, UChi_02_re, U_21_re, Chi_01_re)', 'UChi_02_im = svmla_x(pg1, UChi_02_im, U_21_re, Chi_01_im)', 'UChi_02_re = svmls_x(pg1, UChi_02_re, U_21_im, Chi_01_im)', 'UChi_02_im = svmla_x(pg1, UChi_02_im, U_21_im, Chi_01_re)']
     UChi_02_re = svmla_x(pg1, UChi_02_re, U_21_re, Chi_01_re);\
     UChi_02_im = svmla_x(pg1, UChi_02_im, U_21_re, Chi_01_im);\
     UChi_02_re = svmls_x(pg1, UChi_02_re, U_21_im, Chi_01_im);\
     UChi_02_im = svmla_x(pg1, UChi_02_im, U_21_im, Chi_01_re);\
-['UChi_12_re = svmla_x(pg1, UChi_12_re, U_21_re, Chi_11_re)', 'UChi_12_im = svmla_x(pg1, UChi_12_im, U_21_re, Chi_11_im)', 'UChi_12_re = svmls_x(pg1, UChi_12_re, U_21_im, Chi_11_im)', 'UChi_12_im = svmla_x(pg1, UChi_12_im, U_21_im, Chi_11_re)']
     UChi_12_re = svmla_x(pg1, UChi_12_re, U_21_re, Chi_11_re);\
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_21_re, Chi_11_im);\
     UChi_12_re = svmls_x(pg1, UChi_12_re, U_21_im, Chi_11_im);\
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_21_im, Chi_11_re);\
-['U_00_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2)))', 'U_00_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2 + 1)))']
     U_00_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2)));\
     U_00_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2 + 1)));\
-['U_10_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2)))', 'U_10_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2 + 1)))']
     U_10_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2)));\
     U_10_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2 + 1)));\
-['U_20_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2)))', 'U_20_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2 + 1)))']
     U_20_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2)));\
     U_20_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2 + 1)));\
-['UChi_00_re = svmla_x(pg1, UChi_00_re, U_00_re, Chi_02_re)', 'UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_re, Chi_02_im)', 'UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_02_im)', 'UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_im, Chi_02_re)']
     UChi_00_re = svmla_x(pg1, UChi_00_re, U_00_re, Chi_02_re);\
     UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_re, Chi_02_im);\
     UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_02_im);\
     UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_im, Chi_02_re);\
-['UChi_10_re = svmla_x(pg1, UChi_10_re, U_00_re, Chi_12_re)', 'UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_re, Chi_12_im)', 'UChi_10_re = svmls_x(pg1, UChi_10_re, U_00_im, Chi_12_im)', 'UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_im, Chi_12_re)']
     UChi_10_re = svmla_x(pg1, UChi_10_re, U_00_re, Chi_12_re);\
     UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_re, Chi_12_im);\
     UChi_10_re = svmls_x(pg1, UChi_10_re, U_00_im, Chi_12_im);\
     UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_im, Chi_12_re);\
-['UChi_01_re = svmla_x(pg1, UChi_01_re, U_10_re, Chi_02_re)', 'UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_re, Chi_02_im)', 'UChi_01_re = svmls_x(pg1, UChi_01_re, U_10_im, Chi_02_im)', 'UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_im, Chi_02_re)']
     UChi_01_re = svmla_x(pg1, UChi_01_re, U_10_re, Chi_02_re);\
     UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_re, Chi_02_im);\
     UChi_01_re = svmls_x(pg1, UChi_01_re, U_10_im, Chi_02_im);\
     UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_im, Chi_02_re);\
-['UChi_11_re = svmla_x(pg1, UChi_11_re, U_10_re, Chi_12_re)', 'UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_re, Chi_12_im)', 'UChi_11_re = svmls_x(pg1, UChi_11_re, U_10_im, Chi_12_im)', 'UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_im, Chi_12_re)']
     UChi_11_re = svmla_x(pg1, UChi_11_re, U_10_re, Chi_12_re);\
     UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_re, Chi_12_im);\
     UChi_11_re = svmls_x(pg1, UChi_11_re, U_10_im, Chi_12_im);\
     UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_im, Chi_12_re);\
-['UChi_02_re = svmla_x(pg1, UChi_02_re, U_20_re, Chi_02_re)', 'UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_re, Chi_02_im)', 'UChi_02_re = svmls_x(pg1, UChi_02_re, U_20_im, Chi_02_im)', 'UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_im, Chi_02_re)']
     UChi_02_re = svmla_x(pg1, UChi_02_re, U_20_re, Chi_02_re);\
     UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_re, Chi_02_im);\
     UChi_02_re = svmls_x(pg1, UChi_02_re, U_20_im, Chi_02_im);\
     UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_im, Chi_02_re);\
-['UChi_12_re = svmla_x(pg1, UChi_12_re, U_20_re, Chi_12_re)', 'UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_re, Chi_12_im)', 'UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_12_im)', 'UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_im, Chi_12_re)']
     UChi_12_re = svmla_x(pg1, UChi_12_re, U_20_re, Chi_12_re);\
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_re, Chi_12_im);\
     UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_12_im);\
@@ -215,82 +188,58 @@
 //      hspin(0)=fspin(0)+timesI(fspin(3));
 //      hspin(1)=fspin(1)+timesI(fspin(2));
 #define XP_PROJ \
-['Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_30_im)', 'Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_30_re)']
     Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_30_im);\
     Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_30_re);\
-['Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_31_im)', 'Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_31_re)']
     Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_31_im);\
     Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_31_re);\
-['Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_32_im)', 'Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_32_re)']
     Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_32_im);\
     Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_32_re);\
-['Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_20_im)', 'Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_20_re)']
     Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_20_im);\
     Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_20_re);\
-['Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_21_im)', 'Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_21_re)']
     Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_21_im);\
     Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_21_re);\
-['Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_22_im)', 'Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_22_re)']
     Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_22_im);\
     Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_22_re);
 
 #define YP_PROJ \
-['Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_30_re)', 'Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_30_im)']
     Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_30_re);\
     Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_30_im);\
-['Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_31_re)', 'Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_31_im)']
     Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_31_re);\
     Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_31_im);\
-['Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_32_re)', 'Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_32_im)']
     Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_32_re);\
     Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_32_im);\
-['Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_20_re)', 'Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_20_im)']
     Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_20_re);\
     Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_20_im);\
-['Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_21_re)', 'Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_21_im)']
     Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_21_re);\
     Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_21_im);\
-['Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_22_re)', 'Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_22_im)']
     Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_22_re);\
     Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_22_im);
 
 #define ZP_PROJ \
-['Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_20_im)', 'Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_20_re)']
     Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_20_im);\
     Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_20_re);\
-['Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_21_im)', 'Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_21_re)']
     Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_21_im);\
     Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_21_re);\
-['Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_22_im)', 'Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_22_re)']
     Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_22_im);\
     Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_22_re);\
-['Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_30_im)', 'Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_30_re)']
     Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_30_im);\
     Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_30_re);\
-['Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_31_im)', 'Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_31_re)']
     Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_31_im);\
     Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_31_re);\
-['Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_32_im)', 'Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_32_re)']
     Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_32_im);\
     Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_32_re);
 
 #define TP_PROJ \
-['Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_20_re)', 'Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_20_im)']
     Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_20_re);\
     Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_20_im);\
-['Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_21_re)', 'Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_21_im)']
     Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_21_re);\
     Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_21_im);\
-['Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_22_re)', 'Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_22_im)']
     Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_22_re);\
     Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_22_im);\
-['Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_30_re)', 'Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_30_im)']
     Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_30_re);\
     Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_30_im);\
-['Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_31_re)', 'Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_31_im)']
     Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_31_re);\
     Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_31_im);\
-['Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_32_re)', 'Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_32_im)']
     Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_32_re);\
     Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_32_im);
 
@@ -298,82 +247,58 @@
 //      hspin(0)=fspin(0)-timesI(fspin(3));
 //      hspin(1)=fspin(1)-timesI(fspin(2));
 #define XM_PROJ \
-['Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_30_im)', 'Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_30_re)']
     Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_30_im);\
     Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_30_re);\
-['Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_31_im)', 'Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_31_re)']
     Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_31_im);\
     Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_31_re);\
-['Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_32_im)', 'Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_32_re)']
     Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_32_im);\
     Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_32_re);\
-['Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_20_im)', 'Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_20_re)']
     Chi_10_re = svadd_x(pg1, Chimu_10_re, Chimu_20_im);\
     Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_20_re);\
-['Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_21_im)', 'Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_21_re)']
     Chi_11_re = svadd_x(pg1, Chimu_11_re, Chimu_21_im);\
     Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_21_re);\
-['Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_22_im)', 'Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_22_re)']
     Chi_12_re = svadd_x(pg1, Chimu_12_re, Chimu_22_im);\
     Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_22_re);
 
 #define YM_PROJ \
-['Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_30_re)', 'Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_30_im)']
     Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_30_re);\
     Chi_00_im = svadd_x(pg1, Chimu_00_im, Chimu_30_im);\
-['Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_31_re)', 'Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_31_im)']
     Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_31_re);\
     Chi_01_im = svadd_x(pg1, Chimu_01_im, Chimu_31_im);\
-['Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_32_re)', 'Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_32_im)']
     Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_32_re);\
     Chi_02_im = svadd_x(pg1, Chimu_02_im, Chimu_32_im);\
-['Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_20_re)', 'Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_20_im)']
     Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_20_re);\
     Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_20_im);\
-['Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_21_re)', 'Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_21_im)']
     Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_21_re);\
     Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_21_im);\
-['Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_22_re)', 'Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_22_im)']
     Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_22_re);\
     Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_22_im);
 
 #define ZM_PROJ \
-['Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_20_im)', 'Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_20_re)']
     Chi_00_re = svadd_x(pg1, Chimu_00_re, Chimu_20_im);\
     Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_20_re);\
-['Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_21_im)', 'Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_21_re)']
     Chi_01_re = svadd_x(pg1, Chimu_01_re, Chimu_21_im);\
     Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_21_re);\
-['Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_22_im)', 'Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_22_re)']
     Chi_02_re = svadd_x(pg1, Chimu_02_re, Chimu_22_im);\
     Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_22_re);\
-['Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_30_im)', 'Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_30_re)']
     Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_30_im);\
     Chi_10_im = svadd_x(pg1, Chimu_10_im, Chimu_30_re);\
-['Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_31_im)', 'Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_31_re)']
     Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_31_im);\
     Chi_11_im = svadd_x(pg1, Chimu_11_im, Chimu_31_re);\
-['Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_32_im)', 'Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_32_re)']
     Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_32_im);\
     Chi_12_im = svadd_x(pg1, Chimu_12_im, Chimu_32_re);
 
 #define TM_PROJ \
-['Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_20_re)', 'Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_20_im)']
     Chi_00_re = svsub_x(pg1, Chimu_00_re, Chimu_20_re);\
     Chi_00_im = svsub_x(pg1, Chimu_00_im, Chimu_20_im);\
-['Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_21_re)', 'Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_21_im)']
     Chi_01_re = svsub_x(pg1, Chimu_01_re, Chimu_21_re);\
     Chi_01_im = svsub_x(pg1, Chimu_01_im, Chimu_21_im);\
-['Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_22_re)', 'Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_22_im)']
     Chi_02_re = svsub_x(pg1, Chimu_02_re, Chimu_22_re);\
     Chi_02_im = svsub_x(pg1, Chimu_02_im, Chimu_22_im);\
-['Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_30_re)', 'Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_30_im)']
     Chi_10_re = svsub_x(pg1, Chimu_10_re, Chimu_30_re);\
     Chi_10_im = svsub_x(pg1, Chimu_10_im, Chimu_30_im);\
-['Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_31_re)', 'Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_31_im)']
     Chi_11_re = svsub_x(pg1, Chimu_11_re, Chimu_31_re);\
     Chi_11_im = svsub_x(pg1, Chimu_11_im, Chimu_31_im);\
-['Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_32_re)', 'Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_32_im)']
     Chi_12_re = svsub_x(pg1, Chimu_12_re, Chimu_32_re);\
     Chi_12_im = svsub_x(pg1, Chimu_12_im, Chimu_32_im);
 
@@ -383,382 +308,262 @@
 //      fspin(3)=timesMinusI(hspin(0));
 
 #define XP_RECON\
-['result_00_re = UChi_00_re', 'result_00_im = UChi_00_im']
     result_00_re = UChi_00_re;\
     result_00_im = UChi_00_im;\
-['result_01_re = UChi_01_re', 'result_01_im = UChi_01_im']
     result_01_re = UChi_01_re;\
     result_01_im = UChi_01_im;\
-['result_02_re = UChi_02_re', 'result_02_im = UChi_02_im']
     result_02_re = UChi_02_re;\
     result_02_im = UChi_02_im;\
-['result_10_re = UChi_10_re', 'result_10_im = UChi_10_im']
     result_10_re = UChi_10_re;\
     result_10_im = UChi_10_im;\
-['result_11_re = UChi_11_re', 'result_11_im = UChi_11_im']
     result_11_re = UChi_11_re;\
     result_11_im = UChi_11_im;\
-['result_12_re = UChi_12_re', 'result_12_im = UChi_12_im']
     result_12_re = UChi_12_re;\
     result_12_im = UChi_12_im;\
-['result_20_re = UChi_10_im', 'result_20_im = svneg_x(pg1, UChi_10_re)']
     result_20_re = UChi_10_im;\
     result_20_im = svneg_x(pg1, UChi_10_re);\
-['result_21_re = UChi_11_im', 'result_21_im = svneg_x(pg1, UChi_11_re)']
     result_21_re = UChi_11_im;\
     result_21_im = svneg_x(pg1, UChi_11_re);\
-['result_22_re = UChi_12_im', 'result_22_im = svneg_x(pg1, UChi_12_re)']
     result_22_re = UChi_12_im;\
     result_22_im = svneg_x(pg1, UChi_12_re);\
-['result_30_re = UChi_00_im', 'result_30_im = svneg_x(pg1, UChi_00_re)']
     result_30_re = UChi_00_im;\
     result_30_im = svneg_x(pg1, UChi_00_re);\
-['result_31_re = UChi_01_im', 'result_31_im = svneg_x(pg1, UChi_01_re)']
     result_31_re = UChi_01_im;\
     result_31_im = svneg_x(pg1, UChi_01_re);\
-['result_32_re = UChi_02_im', 'result_32_im = svneg_x(pg1, UChi_02_re)']
     result_32_re = UChi_02_im;\
     result_32_im = svneg_x(pg1, UChi_02_re);
 
 #define XP_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svadd_x(pg1, result_20_re, UChi_10_im)', 'result_20_im = svsub_x(pg1, result_20_im, UChi_10_re)']
     result_20_re = svadd_x(pg1, result_20_re, UChi_10_im);\
     result_20_im = svsub_x(pg1, result_20_im, UChi_10_re);\
-['result_21_re = svadd_x(pg1, result_21_re, UChi_11_im)', 'result_21_im = svsub_x(pg1, result_21_im, UChi_11_re)']
     result_21_re = svadd_x(pg1, result_21_re, UChi_11_im);\
     result_21_im = svsub_x(pg1, result_21_im, UChi_11_re);\
-['result_22_re = svadd_x(pg1, result_22_re, UChi_12_im)', 'result_22_im = svsub_x(pg1, result_22_im, UChi_12_re)']
     result_22_re = svadd_x(pg1, result_22_re, UChi_12_im);\
     result_22_im = svsub_x(pg1, result_22_im, UChi_12_re);\
-['result_30_re = svadd_x(pg1, result_30_re, UChi_00_im)', 'result_30_im = svsub_x(pg1, result_30_im, UChi_00_re)']
     result_30_re = svadd_x(pg1, result_30_re, UChi_00_im);\
     result_30_im = svsub_x(pg1, result_30_im, UChi_00_re);\
-['result_31_re = svadd_x(pg1, result_31_re, UChi_01_im)', 'result_31_im = svsub_x(pg1, result_31_im, UChi_01_re)']
     result_31_re = svadd_x(pg1, result_31_re, UChi_01_im);\
     result_31_im = svsub_x(pg1, result_31_im, UChi_01_re);\
-['result_32_re = svadd_x(pg1, result_32_re, UChi_02_im)', 'result_32_im = svsub_x(pg1, result_32_im, UChi_02_re)']
     result_32_re = svadd_x(pg1, result_32_re, UChi_02_im);\
     result_32_im = svsub_x(pg1, result_32_im, UChi_02_re);
 
 #define XM_RECON\
-['result_00_re = UChi_00_re', 'result_00_im = UChi_00_im']
     result_00_re = UChi_00_re;\
     result_00_im = UChi_00_im;\
-['result_01_re = UChi_01_re', 'result_01_im = UChi_01_im']
     result_01_re = UChi_01_re;\
     result_01_im = UChi_01_im;\
-['result_02_re = UChi_02_re', 'result_02_im = UChi_02_im']
     result_02_re = UChi_02_re;\
     result_02_im = UChi_02_im;\
-['result_10_re = UChi_10_re', 'result_10_im = UChi_10_im']
     result_10_re = UChi_10_re;\
     result_10_im = UChi_10_im;\
-['result_11_re = UChi_11_re', 'result_11_im = UChi_11_im']
     result_11_re = UChi_11_re;\
     result_11_im = UChi_11_im;\
-['result_12_re = UChi_12_re', 'result_12_im = UChi_12_im']
     result_12_re = UChi_12_re;\
     result_12_im = UChi_12_im;\
-['result_20_re = svneg_x(pg1, UChi_10_im)', 'result_20_im = UChi_10_re']
     result_20_re = svneg_x(pg1, UChi_10_im);\
     result_20_im = UChi_10_re;\
-['result_21_re = svneg_x(pg1, UChi_11_im)', 'result_21_im = UChi_11_re']
     result_21_re = svneg_x(pg1, UChi_11_im);\
     result_21_im = UChi_11_re;\
-['result_22_re = svneg_x(pg1, UChi_12_im)', 'result_22_im = UChi_12_re']
     result_22_re = svneg_x(pg1, UChi_12_im);\
     result_22_im = UChi_12_re;\
-['result_30_re = svneg_x(pg1, UChi_00_im)', 'result_30_im = UChi_00_re']
     result_30_re = svneg_x(pg1, UChi_00_im);\
     result_30_im = UChi_00_re;\
-['result_31_re = svneg_x(pg1, UChi_01_im)', 'result_31_im = UChi_01_re']
     result_31_re = svneg_x(pg1, UChi_01_im);\
     result_31_im = UChi_01_re;\
-['result_32_re = svneg_x(pg1, UChi_02_im)', 'result_32_im = UChi_02_re']
     result_32_re = svneg_x(pg1, UChi_02_im);\
     result_32_im = UChi_02_re;
 
 #define XM_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svsub_x(pg1, result_20_re, UChi_10_im)', 'result_20_im = svadd_x(pg1, result_20_im, UChi_10_re)']
     result_20_re = svsub_x(pg1, result_20_re, UChi_10_im);\
     result_20_im = svadd_x(pg1, result_20_im, UChi_10_re);\
-['result_21_re = svsub_x(pg1, result_21_re, UChi_11_im)', 'result_21_im = svadd_x(pg1, result_21_im, UChi_11_re)']
     result_21_re = svsub_x(pg1, result_21_re, UChi_11_im);\
     result_21_im = svadd_x(pg1, result_21_im, UChi_11_re);\
-['result_22_re = svsub_x(pg1, result_22_re, UChi_12_im)', 'result_22_im = svadd_x(pg1, result_22_im, UChi_12_re)']
     result_22_re = svsub_x(pg1, result_22_re, UChi_12_im);\
     result_22_im = svadd_x(pg1, result_22_im, UChi_12_re);\
-['result_30_re = svsub_x(pg1, result_30_re, UChi_00_im)', 'result_30_im = svadd_x(pg1, result_30_im, UChi_00_re)']
     result_30_re = svsub_x(pg1, result_30_re, UChi_00_im);\
     result_30_im = svadd_x(pg1, result_30_im, UChi_00_re);\
-['result_31_re = svsub_x(pg1, result_31_re, UChi_01_im)', 'result_31_im = svadd_x(pg1, result_31_im, UChi_01_re)']
     result_31_re = svsub_x(pg1, result_31_re, UChi_01_im);\
     result_31_im = svadd_x(pg1, result_31_im, UChi_01_re);\
-['result_32_re = svsub_x(pg1, result_32_re, UChi_02_im)', 'result_32_im = svadd_x(pg1, result_32_im, UChi_02_re)']
     result_32_re = svsub_x(pg1, result_32_re, UChi_02_im);\
     result_32_im = svadd_x(pg1, result_32_im, UChi_02_re);
 
 #define YP_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svadd_x(pg1, result_20_re, UChi_10_re)', 'result_20_im = svadd_x(pg1, result_20_im, UChi_10_im)']
     result_20_re = svadd_x(pg1, result_20_re, UChi_10_re);\
     result_20_im = svadd_x(pg1, result_20_im, UChi_10_im);\
-['result_21_re = svadd_x(pg1, result_21_re, UChi_11_re)', 'result_21_im = svadd_x(pg1, result_21_im, UChi_11_im)']
     result_21_re = svadd_x(pg1, result_21_re, UChi_11_re);\
     result_21_im = svadd_x(pg1, result_21_im, UChi_11_im);\
-['result_22_re = svadd_x(pg1, result_22_re, UChi_12_re)', 'result_22_im = svadd_x(pg1, result_22_im, UChi_12_im)']
     result_22_re = svadd_x(pg1, result_22_re, UChi_12_re);\
     result_22_im = svadd_x(pg1, result_22_im, UChi_12_im);\
-['result_30_re = svsub_x(pg1, result_30_re, UChi_00_re)', 'result_30_im = svsub_x(pg1, result_30_im, UChi_00_im)']
     result_30_re = svsub_x(pg1, result_30_re, UChi_00_re);\
     result_30_im = svsub_x(pg1, result_30_im, UChi_00_im);\
-['result_31_re = svsub_x(pg1, result_31_re, UChi_01_re)', 'result_31_im = svsub_x(pg1, result_31_im, UChi_01_im)']
     result_31_re = svsub_x(pg1, result_31_re, UChi_01_re);\
     result_31_im = svsub_x(pg1, result_31_im, UChi_01_im);\
-['result_32_re = svsub_x(pg1, result_32_re, UChi_02_re)', 'result_32_im = svsub_x(pg1, result_32_im, UChi_02_im)']
     result_32_re = svsub_x(pg1, result_32_re, UChi_02_re);\
     result_32_im = svsub_x(pg1, result_32_im, UChi_02_im);
 
 #define YM_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svsub_x(pg1, result_20_re, UChi_10_re)', 'result_20_im = svsub_x(pg1, result_20_im, UChi_10_im)']
     result_20_re = svsub_x(pg1, result_20_re, UChi_10_re);\
     result_20_im = svsub_x(pg1, result_20_im, UChi_10_im);\
-['result_21_re = svsub_x(pg1, result_21_re, UChi_11_re)', 'result_21_im = svsub_x(pg1, result_21_im, UChi_11_im)']
     result_21_re = svsub_x(pg1, result_21_re, UChi_11_re);\
     result_21_im = svsub_x(pg1, result_21_im, UChi_11_im);\
-['result_22_re = svsub_x(pg1, result_22_re, UChi_12_re)', 'result_22_im = svsub_x(pg1, result_22_im, UChi_12_im)']
     result_22_re = svsub_x(pg1, result_22_re, UChi_12_re);\
     result_22_im = svsub_x(pg1, result_22_im, UChi_12_im);\
-['result_30_re = svadd_x(pg1, result_30_re, UChi_00_re)', 'result_30_im = svadd_x(pg1, result_30_im, UChi_00_im)']
     result_30_re = svadd_x(pg1, result_30_re, UChi_00_re);\
     result_30_im = svadd_x(pg1, result_30_im, UChi_00_im);\
-['result_31_re = svadd_x(pg1, result_31_re, UChi_01_re)', 'result_31_im = svadd_x(pg1, result_31_im, UChi_01_im)']
     result_31_re = svadd_x(pg1, result_31_re, UChi_01_re);\
     result_31_im = svadd_x(pg1, result_31_im, UChi_01_im);\
-['result_32_re = svadd_x(pg1, result_32_re, UChi_02_re)', 'result_32_im = svadd_x(pg1, result_32_im, UChi_02_im)']
     result_32_re = svadd_x(pg1, result_32_re, UChi_02_re);\
     result_32_im = svadd_x(pg1, result_32_im, UChi_02_im);
 
 #define ZP_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svadd_x(pg1, result_20_re, UChi_00_im)', 'result_20_im = svsub_x(pg1, result_20_im, UChi_00_re)']
     result_20_re = svadd_x(pg1, result_20_re, UChi_00_im);\
     result_20_im = svsub_x(pg1, result_20_im, UChi_00_re);\
-['result_21_re = svadd_x(pg1, result_21_re, UChi_01_im)', 'result_21_im = svsub_x(pg1, result_21_im, UChi_01_re)']
     result_21_re = svadd_x(pg1, result_21_re, UChi_01_im);\
     result_21_im = svsub_x(pg1, result_21_im, UChi_01_re);\
-['result_22_re = svadd_x(pg1, result_22_re, UChi_02_im)', 'result_22_im = svsub_x(pg1, result_22_im, UChi_02_re)']
     result_22_re = svadd_x(pg1, result_22_re, UChi_02_im);\
     result_22_im = svsub_x(pg1, result_22_im, UChi_02_re);\
-['result_30_re = svsub_x(pg1, result_30_re, UChi_10_im)', 'result_30_im = svadd_x(pg1, result_30_im, UChi_10_re)']
     result_30_re = svsub_x(pg1, result_30_re, UChi_10_im);\
     result_30_im = svadd_x(pg1, result_30_im, UChi_10_re);\
-['result_31_re = svsub_x(pg1, result_31_re, UChi_11_im)', 'result_31_im = svadd_x(pg1, result_31_im, UChi_11_re)']
     result_31_re = svsub_x(pg1, result_31_re, UChi_11_im);\
     result_31_im = svadd_x(pg1, result_31_im, UChi_11_re);\
-['result_32_re = svsub_x(pg1, result_32_re, UChi_12_im)', 'result_32_im = svadd_x(pg1, result_32_im, UChi_12_re)']
     result_32_re = svsub_x(pg1, result_32_re, UChi_12_im);\
     result_32_im = svadd_x(pg1, result_32_im, UChi_12_re);
 
 #define ZM_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svsub_x(pg1, result_20_re, UChi_00_im)', 'result_20_im = svadd_x(pg1, result_20_im, UChi_00_re)']
     result_20_re = svsub_x(pg1, result_20_re, UChi_00_im);\
     result_20_im = svadd_x(pg1, result_20_im, UChi_00_re);\
-['result_21_re = svsub_x(pg1, result_21_re, UChi_01_im)', 'result_21_im = svadd_x(pg1, result_21_im, UChi_01_re)']
     result_21_re = svsub_x(pg1, result_21_re, UChi_01_im);\
     result_21_im = svadd_x(pg1, result_21_im, UChi_01_re);\
-['result_22_re = svsub_x(pg1, result_22_re, UChi_02_im)', 'result_22_im = svadd_x(pg1, result_22_im, UChi_02_re)']
     result_22_re = svsub_x(pg1, result_22_re, UChi_02_im);\
     result_22_im = svadd_x(pg1, result_22_im, UChi_02_re);\
-['result_30_re = svadd_x(pg1, result_30_re, UChi_10_im)', 'result_30_im = svsub_x(pg1, result_30_im, UChi_10_re)']
     result_30_re = svadd_x(pg1, result_30_re, UChi_10_im);\
     result_30_im = svsub_x(pg1, result_30_im, UChi_10_re);\
-['result_31_re = svadd_x(pg1, result_31_re, UChi_11_im)', 'result_31_im = svsub_x(pg1, result_31_im, UChi_11_re)']
     result_31_re = svadd_x(pg1, result_31_re, UChi_11_im);\
     result_31_im = svsub_x(pg1, result_31_im, UChi_11_re);\
-['result_32_re = svadd_x(pg1, result_32_re, UChi_12_im)', 'result_32_im = svsub_x(pg1, result_32_im, UChi_12_re)']
     result_32_re = svadd_x(pg1, result_32_re, UChi_12_im);\
     result_32_im = svsub_x(pg1, result_32_im, UChi_12_re);
 
 #define TP_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svadd_x(pg1, result_20_re, UChi_00_re)', 'result_20_im = svadd_x(pg1, result_20_im, UChi_00_im)']
     result_20_re = svadd_x(pg1, result_20_re, UChi_00_re);\
     result_20_im = svadd_x(pg1, result_20_im, UChi_00_im);\
-['result_21_re = svadd_x(pg1, result_21_re, UChi_01_re)', 'result_21_im = svadd_x(pg1, result_21_im, UChi_01_im)']
     result_21_re = svadd_x(pg1, result_21_re, UChi_01_re);\
     result_21_im = svadd_x(pg1, result_21_im, UChi_01_im);\
-['result_22_re = svadd_x(pg1, result_22_re, UChi_02_re)', 'result_22_im = svadd_x(pg1, result_22_im, UChi_02_im)']
     result_22_re = svadd_x(pg1, result_22_re, UChi_02_re);\
     result_22_im = svadd_x(pg1, result_22_im, UChi_02_im);\
-['result_30_re = svadd_x(pg1, result_30_re, UChi_10_re)', 'result_30_im = svadd_x(pg1, result_30_im, UChi_10_im)']
     result_30_re = svadd_x(pg1, result_30_re, UChi_10_re);\
     result_30_im = svadd_x(pg1, result_30_im, UChi_10_im);\
-['result_31_re = svadd_x(pg1, result_31_re, UChi_11_re)', 'result_31_im = svadd_x(pg1, result_31_im, UChi_11_im)']
     result_31_re = svadd_x(pg1, result_31_re, UChi_11_re);\
     result_31_im = svadd_x(pg1, result_31_im, UChi_11_im);\
-['result_32_re = svadd_x(pg1, result_32_re, UChi_12_re)', 'result_32_im = svadd_x(pg1, result_32_im, UChi_12_im)']
     result_32_re = svadd_x(pg1, result_32_re, UChi_12_re);\
     result_32_im = svadd_x(pg1, result_32_im, UChi_12_im);
 
 #define TM_RECON_ACCUM\
-['result_00_re = svadd_x(pg1, result_00_re, UChi_00_re)', 'result_00_im = svadd_x(pg1, result_00_im, UChi_00_im)']
     result_00_re = svadd_x(pg1, result_00_re, UChi_00_re);\
     result_00_im = svadd_x(pg1, result_00_im, UChi_00_im);\
-['result_01_re = svadd_x(pg1, result_01_re, UChi_01_re)', 'result_01_im = svadd_x(pg1, result_01_im, UChi_01_im)']
     result_01_re = svadd_x(pg1, result_01_re, UChi_01_re);\
     result_01_im = svadd_x(pg1, result_01_im, UChi_01_im);\
-['result_02_re = svadd_x(pg1, result_02_re, UChi_02_re)', 'result_02_im = svadd_x(pg1, result_02_im, UChi_02_im)']
     result_02_re = svadd_x(pg1, result_02_re, UChi_02_re);\
     result_02_im = svadd_x(pg1, result_02_im, UChi_02_im);\
-['result_10_re = svadd_x(pg1, result_10_re, UChi_10_re)', 'result_10_im = svadd_x(pg1, result_10_im, UChi_10_im)']
     result_10_re = svadd_x(pg1, result_10_re, UChi_10_re);\
     result_10_im = svadd_x(pg1, result_10_im, UChi_10_im);\
-['result_11_re = svadd_x(pg1, result_11_re, UChi_11_re)', 'result_11_im = svadd_x(pg1, result_11_im, UChi_11_im)']
     result_11_re = svadd_x(pg1, result_11_re, UChi_11_re);\
     result_11_im = svadd_x(pg1, result_11_im, UChi_11_im);\
-['result_12_re = svadd_x(pg1, result_12_re, UChi_12_re)', 'result_12_im = svadd_x(pg1, result_12_im, UChi_12_im)']
     result_12_re = svadd_x(pg1, result_12_re, UChi_12_re);\
     result_12_im = svadd_x(pg1, result_12_im, UChi_12_im);\
-['result_20_re = svsub_x(pg1, result_20_re, UChi_00_re)', 'result_20_im = svsub_x(pg1, result_20_im, UChi_00_im)']
     result_20_re = svsub_x(pg1, result_20_re, UChi_00_re);\
     result_20_im = svsub_x(pg1, result_20_im, UChi_00_im);\
-['result_21_re = svsub_x(pg1, result_21_re, UChi_01_re)', 'result_21_im = svsub_x(pg1, result_21_im, UChi_01_im)']
     result_21_re = svsub_x(pg1, result_21_re, UChi_01_re);\
     result_21_im = svsub_x(pg1, result_21_im, UChi_01_im);\
-['result_22_re = svsub_x(pg1, result_22_re, UChi_02_re)', 'result_22_im = svsub_x(pg1, result_22_im, UChi_02_im)']
     result_22_re = svsub_x(pg1, result_22_re, UChi_02_re);\
     result_22_im = svsub_x(pg1, result_22_im, UChi_02_im);\
-['result_30_re = svsub_x(pg1, result_30_re, UChi_10_re)', 'result_30_im = svsub_x(pg1, result_30_im, UChi_10_im)']
     result_30_re = svsub_x(pg1, result_30_re, UChi_10_re);\
     result_30_im = svsub_x(pg1, result_30_im, UChi_10_im);\
-['result_31_re = svsub_x(pg1, result_31_re, UChi_11_re)', 'result_31_im = svsub_x(pg1, result_31_im, UChi_11_im)']
     result_31_re = svsub_x(pg1, result_31_re, UChi_11_re);\
     result_31_im = svsub_x(pg1, result_31_im, UChi_11_im);\
-['result_32_re = svsub_x(pg1, result_32_re, UChi_12_re)', 'result_32_im = svsub_x(pg1, result_32_im, UChi_12_im)']
     result_32_re = svsub_x(pg1, result_32_re, UChi_12_re);\
     result_32_im = svsub_x(pg1, result_32_im, UChi_12_im);
 
@@ -779,40 +584,28 @@
 
 #define HAND_RESULT(ss)				\
   {	SiteSpinor & ref (out[ss]);	base = (uint64_t)ref;		\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0)), result_00_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0 + 1)), result_00_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0)), result_00_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0 + 1)), result_00_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1)), result_01_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1 + 1)), result_01_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1)), result_01_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1 + 1)), result_01_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2)), result_02_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2 + 1)), result_02_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2)), result_02_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2 + 1)), result_02_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0)), result_10_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0 + 1)), result_10_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0)), result_10_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0 + 1)), result_10_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1)), result_11_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1 + 1)), result_11_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1)), result_11_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1 + 1)), result_11_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2)), result_12_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2 + 1)), result_12_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2)), result_12_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2 + 1)), result_12_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0)), result_20_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0 + 1)), result_20_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0)), result_20_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0 + 1)), result_20_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1)), result_21_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1 + 1)), result_21_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1)), result_21_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1 + 1)), result_21_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2)), result_22_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2 + 1)), result_22_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2)), result_22_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2 + 1)), result_22_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 0)), result_30_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 0 + 1)), result_30_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 0)), result_30_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 0 + 1)), result_30_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 1)), result_31_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 1 + 1)), result_31_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 1)), result_31_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 1 + 1)), result_31_im);\
-['svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2)), result_32_re)', 'svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2 + 1)), result_32_im)']
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2)), result_32_re);\
     svst1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2 + 1)), result_32_im);\
   }
@@ -840,94 +633,64 @@
 
 
 #define HAND_DECLARATIONS(Simd)			\
-['svfloat64_t result_00_re', 'svfloat64_t result_00_im']
     svfloat64_t result_00_re;\
     svfloat64_t result_00_im;\
-['svfloat64_t result_01_re', 'svfloat64_t result_01_im']
     svfloat64_t result_01_re;\
     svfloat64_t result_01_im;\
-['svfloat64_t result_02_re', 'svfloat64_t result_02_im']
     svfloat64_t result_02_re;\
     svfloat64_t result_02_im;\
-['svfloat64_t result_10_re', 'svfloat64_t result_10_im']
     svfloat64_t result_10_re;\
     svfloat64_t result_10_im;\
-['svfloat64_t result_11_re', 'svfloat64_t result_11_im']
     svfloat64_t result_11_re;\
     svfloat64_t result_11_im;\
-['svfloat64_t result_12_re', 'svfloat64_t result_12_im']
     svfloat64_t result_12_re;\
     svfloat64_t result_12_im;\
-['svfloat64_t result_20_re', 'svfloat64_t result_20_im']
     svfloat64_t result_20_re;\
     svfloat64_t result_20_im;\
-['svfloat64_t result_21_re', 'svfloat64_t result_21_im']
     svfloat64_t result_21_re;\
     svfloat64_t result_21_im;\
-['svfloat64_t result_22_re', 'svfloat64_t result_22_im']
     svfloat64_t result_22_re;\
     svfloat64_t result_22_im;\
-['svfloat64_t result_30_re', 'svfloat64_t result_30_im']
     svfloat64_t result_30_re;\
     svfloat64_t result_30_im;\
-['svfloat64_t result_31_re', 'svfloat64_t result_31_im']
     svfloat64_t result_31_re;\
     svfloat64_t result_31_im;\
-['svfloat64_t result_32_re', 'svfloat64_t result_32_im']
     svfloat64_t result_32_re;\
     svfloat64_t result_32_im;\
-['svfloat64_t Chi_00_re', 'svfloat64_t Chi_00_im']
     svfloat64_t Chi_00_re;\
     svfloat64_t Chi_00_im;\
-['svfloat64_t Chi_01_re', 'svfloat64_t Chi_01_im']
     svfloat64_t Chi_01_re;\
     svfloat64_t Chi_01_im;\
-['svfloat64_t Chi_02_re', 'svfloat64_t Chi_02_im']
     svfloat64_t Chi_02_re;\
     svfloat64_t Chi_02_im;\
-['svfloat64_t Chi_10_re', 'svfloat64_t Chi_10_im']
     svfloat64_t Chi_10_re;\
     svfloat64_t Chi_10_im;\
-['svfloat64_t Chi_11_re', 'svfloat64_t Chi_11_im']
     svfloat64_t Chi_11_re;\
     svfloat64_t Chi_11_im;\
-['svfloat64_t Chi_12_re', 'svfloat64_t Chi_12_im']
     svfloat64_t Chi_12_re;\
     svfloat64_t Chi_12_im;\
-['svfloat64_t UChi_00_re', 'svfloat64_t UChi_00_im']
     svfloat64_t UChi_00_re;\
     svfloat64_t UChi_00_im;\
-['svfloat64_t UChi_01_re', 'svfloat64_t UChi_01_im']
     svfloat64_t UChi_01_re;\
     svfloat64_t UChi_01_im;\
-['svfloat64_t UChi_02_re', 'svfloat64_t UChi_02_im']
     svfloat64_t UChi_02_re;\
     svfloat64_t UChi_02_im;\
-['svfloat64_t UChi_10_re', 'svfloat64_t UChi_10_im']
     svfloat64_t UChi_10_re;\
     svfloat64_t UChi_10_im;\
-['svfloat64_t UChi_11_re', 'svfloat64_t UChi_11_im']
     svfloat64_t UChi_11_re;\
     svfloat64_t UChi_11_im;\
-['svfloat64_t UChi_12_re', 'svfloat64_t UChi_12_im']
     svfloat64_t UChi_12_re;\
     svfloat64_t UChi_12_im;\
-['svfloat64_t U_00_re', 'svfloat64_t U_00_im']
     svfloat64_t U_00_re;\
     svfloat64_t U_00_im;\
-['svfloat64_t U_10_re', 'svfloat64_t U_10_im']
     svfloat64_t U_10_re;\
     svfloat64_t U_10_im;\
-['svfloat64_t U_20_re', 'svfloat64_t U_20_im']
     svfloat64_t U_20_re;\
     svfloat64_t U_20_im;\
-['svfloat64_t U_01_re', 'svfloat64_t U_01_im']
     svfloat64_t U_01_re;\
     svfloat64_t U_01_im;\
-['svfloat64_t U_11_re', 'svfloat64_t U_11_im']
     svfloat64_t U_11_re;\
     svfloat64_t U_11_im;\
-['svfloat64_t U_21_re', 'svfloat64_t U_21_im']
     svfloat64_t U_21_re;\
     svfloat64_t U_21_im;\
   Simd Chimu_00;      \
