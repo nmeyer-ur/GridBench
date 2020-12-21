@@ -61,7 +61,7 @@ class Emitter:
             self.addressing(Gauge=True)
 
         # pass through
-        if not (('result_' in line) or ('Chi_' in line) or ('U_' in line) or ('DEBUG' in line)): # or ('=' in line)):
+        if not (('result_' in line) or ('Chi_' in line) or ('Chimu_' in line) or ('U_' in line) or ('DEBUG' in line)): # or ('=' in line)):
             print(line, end="")
             return
 

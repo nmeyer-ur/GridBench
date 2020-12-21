@@ -5,15 +5,14 @@
  *
  * cycles per single site
  *
- *               rrii*     riri     rrii vs riri
+ *               rrii^     riri     rrii vs riri
  *              (split)  (interleaved)
  *
- * gcc           200       238         +19%
+ * gcc           190       238         +19%
  * armclang      195       225         +15%
  * fcc           178       175          ~
  *
- * vnum issue still persisting; vnum has no influence on gcc and fcc performance,
- * but armclang performance suffers from vnum and result is still wrong
+ * ^ vnum issue still persisting in rrii -> using ordinary load / store instead
  */
 
 #include <stdio.h>

@@ -46,36 +46,48 @@
 #if defined(GRID_SYCL_SIMT) || defined(GRID_NVCC)
 #define LOAD_CHIMU(ptype)		\
   { const SiteSpinor & ref (in[offset]);	\
-    Chimu_00=coalescedReadPermute<ptype>(ref[0][0],perm,mylane);	\
-    Chimu_01=coalescedReadPermute<ptype>(ref[0][1],perm,mylane);	\
-    Chimu_02=coalescedReadPermute<ptype>(ref[0][2],perm,mylane);	\
-    Chimu_10=coalescedReadPermute<ptype>(ref[1][0],perm,mylane);	\
-    Chimu_11=coalescedReadPermute<ptype>(ref[1][1],perm,mylane);	\
-    Chimu_12=coalescedReadPermute<ptype>(ref[1][2],perm,mylane);	\
-    Chimu_20=coalescedReadPermute<ptype>(ref[2][0],perm,mylane);	\
-    Chimu_21=coalescedReadPermute<ptype>(ref[2][1],perm,mylane);	\
-    Chimu_22=coalescedReadPermute<ptype>(ref[2][2],perm,mylane);	\
-    Chimu_30=coalescedReadPermute<ptype>(ref[3][0],perm,mylane);	\
-    Chimu_31=coalescedReadPermute<ptype>(ref[3][1],perm,mylane);	\
-    Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane); }
+Chimu_00=coalescedReadPermute<ptype>(ref[0][0],perm,mylane);	\
+Chimu_01=coalescedReadPermute<ptype>(ref[0][1],perm,mylane);	\
+Chimu_02=coalescedReadPermute<ptype>(ref[0][2],perm,mylane);	\
+Chimu_10=coalescedReadPermute<ptype>(ref[1][0],perm,mylane);	\
+Chimu_11=coalescedReadPermute<ptype>(ref[1][1],perm,mylane);	\
+Chimu_12=coalescedReadPermute<ptype>(ref[1][2],perm,mylane);	\
+Chimu_20=coalescedReadPermute<ptype>(ref[2][0],perm,mylane);	\
+Chimu_21=coalescedReadPermute<ptype>(ref[2][1],perm,mylane);	\
+Chimu_22=coalescedReadPermute<ptype>(ref[2][2],perm,mylane);	\
+Chimu_30=coalescedReadPermute<ptype>(ref[3][0],perm,mylane);	\
+Chimu_31=coalescedReadPermute<ptype>(ref[3][1],perm,mylane);	\
+Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define PERMUTE_DIR(dir) ;
 
 #else
 #define LOAD_CHIMU(ptype)		\
   { const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
-    Chimu_00=coalescedRead(ref[0][0],mylane);	\
-    Chimu_01=coalescedRead(ref[0][1],mylane);	\
-    Chimu_02=coalescedRead(ref[0][2],mylane);	\
-    Chimu_10=coalescedRead(ref[1][0],mylane);	\
-    Chimu_11=coalescedRead(ref[1][1],mylane);	\
-    Chimu_12=coalescedRead(ref[1][2],mylane);	\
-    Chimu_20=coalescedRead(ref[2][0],mylane);	\
-    Chimu_21=coalescedRead(ref[2][1],mylane);	\
-    Chimu_22=coalescedRead(ref[2][2],mylane);	\
-    Chimu_30=coalescedRead(ref[3][0],mylane);	\
-    Chimu_31=coalescedRead(ref[3][1],mylane);	\
-    Chimu_32=coalescedRead(ref[3][2],mylane); }
+    Chimu_00_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0)));\
+    Chimu_00_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 0 + 1)));\
+    Chimu_01_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1)));\
+    Chimu_01_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 1 + 1)));\
+    Chimu_02_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2)));\
+    Chimu_02_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 0 + 2 * 2 + 1)));\
+    Chimu_10_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0)));\
+    Chimu_10_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 0 + 1)));\
+    Chimu_11_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1)));\
+    Chimu_11_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 1 + 1)));\
+    Chimu_12_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2)));\
+    Chimu_12_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 1 + 2 * 2 + 1)));\
+    Chimu_20_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0)));\
+    Chimu_20_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 0 + 1)));\
+    Chimu_21_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1)));\
+    Chimu_21_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 1 + 1)));\
+    Chimu_22_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2)));\
+    Chimu_22_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 2 + 2 * 2 + 1)));\
+    Chimu_30_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 0)));\
+    Chimu_30_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 0 + 1)));\
+    Chimu_31_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 1)));\
+    Chimu_31_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 1 + 1)));\
+    Chimu_32_re = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2)));\
+    Chimu_32_im = svld1(pg1, (float64_t*)(base + 64 * (2 * 3 * 3 + 2 * 2 + 1)));}
 
 /*
 #define PERMUTE_DIR(dir)			\
@@ -693,18 +705,30 @@
     svfloat64_t U_11_im;\
     svfloat64_t U_21_re;\
     svfloat64_t U_21_im;\
-  Simd Chimu_00;      \
-  Simd Chimu_01;      \
-  Simd Chimu_02;      \
-  Simd Chimu_10;      \
-  Simd Chimu_11;      \
-  Simd Chimu_12;      \
-  Simd Chimu_20;      \
-  Simd Chimu_21;      \
-  Simd Chimu_22;      \
-  Simd Chimu_30;      \
-  Simd Chimu_31;      \
-  Simd Chimu_32;      \
+    svfloat64_t Chimu_00_re;\
+    svfloat64_t Chimu_00_im;\
+    svfloat64_t Chimu_01_re;\
+    svfloat64_t Chimu_01_im;\
+    svfloat64_t Chimu_02_re;\
+    svfloat64_t Chimu_02_im;\
+    svfloat64_t Chimu_10_re;\
+    svfloat64_t Chimu_10_im;\
+    svfloat64_t Chimu_11_re;\
+    svfloat64_t Chimu_11_im;\
+    svfloat64_t Chimu_12_re;\
+    svfloat64_t Chimu_12_im;\
+    svfloat64_t Chimu_20_re;\
+    svfloat64_t Chimu_20_im;\
+    svfloat64_t Chimu_21_re;\
+    svfloat64_t Chimu_21_im;\
+    svfloat64_t Chimu_22_re;\
+    svfloat64_t Chimu_22_im;\
+    svfloat64_t Chimu_30_re;\
+    svfloat64_t Chimu_30_im;\
+    svfloat64_t Chimu_31_re;\
+    svfloat64_t Chimu_31_im;\
+    svfloat64_t Chimu_32_re;\
+    svfloat64_t Chimu_32_im;\
   svbool_t pg1 = svptrue_b64();
 
 
