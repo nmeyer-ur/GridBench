@@ -20,7 +20,7 @@ class Emitter:
         self._bracket = '}'         # trailing bracket
         self._isSpinor = False      # spinor addressing
         self._isGauge = False       # gauge addressing
-        self._loadstore_offset = False    # issues with vnum using armclang -> temporarily disable vnum
+        self._loadstore_offset = False    # armclang has a problem with load / store with offsets!! Be cautious
 
     def trailing(self, slash=False, bracket=False):
         self._trailing = ''
@@ -362,21 +362,31 @@ class Emitter:
 
     def cRead(self, op1, row, col):
         """Emit complex load"""
+        displacement = 0
+
+        # offset = 0..7 works with armclang; gcc and fcc are always fine
+        if self._loadstore_offset:
+            cl_offset = 2 * 3 * int(row) + 2 * int(col)
+            displacement = 8 * (cl_offset // 8)
+            base = f'base + {arch_vl} * {displacement}'
+
         if self._isGauge:
-            off_r  = f'2 * 3 * {row} + 2 * {col}'
+            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
+            off_r  = f'{cl_offset}'
             addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'2 * 3 * {row} + 2 * {col} + 1'
+            off_i  = f'{cl_offset + 1}'
             addr_i = f'base + {arch_vl} * ({off_i})'
         else:
-            off_r  = f'2 * 3 * {row} + 2 * {col}'
+            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
+            off_r  = f'{cl_offset}'
             addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'2 * 3 * {row} + 2 * {col} + 1'
+            off_i  = f'{cl_offset + 1}'
             addr_i = f'base + {arch_vl} * ({off_i})'
 
         #print(addr_r)
         if self._loadstore_offset:
-            r = intrin_load_offset.format(self.re(op1), arch_float_typecast, 'base', off_r)
-            i = intrin_load_offset.format(self.im(op1), arch_float_typecast, 'base', off_i)
+            r = intrin_load_offset.format(self.re(op1), arch_float_typecast, base, off_r)
+            i = intrin_load_offset.format(self.im(op1), arch_float_typecast, base, off_i)
         else:
             r = intrin_load.format(self.re(op1), arch_float_typecast, addr_r)
             i = intrin_load.format(self.im(op1), arch_float_typecast, addr_i)
@@ -387,21 +397,31 @@ class Emitter:
 
     def cWrite(self, op1, row, col):
         """Emit complex store"""
+        displacement = 0
+
+        # offset = 0..7 works with armclang; gcc and fcc are always fine
+        if self._loadstore_offset:
+            cl_offset = 2 * 3 * int(row) + 2 * int(col)
+            displacement = 8 * (cl_offset // 8)
+            base = f'base + {arch_vl} * {displacement}'
+
         if self._isGauge:
-            off_r  = f'2 * 3 * {row} + 2 * {col}'
+            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
+            off_r  = f'{cl_offset}'
             addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'2 * 3 * {row} + 2 * {col} + 1'
+            off_i  = f'{cl_offset + 1}'
             addr_i = f'base + {arch_vl} * ({off_i})'
         else:
-            off_r  = f'2 * 3 * {row} + 2 * {col}'
+            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
+            off_r  = f'{cl_offset}'
             addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'2 * 3 * {row} + 2 * {col} + 1'
+            off_i  = f'{cl_offset + 1}'
             addr_i = f'base + {arch_vl} * ({off_i})'
 
         #print(addr_r)
         if self._loadstore_offset:
-            r = intrin_store_offset.format(arch_float_typecast, 'base', off_r, self.re(op1))
-            i = intrin_store_offset.format(arch_float_typecast, 'base', off_i, self.im(op1))
+            r = intrin_store_offset.format(arch_float_typecast, base, off_r, self.re(op1))
+            i = intrin_store_offset.format(arch_float_typecast, base, off_i, self.im(op1))
         else:
             r = intrin_store.format(arch_float_typecast, addr_r, self.re(op1))
             i = intrin_store.format(arch_float_typecast, addr_i, self.im(op1))

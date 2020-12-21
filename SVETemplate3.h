@@ -10,9 +10,8 @@
  *
  * gcc           190       238         +19%
  * armclang      195       225         +15%
- * fcc           178       175          ~
+ * fcc           178       175          ~    (baseline)
  *
- * ^ vnum issue still persisting in rrii -> using ordinary load / store instead
  */
 
 #include <stdio.h>
