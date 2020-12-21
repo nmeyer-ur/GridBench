@@ -1,18 +1,19 @@
 /*
- * rearranged PF
+ * SVETemplate3.h
+ *
+ * - rearranged PF
  *
  * cycles per single site
  *
- * gcc -O1
- *                rrii 190 - 220 cy    (riri: 238 cy)
+ *               rrii*     riri     rrii vs riri
+ *              (split)  (interleaved)
  *
+ * gcc           200       238         +19%
+ * armclang      195       225         +15%
+ * fcc           178       175          ~
  *
- * armclang -O3
- *                rrii 195 - 220  cy   (riri: 225 cy)
- *
- *
- * fcc clang mode -Nclang -Kfast
- *                rrii 178 - 180 cy    (riri: 175 cy)
+ * vnum issue still persisting; vnum has no influence on gcc and fcc performance,
+ * but armclang performance suffers from vnum and result is still wrong
  */
 
 #include <stdio.h>

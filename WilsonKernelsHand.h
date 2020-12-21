@@ -25,7 +25,7 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
   #ifdef INTRIN
     #ifdef SVE
       #pragma message ("RRII kernel using SVE ACLE")
-      #include "WilsonKernelsHandCpuSVE1.h"
+      #include "SVE.h"
       //#include "WilsonKernelsHandCpuSVETemplate.h"
       //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
       //#include "WilsonKernelsHandCpuSVETemplateDebug1.h"

@@ -20,6 +20,7 @@ class Emitter:
         self._bracket = '}'         # trailing bracket
         self._isSpinor = False      # spinor addressing
         self._isGauge = False       # gauge addressing
+        self._loadstore_offset = False    # issues with vnum using armclang -> temporarily disable vnum
 
     def trailing(self, slash=False, bracket=False):
         self._trailing = ''
@@ -60,7 +61,7 @@ class Emitter:
             self.addressing(Gauge=True)
 
         # pass through
-        if not (('result' in line) or ('Chi' in line) or ('U_' in line) or ('DEBUG' in line)): # or ('=' in line)):
+        if not (('result_' in line) or ('Chi_' in line) or ('U_' in line) or ('DEBUG' in line)): # or ('=' in line)):
             print(line, end="")
             return
 
@@ -211,6 +212,8 @@ class Emitter:
 
     def _emit(self):
         """Emit intrinsics"""
+        print(self._collection)
+
         instructions = len(self._collection)
         if instructions == 1:
             line = self._collection[0]
@@ -357,7 +360,7 @@ class Emitter:
         self._collect(i)
         self._emit()
 
-    def cRead(self, op1, row, col, offset=True):
+    def cRead(self, op1, row, col):
         """Emit complex load"""
         if self._isGauge:
             off_r  = f'2 * 3 * {row} + 2 * {col}'
@@ -371,7 +374,7 @@ class Emitter:
             addr_i = f'base + {arch_vl} * ({off_i})'
 
         #print(addr_r)
-        if offset:
+        if self._loadstore_offset:
             r = intrin_load_offset.format(self.re(op1), arch_float_typecast, 'base', off_r)
             i = intrin_load_offset.format(self.im(op1), arch_float_typecast, 'base', off_i)
         else:
@@ -382,7 +385,7 @@ class Emitter:
         self._collect(i)
         self._emit()
 
-    def cWrite(self, op1, row, col, offset=True):
+    def cWrite(self, op1, row, col):
         """Emit complex store"""
         if self._isGauge:
             off_r  = f'2 * 3 * {row} + 2 * {col}'
@@ -396,7 +399,7 @@ class Emitter:
             addr_i = f'base + {arch_vl} * ({off_i})'
 
         #print(addr_r)
-        if offset:
+        if self._loadstore_offset:
             r = intrin_store_offset.format(arch_float_typecast, 'base', off_r, self.re(op1))
             i = intrin_store_offset.format(arch_float_typecast, 'base', off_i, self.im(op1))
         else:
