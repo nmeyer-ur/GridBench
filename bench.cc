@@ -27,7 +27,7 @@ int omp_thread_count() {
 #endif
 
 #define FREQ 1.8 // frequency in GHz
-#define REPLICAS 1
+#define REPLICAS 10
 
 #ifdef __x86_64__
 #define __SSC_MARK(A) __asm__ __volatile__ ("movl %0, %%ebx; .byte 0x64, 0x67, 0x90 " ::"i"(A):"%ebx")
@@ -90,19 +90,16 @@ int main(int argc, char* argv[])
   else
     std::cout << "DATA IN CACHE\n" << std::endl;
 
-  printf("Clock %f\n",FREQ);
-
-  printf("Nsimd %d\n",vComplexD::Nsimd());
-
   int threads = 1;
 //#ifdef _OPENMP
 #ifdef OMP
-//printf("Getting thread number, max = %d\n", omp_get_max_threads());
-//omp_set_num_threads(omp_get_max_threads());
-//threads = omp_get_num_threads();
 threads = omp_thread_count();
 #endif
-  printf("Threads %d\n", threads);
+
+  std::cout << "Clock    " << FREQ << std::endl;
+  std::cout << "Threads  " << threads << std::endl;
+  std::cout << "Nsimd    " << vComplexD::Nsimd() << std::endl;
+  std::cout << "Replicas " << nreplica << std::endl;
 
   Vector<double>   U(umax*nreplica);
   Vector<double>   Psi(fmax*nreplica);
@@ -129,9 +126,9 @@ threads = omp_thread_count();
   Vector<float>   fPhi(fmax*nreplica);
   Vector<float>   fPsi_cpp(fmax*nreplica);
 
-  std::cout << "&U   = " << &U[0] << std::endl;
-  std::cout << "&Psi = " << &Psi[0] << std::endl;
-  std::cout << "&Phi = " << &Phi[0] << std::endl;
+  //std::cout << "&U   = " << &U[0] << std::endl;
+  //std::cout << "&Psi = " << &Psi[0] << std::endl;
+  //std::cout << "&Phi = " << &Phi[0] << std::endl;
 
   assert(vComplexD::Nsimd()==EXPAND_SIMD);
   //assert(vComplexF::Nsimd()==EXPAND_SIMD);
