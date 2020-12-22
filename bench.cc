@@ -27,7 +27,7 @@ int omp_thread_count() {
 #endif
 
 #define FREQ 1.8 // frequency in GHz
-#define REPLICAS 10
+#define REPLICAS 1
 
 #ifdef __x86_64__
 #define __SSC_MARK(A) __asm__ __volatile__ ("movl %0, %%ebx; .byte 0x64, 0x67, 0x90 " ::"i"(A):"%ebx")
@@ -99,6 +99,8 @@ threads = omp_thread_count();
   std::cout << "Clock    " << FREQ << std::endl;
   std::cout << "Threads  " << threads << std::endl;
   std::cout << "Nsimd    " << vComplexD::Nsimd() << std::endl;
+
+  nreplica = 8 * threads;
   std::cout << "Replicas " << nreplica << std::endl;
 
   Vector<double>   U(umax*nreplica);
@@ -218,10 +220,21 @@ threads = omp_thread_count();
   std::cout << std::endl;
   std::cout << "  Ls     = " << Ls << std::endl;
   std::cout << "  nsite  = " << nsite * nreplica << std::endl;
-  std::cout << "  umax   = " << umax << " / " << umax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
-  std::cout << "  fmax   = " << fmax << " / " << fmax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
+  std::cout << "  umax   = " << umax * nreplica << " / " << umax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
+  std::cout << "  fmax   = " << fmax * nreplica << " / " << fmax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
   std::cout << "  nbrmax = " << nbrmax * nreplica << std::endl;
-  std::cout << "  vol    = " << vol << std::endl;
+  std::cout << "  vol    = " << vol * nreplica << std::endl;
+  // decompose 
+  int Latt[5] = {1,1,1,1,Ls};
+  int j = 0;
+  auto v = vol*nreplica / Ls;
+  while(v > 1) {
+    v /= 2;
+    Latt[j % 4] *= 2;
+    j++;
+    if (v % 2 == 1) break;
+  }
+  std::cout << "         = " << Latt[3] << " x " << Latt[2] << " x " << Latt[1] << " x " << Latt[0] << " x " << Latt[4] << std::endl;
   std::cout << "  iterations    = " << nrep << std::endl;
 
   std::cout << std::endl;
@@ -234,7 +247,7 @@ threads = omp_thread_count();
   std::cout <<"YY\t"<< gflops_per_s/FREQ << " Flops/cycle DP; kernel per vector site "<< usec_per_Ls <<" usec / " << cycles_per_Ls << " cycles" <<std::endl;
   std::cout <<"ZZ\t"<< gflops_per_s/FREQ/threads << " Flops/cycle DP per thread; kernel per vector site "<< usec_per_Ls * threads <<" usec / " << cycles_per_Ls * threads << " cycles" <<std::endl;
   std::cout <<std::endl;
-  std::cout <<"XX\t"<< gflops_per_s/FREQ/threads/ EXPAND_SIMD << " Flops/cycle DP per thread; kernel per vector site "<< usec_per_Ls * threads/ EXPAND_SIMD <<" usec / " << cycles_per_Ls * threads / EXPAND_SIMD<< " cycles" <<std::endl;
+  std::cout <<"XX\t"<< gflops_per_s/FREQ/threads/ EXPAND_SIMD << " Flops/cycle DP per thread; kernel per single site "<< usec_per_Ls * threads/ EXPAND_SIMD <<" usec / " << cycles_per_Ls * threads / EXPAND_SIMD<< " cycles" <<std::endl;
 
   std::cout << std::endl;
   std::cout <<"\t"<< percent_peak << " % peak" << std::endl;
@@ -267,7 +280,9 @@ threads = omp_thread_count();
       nres += Psi[i]*Psi[i];
       nref += Psi_cpp[i]*Psi_cpp[i];
     };
-    std::cout<< "normdiff "<< err<< " ref "<<nref<<" result "<<nres<<std::endl;
+    if (r == 0) {
+      std::cout<< "normdiff "<< err<< " ref "<<nref<<" result "<<nres<<std::endl;
+    }
     for(int ii=0;ii<64;ii++){
       uint64_t i=ii+r*fmax;
       //std::cout<< i<<" ref "<<Psi_cpp[i]<< " result "<< Psi[i]<<std::endl;
