@@ -8,17 +8,15 @@
 #endif
 
 #ifdef INTRIN
-#pragma message ("INTRIN")
+//#pragma message ("INTRIN")
 #include <arm_sve.h>
-#include "SVE_riri_intrin.h"
+#include "wi.h"
 #endif
 
 #ifdef ASM
 #pragma message ("ASM")
 #include "wa.h"
 #endif
-
-#pragma message("Using my_wilson_grid.h")
 
 /*
 static constexpr int Xp = 0;

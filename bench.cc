@@ -27,7 +27,6 @@ int omp_thread_count() {
 #endif
 
 #define FREQ 1.8 // frequency in GHz
-#define REPLICAS 1
 
 #ifdef __x86_64__
 #define __SSC_MARK(A) __asm__ __volatile__ ("movl %0, %%ebx; .byte 0x64, 0x67, 0x90 " ::"i"(A):"%ebx")
@@ -74,15 +73,25 @@ int main(int argc, char* argv[])
   ////////////////////////////////////////////////////////////////////
   // Option 2: copy from static arrays
   ////////////////////////////////////////////////////////////////////
-  uint64_t nreplica = uint64_t(REPLICAS);
+  uint64_t nreplica = 1; 
   uint64_t nbrmax = nsite*Ls*8;
 
   uint64_t umax   = nsite*18*8 *vComplexD::Nsimd();
   uint64_t fmax   = nsite*24*Ls*vComplexD::Nsimd();
   uint64_t vol    = nsite*Ls*vComplexD::Nsimd();
 
-  int nrep = argc > 1 ? atoi(argv[1]) : 1000;
-  int in_cache = argc > 2 ? atoi(argv[2]) : 0;
+  std::cout << "Usage: bench.* [<replicas=1 of 8x8x8x8xLs lattice, Ls=8 is fixed>] [<iterations=1000>]" << std::endl;
+
+  nreplica = argc > 1 ? atoi(argv[1]) : 1;
+  int nrep = argc > 2 ? atoi(argv[2]) : 1000;
+
+  // check iterations
+  assert(nrep > 0);
+  // check if nreplica is > 0 and power of 2
+  assert(nreplica > 0); 
+  assert( (nreplica & (nreplica - 1)) == 0 );
+
+  int in_cache = 0;
   if (in_cache != 0) in_cache = 1;
 
   if (in_cache == 0)
@@ -96,12 +105,38 @@ int main(int argc, char* argv[])
 threads = omp_thread_count();
 #endif
 
-  std::cout << "Clock    " << FREQ << std::endl;
-  std::cout << "Threads  " << threads << std::endl;
-  std::cout << "Nsimd    " << vComplexD::Nsimd() << std::endl;
+  std::cout << "Clock      " << FREQ << " GHz" << std::endl;
+  std::cout << "Threads    " << threads << std::endl;
+  std::cout << "Nsimd      " << vComplexD::Nsimd() << std::endl;
+  std::cout << "Replicas   " << nreplica << std::endl;
+  std::cout << "Iterations " << nrep << std::endl;
 
-  nreplica = 8 * threads;
-  std::cout << "Replicas " << nreplica << std::endl;
+  std::cout << std::endl;
+  uint64_t data = (umax * nreplica + 2 * fmax * nreplica) * 2 * sizeof(double) * vComplexD::Nsimd();
+  std::cout << "  Data amount = " << data / (1024. * 1024.) << " MiB" << std::endl;
+
+  std::cout << "  Ls     = " << Ls << std::endl;
+  std::cout << "  nsite  = " << nsite * nreplica << std::endl;
+//  std::cout << "  umax   = " << umax * nreplica << " / " << umax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
+//  std::cout << "  fmax   = " << fmax * nreplica << " / " << fmax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
+  //std::cout << "  nbrmax = " << nbrmax * nreplica << std::endl;
+  std::cout << "  volume = " << nsite * Ls * vComplexD::Nsimd() * nreplica << std::endl;
+  // decompose 
+  int Latt[5] = {1,1,1,1,Ls};
+  int j = 0;
+  auto v = nsite * vComplexD::Nsimd() * nreplica;
+  while(v > 1) {
+    v /= 2;
+    Latt[j % 4] *= 2;
+    j++;
+  }
+  std::cout << "         = " << Latt[3] << " x " << Latt[2] << " x " << Latt[1] << " x " << Latt[0] << " x " << Latt[4] << std::endl;
+
+  std::cout << std::endl;
+  std::cout << "Grid reference benchmark: " << std::endl;
+  std::cout << "srun -n 1 ./Benchmark_dwf --mpi 1.1.1.1 --grid " 
+    << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0] 
+    << " -Ls 8 --dslash-asm --threads " << threads << " | grep \": mflop/s =\" " << std::endl << std::endl;
 
   Vector<double>   U(umax*nreplica);
   Vector<double>   Psi(fmax*nreplica);
@@ -216,29 +251,6 @@ threads = omp_thread_count();
   double tp10 = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
   double tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
   double percent_peak = 100. * ((nrep*flops/usec/1000.)/FREQ/threads) / (2.*2.*8);
-
-  std::cout << std::endl;
-  std::cout << "  Ls     = " << Ls << std::endl;
-  std::cout << "  nsite  = " << nsite * nreplica << std::endl;
-  std::cout << "  umax   = " << umax * nreplica << " / " << umax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
-  std::cout << "  fmax   = " << fmax * nreplica << " / " << fmax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
-  std::cout << "  nbrmax = " << nbrmax * nreplica << std::endl;
-  std::cout << "  vol    = " << vol * nreplica << std::endl;
-  // decompose 
-  int Latt[5] = {1,1,1,1,Ls};
-  int j = 0;
-  auto v = vol*nreplica / Ls;
-  while(v > 1) {
-    v /= 2;
-    Latt[j % 4] *= 2;
-    j++;
-    if (v % 2 == 1) break;
-  }
-  std::cout << "         = " << Latt[3] << " x " << Latt[2] << " x " << Latt[1] << " x " << Latt[0] << " x " << Latt[4] << std::endl;
-  std::cout << "  iterations    = " << nrep << std::endl;
-
-  std::cout << std::endl;
-
   double cycles = sec * FREQ * 1000. * 1000. * 1000.;
   double gflops_per_s = nrep*flops/usec/1000.;
   double usec_per_Ls = usec/nrep/(nsite* nreplica)/Ls;
@@ -256,9 +268,9 @@ threads = omp_thread_count();
   total_data = (8 * 9 + 8 * 12 + 12) * 2 * sizeof(double) * vComplexD::Nsimd() * nsite * nreplica * Ls;
   tp10 = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
   tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
-  std::cout <<"\t"<< tp10 << " GB/s  RF throughput (base 10)" <<std::endl;
+  std::cout <<"\t"<< tp10 << "  GB/s RF throughput (base 10)" <<std::endl;
   std::cout <<"\t"<< tp2  << " GiB/s RF throughput (base  2)" <<std::endl;
-  std::cout << "\ttotal data transfer RF = " << total_data / (1024. * 1024) << " MiB" << std::endl;
+  //std::cout << "\tdata transfer RF per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
 
   std::cout <<"\t"<< nrep*flops/usec/1000. << " Gflop/s in double precision; kernel call "<<usec/nrep <<" microseconds "<<std::endl;
 #else
