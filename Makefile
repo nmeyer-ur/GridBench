@@ -119,7 +119,7 @@ bench.rrii.sve.intrinsics.fcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h SVE.h 
 
 # SVE RIRI
 bench.riri.sve.intrinsics.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
+	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(AVX512_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
 
 
 bench.rrii.sycl.cpu: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile

@@ -25,7 +25,7 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
   #ifdef INTRIN
     #ifdef SVE
       #pragma message ("RRII kernel using SVE ACLE")
-      #include "SVE.h"
+      #include "arch/sve/rrii/SVE_rrii.h"
       //#include "WilsonKernelsHandCpuSVETemplate.h"
       //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
       //#include "WilsonKernelsHandCpuSVETemplateDebug1.h"
@@ -37,7 +37,7 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
     #ifdef SVE
       #pragma message ("RRII kernel using GNU vectors and SVE ACLE for prefetching")
       //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
-      #include "SVEGNUVectorsPF.h"
+      #include "arch/sve/rrii/SVEGNUVectorsPF.h"
     #else
       #pragma message ("GridBench RRII kernel using GNU vectors")
       #include "WilsonKernelsHandCpu.h"
@@ -49,7 +49,7 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
   #ifdef INTRIN
     #ifdef SVE
       #pragma message ("RIRI kernel using SVE ACLE")
-      #include "SVE_riri.h"
+      #include "arch/sve/riri/SVE_riri.h"
     #else
       #pragma message ("RIRI kernel undefined")
       #pragma error
