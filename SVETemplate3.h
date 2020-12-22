@@ -3,7 +3,7 @@
  *
  * - rearranged PF
  *
- * cycles per single site
+ * cycles per single site, single thread measurement
  *
  *               rrii^     riri*    rrii vs riri
  *              (split)  (interleaved)
@@ -12,8 +12,8 @@
  * armclang      195       225         +15%
  * fcc           180       175          ~
  *
- * ^vnum disabled
- * *vnum enabled
+ * ^vnum disabled; OpenMP only for fcc enabled, but disabled for gcc and armclang
+ * *vnum enabled; OpenMP enabled (causes overhead for gcc and armclang)
  */
 
 #include <stdio.h>
