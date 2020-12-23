@@ -35,11 +35,11 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
     #endif
   #else
     #ifdef SVE
-      #pragma message ("RRII kernel using GNU vectors and SVE ACLE for prefetching")
+      #pragma message ("RRII kernel using GCC vectors and SVE ACLE for prefetching")
       //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
-      #include "arch/sve/rrii/SVEGNUVectorsPF.h"
+      #include "arch/sve/rrii/SVEGCCVectorsPF.h"
     #else
-      #pragma message ("GridBench RRII kernel using GNU vectors")
+      #pragma message ("GridBench RRII kernel using GCC vectors")
       #include "WilsonKernelsHandCpu.h"
     #endif
   #endif

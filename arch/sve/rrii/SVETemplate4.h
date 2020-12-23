@@ -1,19 +1,7 @@
 /*
- * SVETemplate3.h
+ * SVETemplate4.h
  *
- * - rearranged PF
- *
- * cycles per single site
- *
- *               rrii^     riri*    rrii vs riri
- *              (split)  (interleaved)
- *
- * gcc           190       238         +25%
- * armclang      195       225         +15%
- * fcc           180       175          ~
- *
- * ^vnum disabled
- * *vnum enabled
+ * - introduced PF of U to L2
  */
 
 #include <stdio.h>
@@ -339,6 +327,9 @@
   PREFETCH_CHIMU_L2; 					\
   PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
+  if (s == 0) {                                           \
+   if ((DIR == 0) || (DIR == 2) || (DIR == 4) || (DIR == 6)) { PREFETCH_GAUGE_L2(DIR); } \
+  }                                                       \
   RECON;
 
 #define HAND_RESULT(ss)				\
@@ -377,7 +368,20 @@
   svprfd_vnum(pg1, (long*)(base), (int64_t)(20), SV_PLDL1STRM); \
 }
 
-
+// PREFETCH_GAUGE_L2 (prefetch to L2)
+#define PREFETCH_GAUGE_L2(A)  \
+{ \
+  const auto & ref(U[sUn][A]); baseU = (uint64_t)&ref; \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(0), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(4), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(8), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(12), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(16), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(20), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(24), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(28), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(32), SV_PLDL2STRM); \
+}
 
 #define HAND_DECLARATIONS(Simd)			\
   Simd result_00;				\
@@ -496,10 +500,13 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     int offset,perm;
     uint64_t base;
     uint64_t sU = ssite;
+    uint64_t sUn = ssite+1;
+    if (sUn == nsite) sUn = 0;
     uint64_t ss = sU*Ls;
     uint64_t ssn = ss + 1; // for prefetching to L2
-      if (ssn == nsite) ssn = 0;
-    uint64_t pf_L1, pf_L2; // pf addresses
+    if (ssn == nsite) ssn = 0;
+    uint64_t pf_L1, pf_L2; // pf addresses psi
+    uint64_t baseU;        // pf U
     for(uint64_t s=0;s<Ls;s++){
       HAND_STENCIL_LEG(XM_PROJ,3,Xp,XM_RECON);
       HAND_STENCIL_LEG(YM_PROJ,2,Yp,YM_RECON_ACCUM);
