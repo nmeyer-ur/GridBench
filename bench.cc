@@ -26,7 +26,7 @@ int omp_thread_count() {
 }
 #endif
 
-#define FREQ 1.8 // frequency in GHz
+#define frequency 1.8 // frequency in GHz
 
 #ifdef __x86_64__
 #define __SSC_MARK(A) __asm__ __volatile__ ("movl %0, %%ebx; .byte 0x64, 0x67, 0x90 " ::"i"(A):"%ebx")
@@ -66,14 +66,32 @@ int omp_thread_count() {
 #include "arch/gen64/static_data.h"
 #endif
 
+// read CPU frequency from file
+double read_freq() {
+
+  double freq = 1.0;
+  std::ifstream ifile("freq.txt", std::ios::in);
+
+  if (!ifile.is_open()) {
+        std::cout << "There was a problem opening the input file!\n";
+        exit(1);
+  }
+
+  ifile >> freq;
+  ifile.close();
+
+  return freq
+}
 
 #define  FMT std::dec
 int main(int argc, char* argv[])
 {
+  double frequency = read_freq();
+
   ////////////////////////////////////////////////////////////////////
   // Option 2: copy from static arrays
   ////////////////////////////////////////////////////////////////////
-  uint64_t nreplica = 1; 
+  uint64_t nreplica = 1;
   uint64_t nbrmax = nsite*Ls*8;
 
   uint64_t umax   = nsite*18*8 *vComplexD::Nsimd();
@@ -88,7 +106,7 @@ int main(int argc, char* argv[])
   // check iterations
   assert(nrep > 0);
   // check if nreplica is > 0 and power of 2
-  assert(nreplica > 0); 
+  assert(nreplica > 0);
   assert( (nreplica & (nreplica - 1)) == 0 );
 
   int in_cache = 0;
@@ -105,23 +123,18 @@ int main(int argc, char* argv[])
 threads = omp_thread_count();
 #endif
 
-  std::cout << "Clock      " << FREQ << " GHz" << std::endl;
+  std::cout << "Clock      " << frequency << " GHz" << std::endl;
   std::cout << "Threads    " << threads << std::endl;
   std::cout << "Nsimd      " << vComplexD::Nsimd() << std::endl;
   std::cout << "Replicas   " << nreplica << std::endl;
   std::cout << "Iterations " << nrep << std::endl;
 
   std::cout << std::endl;
-  uint64_t data = (umax * nreplica + 2 * fmax * nreplica) * 2 * sizeof(double) * vComplexD::Nsimd();
-  std::cout << "  Data amount = " << data / (1024. * 1024.) << " MiB" << std::endl;
 
   std::cout << "  Ls     = " << Ls << std::endl;
   std::cout << "  nsite  = " << nsite * nreplica << std::endl;
-//  std::cout << "  umax   = " << umax * nreplica << " / " << umax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
-//  std::cout << "  fmax   = " << fmax * nreplica << " / " << fmax * nreplica * sizeof(double) / (1024. * 1024.) << " MiB" << std::endl;
-  //std::cout << "  nbrmax = " << nbrmax * nreplica << std::endl;
-  std::cout << "  volume = " << nsite * Ls * vComplexD::Nsimd() * nreplica << std::endl;
-  // decompose 
+  std::cout << "  volume = " << vol * nreplica << std::endl;
+  // decompose
   int Latt[5] = {1,1,1,1,Ls};
   int j = 0;
   auto v = nsite * vComplexD::Nsimd() * nreplica;
@@ -133,9 +146,21 @@ threads = omp_thread_count();
   std::cout << "         = " << Latt[3] << " x " << Latt[2] << " x " << Latt[1] << " x " << Latt[0] << " x " << Latt[4] << std::endl;
 
   std::cout << std::endl;
+
+  uint64_t udata = umax * sizeof(double) * nreplica;
+  uint64_t fdata = fmax * sizeof(double) * nreplica;
+  std::cout << "  U       = " << udata / (1024. * 1024.) << " MiB" << std::endl;
+  std::cout << "  psi in  = " << fdata / (1024. * 1024.) << " MiB" << std::endl;
+  std::cout << "  psi out = " << fdata / (1024. * 1024.) << " MiB" << std::endl;
+
+  //uint64_t data = (umax * nreplica + 2 * fmax * nreplica) * 2 * sizeof(double) * vComplexD::Nsimd();
+  //std::cout << "  Data amount = " << data / (1024. * 1024.) << " MiB" << std::endl;
+
+  std::cout << std::endl;
+
   std::cout << "Grid reference benchmark: " << std::endl;
-  std::cout << "srun -n 1 ./Benchmark_dwf --mpi 1.1.1.1 --grid " 
-    << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0] 
+  std::cout << "srun -n 1 ./Benchmark_dwf --mpi 1.1.1.1 --grid "
+    << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
     << " -Ls 8 --dslash-asm --threads " << threads << " | grep \": mflop/s =\" " << std::endl << std::endl;
 
   Vector<double>   U(umax*nreplica);
@@ -246,23 +271,35 @@ threads = omp_thread_count();
   // 8 * 12 + 8 * 9 in
   // 12 out
   double sec = usec / 1000000.;
-  //uint64_t total_data = (8*umax + 2*fmax) * sizeof(double);
-  uint64_t total_data = (umax + 2*fmax) * sizeof(double) * nreplica;
-  double tp10 = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
-  double tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
-  double percent_peak = 100. * ((nrep*flops/usec/1000.)/FREQ/threads) / (2.*2.*8);
-  double cycles = sec * FREQ * 1000. * 1000. * 1000.;
-  double gflops_per_s = nrep*flops/usec/1000.;
-  double usec_per_Ls = usec/nrep/(nsite* nreplica)/Ls;
+
+  uint64_t total_data  = udata + 2 * fdata;
+  double tp10          = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
+  double tp2           = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
+  double percent_peak  = 100. * ((nrep*flops/usec/1000.)/frequency/threads) / (2.*2.*8);
+  double cycles        = sec * frequency * 1000. * 1000. * 1000.;
+  double gflops_per_s  = nrep*flops/usec/1000.;
+  double usec_per_Ls   = usec/nrep/(nsite* nreplica)/Ls;
   double cycles_per_Ls = cycles/nrep/(nsite* nreplica)/Ls;
-  std::cout <<"XX\t"<< gflops_per_s << " GFlops/s DP; kernel per vector site "<< usec_per_Ls <<" usec / " << cycles_per_Ls << " cycles" <<std::endl;
-  std::cout <<"YY\t"<< gflops_per_s/FREQ << " Flops/cycle DP; kernel per vector site "<< usec_per_Ls <<" usec / " << cycles_per_Ls << " cycles" <<std::endl;
-  std::cout <<"ZZ\t"<< gflops_per_s/FREQ/threads << " Flops/cycle DP per thread; kernel per vector site "<< usec_per_Ls * threads <<" usec / " << cycles_per_Ls * threads << " cycles" <<std::endl;
+
+  std::cout <<"XX\t"<< gflops_per_s << " GFlops/s DP; kernel per vector site "
+    << usec_per_Ls <<" usec / " << cycles_per_Ls << " cycles" <<std::endl;
+
+  std::cout <<"YY\t"<< gflops_per_s/frequency << " Flops/cycle DP; kernel per vector site "
+    << usec_per_Ls <<" usec / " << cycles_per_Ls << " cycles" <<std::endl;
+
+  std::cout <<"ZZ\t"<< gflops_per_s/frequency/threads << " Flops/cycle DP per thread; kernel per vector site "
+    << usec_per_Ls * threads <<" usec / " << cycles_per_Ls * threads << " cycles" <<std::endl;
+
   std::cout <<std::endl;
-  std::cout <<"XX\t"<< gflops_per_s/FREQ/threads/ EXPAND_SIMD << " Flops/cycle DP per thread; kernel per single site "<< usec_per_Ls * threads/ EXPAND_SIMD <<" usec / " << cycles_per_Ls * threads / EXPAND_SIMD<< " cycles" <<std::endl;
+
+  std::cout <<"XX\t"<< gflops_per_s/frequency/threads/ EXPAND_SIMD << " Flops/cycle DP per thread; kernel per single site "
+    << usec_per_Ls * threads/ EXPAND_SIMD << " usec / "
+    << cycles_per_Ls * threads / EXPAND_SIMD << " cycles" <<std::endl;
 
   std::cout << std::endl;
+
   std::cout <<"\t"<< percent_peak << " % peak" << std::endl;
+
   std::cout << std::endl;
 
   total_data = (8 * 9 + 8 * 12 + 12) * 2 * sizeof(double) * vComplexD::Nsimd() * nsite * nreplica * Ls;
