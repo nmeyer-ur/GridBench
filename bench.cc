@@ -308,14 +308,15 @@ threads = omp_thread_count();
   std::cout << std::endl;
 
   // One liner result output
-  std::cout << "# Threads     Replicas    Volume    GFlop/s    Cycles per single site    Cycles per vector site" << std::endl;
+  std::cout << "# Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site" << std::endl;
   std::cout
-    << std::setw(2) << threads       << "  "
-    << std::setw(4) << nreplica      << "  "
+    << threads       << "  "
+    << nreplica      << "  "
     << Latt[3] << "x" << Latt[2] << "x" << Latt[1] << "x" << Latt[0] << "x" << Latt[4] << "  "
-    << std::setw(5) << gflops_per_s  << "  "
-    << std::setw(5) << cycles_per_Ls * threads / EXPAND_SIMD << "  "
-    << std::setw(5) << cycles_per_Ls << "  "
+    << gflops_per_s  << "  "
+    << percent_peak  << "  "
+    << cycles_per_Ls * threads / EXPAND_SIMD << "  "
+    << cycles_per_Ls * threads << "  "
     << "XX1" << std::endl << std::endl;
 
   // Check results
