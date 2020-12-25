@@ -273,7 +273,7 @@ threads = omp_thread_count();
   double usec_per_Ls   = usec/nrep/(nsite* nreplica)/Ls;
   double cycles_per_Ls = cycles/nrep/(nsite* nreplica)/Ls;
 
-  std::cout <<"XX\t"<< gflops_per_s << " GFlops/s DP; kernel per vector site "
+  std::cout <<"XX\t"<< gflops_per_s << " GFlop/s DP; kernel per vector site "
     << usec_per_Ls <<" usec / " << cycles_per_Ls << " cycles" <<std::endl;
 
   std::cout <<"YY\t"<< gflops_per_s/frequency << " Flops/cycle DP; kernel per vector site "
@@ -299,7 +299,18 @@ threads = omp_thread_count();
   tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
   std::cout <<"\t"<< tp10 << "  GB/s RF throughput (base 10)" <<std::endl;
   std::cout <<"\t"<< tp2  << " GiB/s RF throughput (base  2)" <<std::endl;
-  //std::cout << "\tdata transfer RF per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
+  std::cout << "\tdata transfer RF per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
+
+  std::cout << std::endl;
+
+  total_data = (8 * 9 + (8 * 12 + 12) * Ls) * 2 * sizeof(double) * vComplexD::Nsimd() * nsite * nreplica;
+  tp10 = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
+  tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
+  std::cout <<"\t"<< tp10 << "  GB/s memory throughput (base 10)" <<std::endl;
+  std::cout <<"\t"<< tp2  << " GiB/s memory throughput (base  2)" <<std::endl;
+  std::cout << "\tdata transfer memory per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
+
+  std::cout << std::endl;
 
   std::cout <<"\t"<< nrep*flops/usec/1000. << " Gflop/s in double precision; kernel call "<<usec/nrep <<" microseconds "<<std::endl;
 #else
@@ -320,7 +331,6 @@ threads = omp_thread_count();
     << "XX1" << std::endl << std::endl;
 
   // Check results
-
   vComplexD *Psi_p = (vComplexD *) &Psi[0];
   vComplexD *Psi_cpp_p = (vComplexD *) &Psi_cpp[0];
   double err=0;
