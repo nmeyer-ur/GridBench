@@ -47,7 +47,7 @@ intrin_store_offset = "svst1_vnum(pg1, {}({}), (int64_t)({}), {})"
 # tbd
 
 # op1 = scatter scalar typecast op2 op3
-intrin_dup  = "{} = svdup(({})({}))"
+intrin_dup  = "{} = svdup_f64(({})({}))"
 
 # copy op1 = op2
 intrin_mov  = "{} = {}"

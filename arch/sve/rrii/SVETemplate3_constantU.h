@@ -3,6 +3,14 @@
  *
  * - rearranged PF
  * - U constant
+ *
+ * FX700 / GCC
+
+$ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
+
+# Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site
+
+
  */
 
 #include <stdio.h>
