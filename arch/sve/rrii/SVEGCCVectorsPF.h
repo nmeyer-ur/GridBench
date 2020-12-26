@@ -64,12 +64,18 @@
   else if (dir == 1) table = svld1(pg1, (uint64_t*)&lut[1]); \
   else if (dir == 2) table = svld1(pg1, (uint64_t*)&lut[2]); \
   else if (dir == 3) table = svld1(pg1, (uint64_t*)&lut[3]); \
-  Chi_00 = svtbl(Chi_00, table);    \
-  Chi_01 = svtbl(Chi_01, table);    \
-  Chi_02 = svtbl(Chi_02, table);    \
-  Chi_10 = svtbl(Chi_10, table);    \
-  Chi_11 = svtbl(Chi_11, table);    \
-  Chi_12 = svtbl(Chi_12, table);
+  Chi_00.z.x = svtbl_f64(Chi_00.z.x, table);    \
+  Chi_01.z.x = svtbl_f64(Chi_01.z.x, table);    \
+  Chi_02.z.x = svtbl_f64(Chi_02.z.x, table);    \
+  Chi_10.z.x = svtbl_f64(Chi_10.z.x, table);    \
+  Chi_11.z.x = svtbl_f64(Chi_11.z.x, table);    \
+  Chi_12.z.x = svtbl_f64(Chi_12.z.x, table);    \
+  Chi_00.z.y = svtbl_f64(Chi_00.z.y, table);    \
+  Chi_01.z.y = svtbl_f64(Chi_01.z.y, table);    \
+  Chi_02.z.y = svtbl_f64(Chi_02.z.y, table);    \
+  Chi_10.z.y = svtbl_f64(Chi_10.z.y, table);    \
+  Chi_11.z.y = svtbl_f64(Chi_11.z.y, table);    \
+  Chi_12.z.y = svtbl_f64(Chi_12.z.y, table);
 
 #endif
 
