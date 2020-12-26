@@ -228,6 +228,13 @@ class Emitter:
             self.cWrite(op.group(3), op.group(1), op.group(2))
             return
 
+        # permute
+        p = re.compile(r'(\w+)=svtbl\((\w+),(\w+)\)', re.I)
+        op = p.search(line)
+        if op:
+            self.permute(op.group(1), op.group(2), op.group(3))
+            return
+
         # duplicate
         p = re.compile(r'(\w+)=duplicate\((\w+)\)', re.I)
         op = p.search(line)
@@ -510,6 +517,16 @@ class Emitter:
             r = intrin_store.format(arch_float_typecast, addr_r, self.re(op1))
             i = intrin_store.format(arch_float_typecast, addr_i, self.im(op1))
 
+        self._collect(r)
+        self._collect(i)
+        self._emit()
+
+    def permute(self, op1, op2, op3):
+        """Emit permute
+           op1 = permute(op2, op3)"""
+        # ok
+        r = intrin_permute.format(self.re(op1), self.re(op2), op3)
+        i = intrin_permute.format(self.im(op1), self.im(op2), op3)
         self._collect(r)
         self._collect(i)
         self._emit()

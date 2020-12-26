@@ -69,3 +69,6 @@ intrin_fma  = "{} = svmla_x(pg1, {}, {}, {})"
 
 # fms op1 = op2 - op3 * op4
 intrin_fms  = "{} = svmls_x(pg1, {}, {}, {})"
+
+# permute op1 = permute op2 using table op3
+intrin_permute = "{} = svtbl({}, {})"
