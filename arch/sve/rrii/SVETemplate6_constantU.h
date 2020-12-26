@@ -1,28 +1,18 @@
 /*
- * SVETemplate5_constantU.h
+ * SVETemplate6_constantU.h
  *
  * - rearranged PF
  * - U constant
  * - separated cmul into 2 parts
  * - separated cfma into 2 parts
+ * - separated LOAD_CHIMU into 2 parts
  *
  * FX700 / GCC
 
 $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
 
 # Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site
-1  32  16x16x16x32x8  12.0546  20.9282  197.103  1576.82  XX1
-2  32  16x16x16x32x8  22.4324  19.4726  211.837  1694.69  XX1
-3  32  16x16x16x32x8  32.4978  18.8066  219.338  1754.7  XX1
-4  32  16x16x16x32x8  41.8232  18.1524  227.242  1817.94  XX1
-5  32  16x16x16x32x8  50.2661  17.4535  236.342  1890.74  XX1
-6  32  16x16x16x32x8  58.6581  16.9728  243.035  1944.28  XX1
-7  32  16x16x16x32x8  67.2781  16.686  247.213  1977.7  XX1
-8  32  16x16x16x32x8  75.1144  16.3009  253.054  2024.43  XX1
-9  32  16x16x16x32x8  82.6543  15.9441  258.716  2069.73  XX1
-10  32  16x16x16x32x8  86.102  14.9483  275.952  2207.61  XX1
-11  32  16x16x16x32x8  88.2345  13.9259  296.211  2369.68  XX1
-12  32  16x16x16x32x8  101.804  14.7286  280.066  2240.53  XX1
+
 
 * Result: no benefit, performance worse than riri
           same for fcc, performance worse than riri
@@ -64,7 +54,10 @@ $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32
 #define PERMUTE_DIR(dir) ;
 
 #else
-#define LOAD_CHIMU(ptype)		\
+#define LOAD_CHIMU(ptype)
+
+/*
+#define LOAD_CHIMU(ptype) \
   { const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
     Chimu_00=coalescedRead(ref[0][0],mylane);	\
     Chimu_01=coalescedRead(ref[0][1],mylane);	\
@@ -78,6 +71,7 @@ $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32
     Chimu_30=coalescedRead(ref[3][0],mylane);	\
     Chimu_31=coalescedRead(ref[3][1],mylane);	\
     Chimu_32=coalescedRead(ref[3][2],mylane); }
+*/
 
 /*
 #define PERMUTE_DIR(dir)			\
@@ -145,71 +139,183 @@ $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32
 //      hspin(0)=fspin(0)+timesI(fspin(3));
 //      hspin(1)=fspin(1)+timesI(fspin(2));
 #define XP_PROJ \
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
     Chi_00 = Chimu_00+timesI(Chimu_30);\
     Chi_01 = Chimu_01+timesI(Chimu_31);\
     Chi_02 = Chimu_02+timesI(Chimu_32);\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
     Chi_10 = Chimu_10+timesI(Chimu_20);\
     Chi_11 = Chimu_11+timesI(Chimu_21);\
-    Chi_12 = Chimu_12+timesI(Chimu_22);
+    Chi_12 = Chimu_12+timesI(Chimu_22);\
+}
 
 #define YP_PROJ \
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
     Chi_00 = Chimu_00-Chimu_30;\
     Chi_01 = Chimu_01-Chimu_31;\
     Chi_02 = Chimu_02-Chimu_32;\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
     Chi_10 = Chimu_10+Chimu_20;\
     Chi_11 = Chimu_11+Chimu_21;\
-    Chi_12 = Chimu_12+Chimu_22;
+    Chi_12 = Chimu_12+Chimu_22;\
+}
 
 #define ZP_PROJ \
-  Chi_00 = Chimu_00+timesI(Chimu_20);		\
-  Chi_01 = Chimu_01+timesI(Chimu_21);		\
-  Chi_02 = Chimu_02+timesI(Chimu_22);		\
-  Chi_10 = Chimu_10-timesI(Chimu_30);		\
-  Chi_11 = Chimu_11-timesI(Chimu_31);		\
-  Chi_12 = Chimu_12-timesI(Chimu_32);
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
+    Chi_00 = Chimu_00+timesI(Chimu_20);		\
+    Chi_01 = Chimu_01+timesI(Chimu_21);		\
+    Chi_02 = Chimu_02+timesI(Chimu_22);		\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
+    Chi_10 = Chimu_10-timesI(Chimu_30);		\
+    Chi_11 = Chimu_11-timesI(Chimu_31);		\
+    Chi_12 = Chimu_12-timesI(Chimu_32);   \
+}
 
 #define TP_PROJ \
-  Chi_00 = Chimu_00+Chimu_20;		\
-  Chi_01 = Chimu_01+Chimu_21;		\
-  Chi_02 = Chimu_02+Chimu_22;		\
-  Chi_10 = Chimu_10+Chimu_30;		\
-  Chi_11 = Chimu_11+Chimu_31;		\
-  Chi_12 = Chimu_12+Chimu_32;
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
+    Chi_00 = Chimu_00+Chimu_20;		\
+    Chi_01 = Chimu_01+Chimu_21;		\
+    Chi_02 = Chimu_02+Chimu_22;		\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
+    Chi_10 = Chimu_10+Chimu_30;		\
+    Chi_11 = Chimu_11+Chimu_31;		\
+    Chi_12 = Chimu_12+Chimu_32;   \
+}
 
 
 //      hspin(0)=fspin(0)-timesI(fspin(3));
 //      hspin(1)=fspin(1)-timesI(fspin(2));
 #define XM_PROJ \
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
     Chi_00 = Chimu_00-timesI(Chimu_30);\
     Chi_01 = Chimu_01-timesI(Chimu_31);\
     Chi_02 = Chimu_02-timesI(Chimu_32);\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
     Chi_10 = Chimu_10-timesI(Chimu_20);\
     Chi_11 = Chimu_11-timesI(Chimu_21);\
-    Chi_12 = Chimu_12-timesI(Chimu_22);
+    Chi_12 = Chimu_12-timesI(Chimu_22);\
+}
 
 #define YM_PROJ \
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
     Chi_00 = Chimu_00+Chimu_30;\
     Chi_01 = Chimu_01+Chimu_31;\
     Chi_02 = Chimu_02+Chimu_32;\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
     Chi_10 = Chimu_10-Chimu_20;\
     Chi_11 = Chimu_11-Chimu_21;\
-    Chi_12 = Chimu_12-Chimu_22;
+    Chi_12 = Chimu_12-Chimu_22;\
+}
 
 #define ZM_PROJ \
-  Chi_00 = Chimu_00-timesI(Chimu_20);		\
-  Chi_01 = Chimu_01-timesI(Chimu_21);		\
-  Chi_02 = Chimu_02-timesI(Chimu_22);		\
-  Chi_10 = Chimu_10+timesI(Chimu_30);		\
-  Chi_11 = Chimu_11+timesI(Chimu_31);		\
-  Chi_12 = Chimu_12+timesI(Chimu_32);
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
+    Chi_00 = Chimu_00-timesI(Chimu_20);		\
+    Chi_01 = Chimu_01-timesI(Chimu_21);		\
+    Chi_02 = Chimu_02-timesI(Chimu_22);		\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
+    Chi_10 = Chimu_10+timesI(Chimu_30);		\
+    Chi_11 = Chimu_11+timesI(Chimu_31);		\
+    Chi_12 = Chimu_12+timesI(Chimu_32);   \
+}
 
 #define TM_PROJ \
-  Chi_00 = Chimu_00-Chimu_20;		\
-  Chi_01 = Chimu_01-Chimu_21;		\
-  Chi_02 = Chimu_02-Chimu_22;		\
-  Chi_10 = Chimu_10-Chimu_30;		\
-  Chi_11 = Chimu_11-Chimu_31;		\
-  Chi_12 = Chimu_12-Chimu_32;
+{ const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
+  Chimu_00=coalescedRead(ref[0][0],mylane);	\
+  Chimu_01=coalescedRead(ref[0][1],mylane);	\
+  Chimu_02=coalescedRead(ref[0][2],mylane);	\
+  Chimu_10=coalescedRead(ref[1][0],mylane);	\
+  Chimu_11=coalescedRead(ref[1][1],mylane);	\
+  Chimu_12=coalescedRead(ref[1][2],mylane);	\
+    Chi_00 = Chimu_00-Chimu_20;		\
+    Chi_01 = Chimu_01-Chimu_21;		\
+    Chi_02 = Chimu_02-Chimu_22;		\
+  Chimu_20=coalescedRead(ref[2][0],mylane);	\
+  Chimu_21=coalescedRead(ref[2][1],mylane);	\
+  Chimu_22=coalescedRead(ref[2][2],mylane);	\
+  Chimu_30=coalescedRead(ref[3][0],mylane);	\
+  Chimu_31=coalescedRead(ref[3][1],mylane);	\
+  Chimu_32=coalescedRead(ref[3][2],mylane); \
+    Chi_10 = Chimu_10-Chimu_30;		\
+    Chi_11 = Chimu_11-Chimu_31;		\
+    Chi_12 = Chimu_12-Chimu_32;   \
+}
 
 //      fspin(0)=hspin(0);
 //      fspin(1)=hspin(1);
