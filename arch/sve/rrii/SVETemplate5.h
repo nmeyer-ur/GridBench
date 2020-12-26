@@ -2,7 +2,7 @@
  * SVETemplate5.h
  *
  * - introduced permutes
- * - complex multiplication split into 2 rounds
+ * - reverted complex multiplication split into 2 rounds due to performance penalty (single thread 206.303 cy instead of 193.879)
 
 $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
 1  32  16x16x16x32x8  12.255  21.2761  193.879  1551.04  XX1
@@ -105,45 +105,27 @@ $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32
     U_01=coalescedRead(ref[0][1],mylane);				\
     U_11=coalescedRead(ref[1][1],mylane);				\
     U_21=coalescedRead(ref[2][1],mylane);				\
-    UChi_00 = U_00**Chi_00;					\
-    UChi_10 = U_00**Chi_10;					\
-    UChi_01 = U_10**Chi_00;					\
-    UChi_11 = U_10**Chi_10;					\
-    UChi_02 = U_20**Chi_00;					\
-    UChi_12 = U_20**Chi_10;					\
-    UChi_00 = U_00***Chi_00;					\
-    UChi_10 = U_00***Chi_10;					\
-    UChi_01 = U_10***Chi_00;					\
-    UChi_11 = U_10***Chi_10;					\
-    UChi_02 = U_20***Chi_00;					\
-    UChi_12 = U_20***Chi_10;					\
-    UChi_00+= U_01**Chi_01;					\
-    UChi_10+= U_01**Chi_11;					\
-    UChi_01+= U_11**Chi_01;					\
-    UChi_11+= U_11**Chi_11;					\
-    UChi_02+= U_21**Chi_01;					\
-    UChi_12+= U_21**Chi_11;					\
-    UChi_00+= U_01***Chi_01;					\
-    UChi_10+= U_01***Chi_11;					\
-    UChi_01+= U_11***Chi_01;					\
-    UChi_11+= U_11***Chi_11;					\
-    UChi_02+= U_21***Chi_01;					\
-    UChi_12+= U_21***Chi_11;					\
+    UChi_00 = U_00*Chi_00;                                      \
+    UChi_10 = U_00*Chi_10;                                      \
+    UChi_01 = U_10*Chi_00;                                      \
+    UChi_11 = U_10*Chi_10;                                      \
+    UChi_02 = U_20*Chi_00;                                      \
+    UChi_12 = U_20*Chi_10;                                      \
+    UChi_00+= U_01*Chi_01;                                      \
+    UChi_10+= U_01*Chi_11;                                      \
+    UChi_01+= U_11*Chi_01;                                      \
+    UChi_11+= U_11*Chi_11;                                      \
+    UChi_02+= U_21*Chi_01;                                      \
+    UChi_12+= U_21*Chi_11;                                      \
     U_00=coalescedRead(ref[0][2],mylane);				\
     U_10=coalescedRead(ref[1][2],mylane);				\
     U_20=coalescedRead(ref[2][2],mylane);				\
-    UChi_00+= U_00**Chi_02;					\
-    UChi_10+= U_00**Chi_12;					\
-    UChi_01+= U_10**Chi_02;					\
-    UChi_11+= U_10**Chi_12;					\
-    UChi_02+= U_20**Chi_02;					\
-    UChi_12+= U_20**Chi_12;          \
-    UChi_00+= U_00***Chi_02;					\
-    UChi_10+= U_00***Chi_12;					\
-    UChi_01+= U_10***Chi_02;					\
-    UChi_11+= U_10***Chi_12;					\
-    UChi_02+= U_20***Chi_02;					\
-    UChi_12+= U_20***Chi_12;}
+    UChi_00+= U_00*Chi_02;                                      \
+    UChi_10+= U_00*Chi_12;                                      \
+    UChi_01+= U_10*Chi_02;                                      \
+    UChi_11+= U_10*Chi_12;                                      \
+    UChi_02+= U_20*Chi_02;                                      \
+    UChi_12+= U_20*Chi_12;}
 
 //      hspin(0)=fspin(0)+timesI(fspin(3));
 //      hspin(1)=fspin(1)+timesI(fspin(2));
