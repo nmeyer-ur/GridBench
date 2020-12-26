@@ -9,20 +9,9 @@
 #include <arm_sve.h>
     
 /*
- * SVETemplate3.h
+ * SVETemplate5.h
  *
- * - rearranged PF
- *
- * cycles per single site
- *
- *               rrii^     riri     rrii vs riri
- *              (split)  (interleaved)
- *
- * gcc           190       238         +25%
- * armclang      195       225         +15%
- * fcc           180       175          ~    (baseline)
- *
- * ^vnum disabled
+ * - introduced permutes
  */
 
 #include <stdio.h>
@@ -98,7 +87,23 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
       permute##dir(Chi_12,Chi_12);
 */
 
-#define PERMUTE_DIR(dir)
+#define PERMUTE_DIR(dir) \
+  if      (dir == 0) table = svld1(pg1, (uint64_t*)&lut[0]); \
+  else if (dir == 1) table = svld1(pg1, (uint64_t*)&lut[1]); \
+  else if (dir == 2) table = svld1(pg1, (uint64_t*)&lut[2]); \
+  else if (dir == 3) table = svld1(pg1, (uint64_t*)&lut[3]); \
+    Chi_00_re = svtbl(Chi_00_re, table);\
+    Chi_00_im = svtbl(Chi_00_im, table);\
+    Chi_01_re = svtbl(Chi_01_re, table);\
+    Chi_01_im = svtbl(Chi_01_im, table);\
+    Chi_02_re = svtbl(Chi_02_re, table);\
+    Chi_02_im = svtbl(Chi_02_im, table);\
+    Chi_10_re = svtbl(Chi_10_re, table);\
+    Chi_10_im = svtbl(Chi_10_im, table);\
+    Chi_11_re = svtbl(Chi_11_re, table);\
+    Chi_11_im = svtbl(Chi_11_im, table);\
+    Chi_12_re = svtbl(Chi_12_re, table);\
+    Chi_12_im = svtbl(Chi_12_im, table);
 
 #endif
 
@@ -591,6 +596,9 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
   PREFETCH_CHIMU_L2; 					\
   PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
+  if (s == 0) {                                           \
+   if ((DIR == 0) || (DIR == 2) || (DIR == 4) || (DIR == 6)) { PREFETCH_GAUGE_L2(DIR); } \
+  }                                                       \
   RECON;
 
 #define HAND_RESULT(ss)				\
@@ -641,7 +649,20 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
   svprfd_vnum(pg1, (long*)(base), (int64_t)(20), SV_PLDL1STRM); \
 }
 
-
+// PREFETCH_GAUGE_L2 (prefetch to L2)
+#define PREFETCH_GAUGE_L2(A)  \
+{ \
+  const auto & ref(U[sUn][A]); baseU = (uint64_t)&ref; \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(0), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(4), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(8), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(12), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(16), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(20), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(24), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(28), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(32), SV_PLDL2STRM); \
+}
 
 #define HAND_DECLARATIONS(Simd)			\
     svfloat64_t result_00_re;\
@@ -728,6 +749,9 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     svfloat64_t Chimu_31_im;\
     svfloat64_t Chimu_32_re;\
     svfloat64_t Chimu_32_im;\
+  const uint64_t lut[4][8] =    \
+  { {4,5,6,7,0,1,2,3}, {2,3,0,1,6,7,4,5}, {1,0,3,2,5,4,7,6}, {0,1,2,3,4,5,6,7} }; \
+  svuint64_t table; \
   svbool_t pg1 = svptrue_b64();
 
 
@@ -814,10 +838,13 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     int offset,perm;
     uint64_t base;
     uint64_t sU = ssite;
+    uint64_t sUn = ssite+1;
+    if (sUn == nsite) sUn = 0;
     uint64_t ss = sU*Ls;
     uint64_t ssn = ss + 1; // for prefetching to L2
-      if (ssn == nsite) ssn = 0;
-    uint64_t pf_L1, pf_L2; // pf addresses
+    if (ssn == nsite) ssn = 0;
+    uint64_t pf_L1, pf_L2; // pf addresses psi
+    uint64_t baseU;        // pf U
     for(uint64_t s=0;s<Ls;s++){
       HAND_STENCIL_LEG(XM_PROJ,3,Xp,XM_RECON);
       HAND_STENCIL_LEG(YM_PROJ,2,Yp,YM_RECON_ACCUM);
