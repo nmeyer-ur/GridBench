@@ -59,7 +59,17 @@
       permute##dir(Chi_12,Chi_12);
 */
 
-#define PERMUTE_DIR(dir)
+#define PERMUTE_DIR(dir) \
+  if      (dir == 0) table = svld1(pg1, (uint64_t*)&lut[0]); \
+  else if (dir == 1) table = svld1(pg1, (uint64_t*)&lut[1]); \
+  else if (dir == 2) table = svld1(pg1, (uint64_t*)&lut[2]); \
+  else if (dir == 3) table = svld1(pg1, (uint64_t*)&lut[3]); \
+  Chi_00 = svtbl(Chi_00, table);    \
+  Chi_01 = svtbl(Chi_01, table);    \
+  Chi_02 = svtbl(Chi_02, table);    \
+  Chi_10 = svtbl(Chi_10, table);    \
+  Chi_11 = svtbl(Chi_11, table);    \
+  Chi_12 = svtbl(Chi_12, table);
 
 #endif
 
@@ -391,8 +401,11 @@
   Simd U_20;					\
   Simd U_01;					\
   Simd U_11;					\
-  Simd U_21;                                    \
-  svbool_t pg1 = svptrue_b64();
+  Simd U_21;          \
+  svbool_t pg1 = svptrue_b64(); \
+  const uint64_t lut[4][8] =    \
+  { {4,5,6,7,0,1,2,3}, {2,3,0,1,6,7,4,5}, {1,0,3,2,5,4,7,6}, {0,1,2,3,4,5,6,7} }; \
+  svuint64_t table; \
 
 #define Chimu_00 Chi_00
 #define Chimu_01 Chi_01
