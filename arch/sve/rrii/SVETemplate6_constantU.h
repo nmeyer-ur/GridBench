@@ -5,25 +5,25 @@
  * - separated cmul into 2 rounds
  * - separated cfma into 2 rounds
  * - pulled LOAD_CHIMU into *_PROJ, taking 2 rounds
- * - rearranged PF of chimu 
+ * - rearranged PF of chimu
  *
  * FX700 / GCC
 
 $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
 
 # Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site
-1  32  16x16x16x32x8  11.9258  20.7045  199.232  1593.85  XX1
-2  32  16x16x16x32x8  21.9063  19.0159  216.924  1735.39  XX1
-3  32  16x16x16x32x8  31.6115  18.2937  225.487  1803.9  XX1
-4  32  16x16x16x32x8  40.7217  17.6743  233.389  1867.11  XX1
-5  32  16x16x16x32x8  49.0642  17.0362  242.132  1937.05  XX1
-6  32  16x16x16x32x8  57.9766  16.7756  245.892  1967.14  XX1
-7  32  16x16x16x32x8  66.1472  16.4056  251.439  2011.51  XX1
-8  32  16x16x16x32x8  73.9958  16.0581  256.879  2055.03  XX1
-9  32  16x16x16x32x8  78.3185  15.1077  273.039  2184.31  XX1
-10  32  16x16x16x32x8  88.0419  15.285  269.872  2158.97  XX1
-11  32  16x16x16x32x8  94.2726  14.8789  277.238  2217.91  XX1
-12  32  16x16x16x32x8  94.0967  13.6135  303.008  2424.06  XX1
+1  32  16x16x16x32x8  11.9523  20.7506  198.789  1590.32  XX1
+2  32  16x16x16x32x8  21.9563  19.0593  216.43  1731.44  XX1
+3  32  16x16x16x32x8  31.7382  18.367  224.587  1796.7  XX1
+4  32  16x16x16x32x8  40.7541  17.6884  233.204  1865.63  XX1
+5  32  16x16x16x32x8  49.413  17.1573  240.423  1923.38  XX1
+6  32  16x16x16x32x8  58.1305  16.8202  245.242  1961.93  XX1
+7  32  16x16x16x32x8  65.7602  16.3096  252.919  2023.35  XX1
+8  32  16x16x16x32x8  74.1411  16.0897  256.376  2051.01  XX1
+9  32  16x16x16x32x8  81.4771  15.717  262.454  2099.63  XX1
+10  32  16x16x16x32x8  88.0991  15.295  269.696  2157.57  XX1
+11  32  16x16x16x32x8  94.3144  14.8855  277.116  2216.93  XX1
+12  32  16x16x16x32x8  88.1068  12.7469  323.607  2588.86  XX1
 
 * Result: no benefit, performance worse than riri
           same for fcc, performance worse than riri
