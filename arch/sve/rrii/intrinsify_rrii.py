@@ -200,6 +200,13 @@ class Emitter:
             self.cWrite(op.group(3), op.group(1), op.group(2))
             return
 
+        # duplicate
+        p = re.compile(r'(\w+)=duplicate\((\w+)\)', re.I)
+        op = p.search(line)
+        if op:
+            self.duplicate(op.group(1), op.group(2))
+            return
+
         # done, pass through SYCL stuff
         if ('Permute' in line):
             print(line, end="")
@@ -426,6 +433,16 @@ class Emitter:
             r = intrin_store.format(arch_float_typecast, addr_r, self.re(op1))
             i = intrin_store.format(arch_float_typecast, addr_i, self.im(op1))
 
+        self._collect(r)
+        self._collect(i)
+        self._emit()
+
+    def duplicate(self, op1, op2):
+        """Emit duplicate
+           op1 = duplicate(op2)"""
+        # ok
+        r = intrin_dup.format(self.re(op1), arch_float_type, op2)
+        i = intrin_dup.format(self.im(op1), arch_float_type, op2)
         self._collect(r)
         self._collect(i)
         self._emit()
