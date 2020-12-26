@@ -1,10 +1,10 @@
 /*
  * SVETemplate5_constantU.h
  *
- * - rearranged PF
+ * SVETemplate3.h PF
  * - U constant
- * - separated cmul into 2 parts
- * - separated cfma into 2 parts
+ * - separated cmul into 2 rounds
+ * - separated cfma into 2 rounds
  *
  * FX700 / GCC
 

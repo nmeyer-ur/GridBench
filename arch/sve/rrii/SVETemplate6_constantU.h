@@ -1,18 +1,29 @@
 /*
  * SVETemplate6_constantU.h
  *
- * - rearranged PF
  * - U constant
- * - separated cmul into 2 parts
- * - separated cfma into 2 parts
- * - separated LOAD_CHIMU into 2 parts
+ * - separated cmul into 2 rounds
+ * - separated cfma into 2 rounds
+ * - pulled LOAD_CHIMU into *_PROJ, taking 2 rounds
+ * - rearranged PF of chimu 
  *
  * FX700 / GCC
 
 $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
 
 # Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site
-
+1  32  16x16x16x32x8  11.9258  20.7045  199.232  1593.85  XX1
+2  32  16x16x16x32x8  21.9063  19.0159  216.924  1735.39  XX1
+3  32  16x16x16x32x8  31.6115  18.2937  225.487  1803.9  XX1
+4  32  16x16x16x32x8  40.7217  17.6743  233.389  1867.11  XX1
+5  32  16x16x16x32x8  49.0642  17.0362  242.132  1937.05  XX1
+6  32  16x16x16x32x8  57.9766  16.7756  245.892  1967.14  XX1
+7  32  16x16x16x32x8  66.1472  16.4056  251.439  2011.51  XX1
+8  32  16x16x16x32x8  73.9958  16.0581  256.879  2055.03  XX1
+9  32  16x16x16x32x8  78.3185  15.1077  273.039  2184.31  XX1
+10  32  16x16x16x32x8  88.0419  15.285  269.872  2158.97  XX1
+11  32  16x16x16x32x8  94.2726  14.8789  277.238  2217.91  XX1
+12  32  16x16x16x32x8  94.0967  13.6135  303.008  2424.06  XX1
 
 * Result: no benefit, performance worse than riri
           same for fcc, performance worse than riri
@@ -469,11 +480,11 @@ $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
+  PREFETCH_CHIMU_L1;        \
+  PREFETCH_CHIMU_L2; 					\
   if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
-  PREFETCH_CHIMU_L2; 					\
-  PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
   RECON;
 
