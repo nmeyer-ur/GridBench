@@ -12,7 +12,7 @@
  * SVETemplate5.h
  *
  * - introduced permutes
- * - reverted complex multiplication split into 2 rounds due to performance penalty (single thread 206.303 cy instead of 193.879)
+ * (reverted complex multiplication split into 2 rounds due to performance penalty (single thread 206.303 cy instead of 193.879))
 
 $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
 1  32  16x16x16x32x8  12.255  21.2761  193.879  1551.04  XX1
@@ -69,30 +69,30 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 #else
 #define LOAD_CHIMU(ptype)		\
   { const SiteSpinor & ref (in[offset]);	base = (uint64_t)ref; \
-    Chimu_00_re = svld1(pg1, (float64_t*)(base + 64 * 0));\
-    Chimu_00_im = svld1(pg1, (float64_t*)(base + 64 * 1));\
-    Chimu_01_re = svld1(pg1, (float64_t*)(base + 64 * 2));\
-    Chimu_01_im = svld1(pg1, (float64_t*)(base + 64 * 3));\
-    Chimu_02_re = svld1(pg1, (float64_t*)(base + 64 * 4));\
-    Chimu_02_im = svld1(pg1, (float64_t*)(base + 64 * 5));\
-    Chimu_10_re = svld1(pg1, (float64_t*)(base + 64 * 6));\
-    Chimu_10_im = svld1(pg1, (float64_t*)(base + 64 * 7));\
-    Chimu_11_re = svld1(pg1, (float64_t*)(base + 64 * 8));\
-    Chimu_11_im = svld1(pg1, (float64_t*)(base + 64 * 9));\
-    Chimu_12_re = svld1(pg1, (float64_t*)(base + 64 * 10));\
-    Chimu_12_im = svld1(pg1, (float64_t*)(base + 64 * 11));\
-    Chimu_20_re = svld1(pg1, (float64_t*)(base + 64 * 12));\
-    Chimu_20_im = svld1(pg1, (float64_t*)(base + 64 * 13));\
-    Chimu_21_re = svld1(pg1, (float64_t*)(base + 64 * 14));\
-    Chimu_21_im = svld1(pg1, (float64_t*)(base + 64 * 15));\
-    Chimu_22_re = svld1(pg1, (float64_t*)(base + 64 * 16));\
-    Chimu_22_im = svld1(pg1, (float64_t*)(base + 64 * 17));\
-    Chimu_30_re = svld1(pg1, (float64_t*)(base + 64 * 18));\
-    Chimu_30_im = svld1(pg1, (float64_t*)(base + 64 * 19));\
-    Chimu_31_re = svld1(pg1, (float64_t*)(base + 64 * 20));\
-    Chimu_31_im = svld1(pg1, (float64_t*)(base + 64 * 21));\
-    Chimu_32_re = svld1(pg1, (float64_t*)(base + 64 * 22));\
-    Chimu_32_im = svld1(pg1, (float64_t*)(base + 64 * 23));}
+    Chimu_00_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-8));\
+    Chimu_00_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-7));\
+    Chimu_01_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-6));\
+    Chimu_01_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-5));\
+    Chimu_02_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-4));\
+    Chimu_02_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-3));\
+    Chimu_10_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-2));\
+    Chimu_10_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-1));\
+    Chimu_11_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(0));\
+    Chimu_11_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(1));\
+    Chimu_12_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(2));\
+    Chimu_12_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(3));\
+    Chimu_20_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(4));\
+    Chimu_20_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(5));\
+    Chimu_21_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(6));\
+    Chimu_21_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(7));\
+    Chimu_22_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-8));\
+    Chimu_22_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-7));\
+    Chimu_30_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-6));\
+    Chimu_30_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-5));\
+    Chimu_31_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-4));\
+    Chimu_31_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-3));\
+    Chimu_32_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-2));\
+    Chimu_32_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-1));}
 
 /*
 #define PERMUTE_DIR(dir)			\
@@ -127,18 +127,18 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define MULT_2SPIN(A)\
   { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
-    U_00_re = svld1(pg1, (float64_t*)(base + 64 * 0));\
-    U_00_im = svld1(pg1, (float64_t*)(base + 64 * 1));\
-    U_10_re = svld1(pg1, (float64_t*)(base + 64 * 6));\
-    U_10_im = svld1(pg1, (float64_t*)(base + 64 * 7));\
-    U_20_re = svld1(pg1, (float64_t*)(base + 64 * 12));\
-    U_20_im = svld1(pg1, (float64_t*)(base + 64 * 13));\
-    U_01_re = svld1(pg1, (float64_t*)(base + 64 * 2));\
-    U_01_im = svld1(pg1, (float64_t*)(base + 64 * 3));\
-    U_11_re = svld1(pg1, (float64_t*)(base + 64 * 8));\
-    U_11_im = svld1(pg1, (float64_t*)(base + 64 * 9));\
-    U_21_re = svld1(pg1, (float64_t*)(base + 64 * 14));\
-    U_21_im = svld1(pg1, (float64_t*)(base + 64 * 15));\
+    U_00_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-8));\
+    U_00_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-7));\
+    U_10_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-2));\
+    U_10_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-1));\
+    U_20_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(4));\
+    U_20_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(5));\
+    U_01_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-6));\
+    U_01_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-5));\
+    U_11_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(0));\
+    U_11_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(1));\
+    U_21_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(6));\
+    U_21_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(7));\
     UChi_00_re = svmul_x(pg1, U_00_re, Chi_00_re);\
     UChi_00_im = svmul_x(pg1, U_00_re, Chi_00_im);\
     UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_00_im);\
@@ -187,12 +187,12 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_21_re, Chi_11_im);\
     UChi_12_re = svmls_x(pg1, UChi_12_re, U_21_im, Chi_11_im);\
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_21_im, Chi_11_re);\
-    U_00_re = svld1(pg1, (float64_t*)(base + 64 * 4));\
-    U_00_im = svld1(pg1, (float64_t*)(base + 64 * 5));\
-    U_10_re = svld1(pg1, (float64_t*)(base + 64 * 10));\
-    U_10_im = svld1(pg1, (float64_t*)(base + 64 * 11));\
-    U_20_re = svld1(pg1, (float64_t*)(base + 64 * 16));\
-    U_20_im = svld1(pg1, (float64_t*)(base + 64 * 17));\
+    U_00_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-4));\
+    U_00_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-3));\
+    U_10_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(2));\
+    U_10_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(3));\
+    U_20_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-8));\
+    U_20_im = svld1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-7));\
     UChi_00_re = svmla_x(pg1, UChi_00_re, U_00_re, Chi_02_re);\
     UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_re, Chi_02_im);\
     UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_02_im);\
@@ -620,30 +620,30 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define HAND_RESULT(ss)				\
   {	SiteSpinor & ref (out[ss]);	base = (uint64_t)ref;		\
-    svst1(pg1, (float64_t*)(base + 64 * 0), result_00_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 1), result_00_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 2), result_01_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 3), result_01_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 4), result_02_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 5), result_02_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 6), result_10_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 7), result_10_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 8), result_11_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 9), result_11_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 10), result_12_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 11), result_12_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 12), result_20_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 13), result_20_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 14), result_21_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 15), result_21_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 16), result_22_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 17), result_22_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 18), result_30_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 19), result_30_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 20), result_31_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 21), result_31_im);\
-    svst1(pg1, (float64_t*)(base + 64 * 22), result_32_re);\
-    svst1(pg1, (float64_t*)(base + 64 * 23), result_32_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-8), result_00_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-7), result_00_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-6), result_01_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-5), result_01_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-4), result_02_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-3), result_02_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-2), result_10_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-1), result_10_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(0), result_11_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(1), result_11_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(2), result_12_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(3), result_12_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(4), result_20_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(5), result_20_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(6), result_21_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(7), result_21_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-8), result_22_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-7), result_22_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-6), result_30_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-5), result_30_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-4), result_31_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-3), result_31_im);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-2), result_32_re);\
+    svst1_vnum(pg1, (float64_t*)(base + 64 * (24)), (int64_t)(-1), result_32_im);\
   }
 
 #define PREFETCH_CHIMU_L2  \

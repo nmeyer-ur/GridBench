@@ -2,7 +2,7 @@
  * SVETemplate5.h
  *
  * - introduced permutes
- * - reverted complex multiplication split into 2 rounds due to performance penalty (single thread 206.303 cy instead of 193.879)
+ * (reverted complex multiplication split into 2 rounds due to performance penalty (single thread 206.303 cy instead of 193.879))
 
 $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
 1  32  16x16x16x32x8  12.255  21.2761  193.879  1551.04  XX1
