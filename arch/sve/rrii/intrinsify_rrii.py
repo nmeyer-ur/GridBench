@@ -487,6 +487,7 @@ class Emitter:
 
     def cWrite(self, op1, row, col):
         """Emit complex store"""
+
         cl_offset = 2 * 3 * int(row) + 2 * int(col)
 
         # use vnum
@@ -498,14 +499,14 @@ class Emitter:
             displacement = x * (cl_offset // x) - vnum_lo
             offset = cl_offset % x + vnum_lo
             base = f'base + {arch_vl} * ({displacement})'
-            r = intrin_store_offset.format(self.re(op1), arch_float_typecast, base, offset)
-            i = intrin_store_offset.format(self.im(op1), arch_float_typecast, base, offset+1)
+            r = intrin_store_offset.format(arch_float_typecast, base, offset, self.re(op1))
+            i = intrin_store_offset.format(arch_float_typecast, base, offset+1, self.im(op1))
         # no vnum
         else:
             addr_r = f'base + {arch_vl} * {cl_offset}'
             addr_i = f'base + {arch_vl} * {cl_offset+1}'
-            r = intrin_store.format(self.re(op1), arch_float_typecast, addr_r)
-            i = intrin_store.format(self.im(op1), arch_float_typecast, addr_i)
+            r = intrin_store.format(arch_float_typecast, addr_r, self.re(op1))
+            i = intrin_store.format(arch_float_typecast, addr_i, self.im(op1))
 
         self._collect(r)
         self._collect(i)

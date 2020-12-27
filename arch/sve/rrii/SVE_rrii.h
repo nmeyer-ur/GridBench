@@ -620,30 +620,30 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define HAND_RESULT(ss)				\
   {	SiteSpinor & ref (out[ss]);	base = (uint64_t)ref;		\
-    svst1(pg1, result_00_re((float64_t*)), base + 64 * 0);\
-    svst1(pg1, result_00_im((float64_t*)), base + 64 * 1);\
-    svst1(pg1, result_01_re((float64_t*)), base + 64 * 2);\
-    svst1(pg1, result_01_im((float64_t*)), base + 64 * 3);\
-    svst1(pg1, result_02_re((float64_t*)), base + 64 * 4);\
-    svst1(pg1, result_02_im((float64_t*)), base + 64 * 5);\
-    svst1(pg1, result_10_re((float64_t*)), base + 64 * 6);\
-    svst1(pg1, result_10_im((float64_t*)), base + 64 * 7);\
-    svst1(pg1, result_11_re((float64_t*)), base + 64 * 8);\
-    svst1(pg1, result_11_im((float64_t*)), base + 64 * 9);\
-    svst1(pg1, result_12_re((float64_t*)), base + 64 * 10);\
-    svst1(pg1, result_12_im((float64_t*)), base + 64 * 11);\
-    svst1(pg1, result_20_re((float64_t*)), base + 64 * 12);\
-    svst1(pg1, result_20_im((float64_t*)), base + 64 * 13);\
-    svst1(pg1, result_21_re((float64_t*)), base + 64 * 14);\
-    svst1(pg1, result_21_im((float64_t*)), base + 64 * 15);\
-    svst1(pg1, result_22_re((float64_t*)), base + 64 * 16);\
-    svst1(pg1, result_22_im((float64_t*)), base + 64 * 17);\
-    svst1(pg1, result_30_re((float64_t*)), base + 64 * 18);\
-    svst1(pg1, result_30_im((float64_t*)), base + 64 * 19);\
-    svst1(pg1, result_31_re((float64_t*)), base + 64 * 20);\
-    svst1(pg1, result_31_im((float64_t*)), base + 64 * 21);\
-    svst1(pg1, result_32_re((float64_t*)), base + 64 * 22);\
-    svst1(pg1, result_32_im((float64_t*)), base + 64 * 23);\
+    svst1(pg1, (float64_t*)(base + 64 * 0), result_00_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 1), result_00_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 2), result_01_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 3), result_01_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 4), result_02_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 5), result_02_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 6), result_10_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 7), result_10_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 8), result_11_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 9), result_11_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 10), result_12_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 11), result_12_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 12), result_20_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 13), result_20_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 14), result_21_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 15), result_21_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 16), result_22_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 17), result_22_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 18), result_30_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 19), result_30_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 20), result_31_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 21), result_31_im);\
+    svst1(pg1, (float64_t*)(base + 64 * 22), result_32_re);\
+    svst1(pg1, (float64_t*)(base + 64 * 23), result_32_im);\
   }
 
 #define PREFETCH_CHIMU_L2  \
