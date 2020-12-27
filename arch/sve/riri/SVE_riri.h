@@ -74,7 +74,8 @@ static constexpr int Tm = 7;
 
 #define ASM_LEG(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)			\
         offset = nbr[ssn*8+Dir]; {auto & ref(in[offset]); basep = (uint64_t)&ref - 1 * 3*4*64;} \
-        offset = nbr[ss*8+NxtDir+1]; {auto & ref(in[offset]); base2 = (uint64_t)&ref;} \
+        offset = nbr[ss*8+NxtDir]; {auto & ref(in[offset]); base2 = (uint64_t)&ref;} \
+        offset = nbr[ss*8+NxtDir+1]; {auto & ref(in[offset]); base3 = (uint64_t)&ref;} \
     LOAD_CHIMU(base);                                       \
     LOAD_TABLE(PERMUTE_DIR);                                \
     PROJ;							                        \
@@ -86,7 +87,7 @@ static constexpr int Tm = 7;
    /* LOAD_GAUGE(Dir); */                                        \
     MULT_2SPIN_1(Dir);					                    \
    /* PREFETCH_CHIMU_L1(base); */                                \
-    PREFETCH_CHIMU_L1(base2); /* 1232 1191  1260 990          */                           \
+    PREFETCH_CHIMU_L1(base3); /* 1232 1191  1260 990          */                           \
     PREFETCH_CHIMU_L2(basep);                               \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
@@ -256,6 +257,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
 
       uint64_t base;
       uint64_t base2;
+      uint64_t base3;
       uint64_t basep;
       const uint64_t plocal =(uint64_t) &in[0];
 
