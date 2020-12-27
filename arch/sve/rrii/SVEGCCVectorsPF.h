@@ -332,7 +332,7 @@
 
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
-  pf_L1  = nbr[ss*8+DIR+1];				\
+  pf_L1  = nbr[ss*8+DIR+2];				\
   pf_L2  = nbr[ssn*8+DIR-1];				\
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\

@@ -358,7 +358,7 @@ $ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32
 
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
-  pf_L1  = nbr[ss*8+DIR+1];				\
+  pf_L1  = nbr[ss*8+DIR+2];				\
   pf_L2  = nbr[ssn*8+DIR-1];				\
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
