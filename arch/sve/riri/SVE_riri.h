@@ -73,9 +73,9 @@ static constexpr int Tm = 7;
 #ifdef INTERIOR_AND_EXTERIOR
 
 #define ASM_LEG(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)			\
-        offset = nbr[ssn*8+Dir]; {auto & ref(in[offset]); basep = (uint64_t)&ref - 1 * 3*4*64;} \
+        offset = nbr[ssn*8+Dir-2]; {auto & ref(in[offset]); basep = (uint64_t)&ref;} \
         offset = nbr[ss*8+NxtDir]; {auto & ref(in[offset]); base2 = (uint64_t)&ref;} \
-        offset = nbr[ss*8+NxtDir+1]; {auto & ref(in[offset]); base3 = (uint64_t)&ref;} \
+        offset = nbr[ss*8+Dir+2]; {auto & ref(in[offset]); base3 = (uint64_t)&ref;} \
     LOAD_CHIMU(base);                                       \
     LOAD_TABLE(PERMUTE_DIR);                                \
     PROJ;							                        \
