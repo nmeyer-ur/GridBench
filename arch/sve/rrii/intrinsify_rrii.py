@@ -9,8 +9,8 @@ from acle import *
 # armclang and fcc have a problem with load / store with offsets!! Be cautious
 # max vnum range is -8 .. 7
 
-vnum_range = []        # disable vnum for load / store
-#vnum_range = [-8, 7]    # vnum range for load / store
+#vnum_range = []        # disable vnum for load / store
+vnum_range = [-8, 7]    # vnum range for load / store
 
 class Emitter:
     """Emitter class generates intrinsics functions calls"""
