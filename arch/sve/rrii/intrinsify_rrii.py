@@ -1,13 +1,16 @@
 #!/usr/bin/python3
 
-# RRII Intrinsifier
+# RRII Intrinsifier for SVE
 
 import re
 import sys
 from acle import *
 
-# src file
-src = 'WilsonKernelsHandCpuSVETemplate.h'
+# armclang and fcc have a problem with load / store with offsets!! Be cautious
+# max vnum range is -8 .. 7
+
+vnum_range = []        # disable vnum for load / store
+#vnum_range = [-8, 7]    # vnum range for load / store
 
 class Emitter:
     """Emitter class generates intrinsics functions calls"""
@@ -20,7 +23,7 @@ class Emitter:
         self._bracket = '}'         # trailing bracket
         self._isSpinor = False      # spinor addressing
         self._isGauge = False       # gauge addressing
-        self._loadstore_offset = False    # armclang has a problem with load / store with offsets!! Be cautious
+        self._loadstore_vnum_range = vnum_range     # vnum range
 
     def trailing(self, slash=False, bracket=False):
         self._trailing = ''
@@ -73,6 +76,10 @@ class Emitter:
                 self.trailing()  # no backslash or bracket here
                 self.cdefine(op.group(1), op.group(2))
                 return
+
+        if ('SVETemplate' in line):
+            print(line, end="")
+            return
 
         if ('PREFETCH' in line):
             print(line, end="")
@@ -453,32 +460,24 @@ class Emitter:
 
     def cRead(self, op1, row, col):
         """Emit complex load"""
-        displacement = 0
 
-        # offset = 0..7 works with armclang; gcc and fcc are always fine
-        if self._loadstore_offset:
-            cl_offset = 2 * 3 * int(row) + 2 * int(col)
-            displacement = 8 * (cl_offset // 8)
-            base = f'base + {arch_vl} * {displacement}'
+        cl_offset = 2 * 3 * int(row) + 2 * int(col)
 
-        if self._isGauge:
-            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
-            off_r  = f'{cl_offset}'
-            addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'{cl_offset + 1}'
-            addr_i = f'base + {arch_vl} * ({off_i})'
+        # use vnum
+        if len(self._loadstore_vnum_range) == 2:
+            vnum_lo = self._loadstore_vnum_range[0]
+            vnum_hi = self._loadstore_vnum_range[1]
+            x  = vnum_hi - vnum_lo + 1
+
+            displacement = x * (cl_offset // x) - vnum_lo
+            offset = cl_offset % x + vnum_lo
+            base = f'base + {arch_vl} * ({displacement})'
+            r = intrin_load_offset.format(self.re(op1), arch_float_typecast, base, offset)
+            i = intrin_load_offset.format(self.im(op1), arch_float_typecast, base, offset+1)
+        # no vnum
         else:
-            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
-            off_r  = f'{cl_offset}'
-            addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'{cl_offset + 1}'
-            addr_i = f'base + {arch_vl} * ({off_i})'
-
-        #print(addr_r)
-        if self._loadstore_offset:
-            r = intrin_load_offset.format(self.re(op1), arch_float_typecast, base, off_r)
-            i = intrin_load_offset.format(self.im(op1), arch_float_typecast, base, off_i)
-        else:
+            addr_r = f'base + {arch_vl} * {cl_offset}'
+            addr_i = f'base + {arch_vl} * {cl_offset+1}'
             r = intrin_load.format(self.re(op1), arch_float_typecast, addr_r)
             i = intrin_load.format(self.im(op1), arch_float_typecast, addr_i)
 
@@ -488,34 +487,25 @@ class Emitter:
 
     def cWrite(self, op1, row, col):
         """Emit complex store"""
-        displacement = 0
+        cl_offset = 2 * 3 * int(row) + 2 * int(col)
 
-        # offset = 0..7 works with armclang; gcc and fcc are always fine
-        if self._loadstore_offset:
-            cl_offset = 2 * 3 * int(row) + 2 * int(col)
-            displacement = 8 * (cl_offset // 8)
-            base = f'base + {arch_vl} * {displacement}'
+        # use vnum
+        if len(self._loadstore_vnum_range) == 2:
+            vnum_lo = self._loadstore_vnum_range[0]
+            vnum_hi = self._loadstore_vnum_range[1]
+            x  = vnum_hi - vnum_lo + 1
 
-        if self._isGauge:
-            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
-            off_r  = f'{cl_offset}'
-            addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'{cl_offset + 1}'
-            addr_i = f'base + {arch_vl} * ({off_i})'
+            displacement = x * (cl_offset // x) - vnum_lo
+            offset = cl_offset % x + vnum_lo
+            base = f'base + {arch_vl} * ({displacement})'
+            r = intrin_store_offset.format(self.re(op1), arch_float_typecast, base, offset)
+            i = intrin_store_offset.format(self.im(op1), arch_float_typecast, base, offset+1)
+        # no vnum
         else:
-            cl_offset = 2 * 3 * int(row) + 2 * int(col) - displacement
-            off_r  = f'{cl_offset}'
-            addr_r = f'base + {arch_vl} * ({off_r})'
-            off_i  = f'{cl_offset + 1}'
-            addr_i = f'base + {arch_vl} * ({off_i})'
-
-        #print(addr_r)
-        if self._loadstore_offset:
-            r = intrin_store_offset.format(arch_float_typecast, base, off_r, self.re(op1))
-            i = intrin_store_offset.format(arch_float_typecast, base, off_i, self.im(op1))
-        else:
-            r = intrin_store.format(arch_float_typecast, addr_r, self.re(op1))
-            i = intrin_store.format(arch_float_typecast, addr_i, self.im(op1))
+            addr_r = f'base + {arch_vl} * {cl_offset}'
+            addr_i = f'base + {arch_vl} * {cl_offset+1}'
+            r = intrin_store.format(self.re(op1), arch_float_typecast, addr_r)
+            i = intrin_store.format(self.im(op1), arch_float_typecast, addr_i)
 
         self._collect(r)
         self._collect(i)

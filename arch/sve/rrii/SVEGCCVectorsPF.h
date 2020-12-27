@@ -59,6 +59,9 @@
       permute##dir(Chi_12,Chi_12);
 */
 
+#define PERMUTE_DIR(dir) ;
+
+/*
 #define PERMUTE_DIR(dir) \
   if      (dir == 0) table = svld1(pg1, (uint64_t*)&lut[0]); \
   else if (dir == 1) table = svld1(pg1, (uint64_t*)&lut[1]); \
@@ -76,6 +79,8 @@
   Chi_10.z.y = svtbl_f64(Chi_10.z.y, table);    \
   Chi_11.z.y = svtbl_f64(Chi_11.z.y, table);    \
   Chi_12.z.y = svtbl_f64(Chi_12.z.y, table);
+*/
+
 
 #endif
 
