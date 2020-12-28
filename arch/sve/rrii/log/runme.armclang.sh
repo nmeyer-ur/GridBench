@@ -3,14 +3,16 @@
 # copy to GridBench folder
 # compile and run all registered templates 
 
-SUFFIX="gcc"
-CXX="g++"
+DESCRIPTION="empty"
+SUFFIX="armclang"
+CXX="armclang++"
 BIND=3
+
 
 # compile and execute
 
 g () {
-  echo "================ $1 ================"
+  echo "\n================ $1 ================"
   cd arch/sve/rrii/
   rm -f SVE_rrii.h
   ./intrinsify_rrii.py $1 > SVE_rrii.h
@@ -25,6 +27,37 @@ g () {
 }
 
 # main
+
+echo "=== description ==="
+echo "${DESCRIPTION}"
+
+echo "\n=== commit ==="
+git log | head -n 1
+
+echo "\n=== timestamp ==="
+date
+
+echo "\n=== compiler ==="
+${CXX} -v
+
+echo "\n=== clock frequency in GHz ==="
+cat freq.txt
+
+echo "\n=== node ==="
+hostname
+
+echo "\n=== current working directory ==="
+pwd
+
+echo "\n=== this script name ==="
+echo "$0"
+
+echo "\n=== this script ==="
+cat $0
+
+echo "=== end this script ==="
+
+echo "\n=== runs ==="
 
 g "SVETemplate0.h"
 g "SVETemplate1.h"
