@@ -2,18 +2,6 @@
  * SVETemplate3.h
  *
  * - rearranged PF
- *
- * cycles per single site, single thread measurement
- *
- *               rrii^     riri*    rrii vs riri
- *              (split)  (interleaved)
- *
- * gcc           190       238         +25%
- * armclang      195       225         +15%
- * fcc           180       175          ~
- *
- * ^vnum disabled; OpenMP only for fcc enabled, but disabled for gcc and armclang
- * *vnum enabled; OpenMP enabled (causes overhead for gcc and armclang)
  */
 
 #include <stdio.h>

@@ -1,31 +1,9 @@
 /*
- * SVETemplate5_constantU_2.h
+ * SVETemplate3_constantU_2.h
  *
- * SVETemplate3.h PF
  * - U constant
  * - separated cmul into 2 rounds
  * - separated cfma into 2 rounds
- *
- * FX700 / GCC
-
-$ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
-
-# Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site
-1  32  16x16x16x32x8  12.0546  20.9282  197.103  1576.82  XX1
-2  32  16x16x16x32x8  22.4324  19.4726  211.837  1694.69  XX1
-3  32  16x16x16x32x8  32.4978  18.8066  219.338  1754.7  XX1
-4  32  16x16x16x32x8  41.8232  18.1524  227.242  1817.94  XX1
-5  32  16x16x16x32x8  50.2661  17.4535  236.342  1890.74  XX1
-6  32  16x16x16x32x8  58.6581  16.9728  243.035  1944.28  XX1
-7  32  16x16x16x32x8  67.2781  16.686  247.213  1977.7  XX1
-8  32  16x16x16x32x8  75.1144  16.3009  253.054  2024.43  XX1
-9  32  16x16x16x32x8  82.6543  15.9441  258.716  2069.73  XX1
-10  32  16x16x16x32x8  86.102  14.9483  275.952  2207.61  XX1
-11  32  16x16x16x32x8  88.2345  13.9259  296.211  2369.68  XX1
-12  32  16x16x16x32x8  101.804  14.7286  280.066  2240.53  XX1
-
-* Result: no benefit, performance worse than riri
-          same for fcc, performance worse than riri
  */
 
 #include <stdio.h>

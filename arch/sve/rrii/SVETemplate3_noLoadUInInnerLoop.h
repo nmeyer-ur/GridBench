@@ -4,27 +4,6 @@
  * - rearranged PF
  * - moved load U to HAND_DECLARATIONS -> U = const during inner loop traversal
  * - no PF of U
- *
- * FX700 / GCC
-
-$ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
-
-# Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site
-1  32  16x16x16x32x8  11.9235  20.7006  199.27  1594.16  XX1
-2  32  16x16x16x32x8  22.4292  19.4698  211.866  1694.93  XX1
-3  32  16x16x16x32x8  32.4699  18.7905  219.526  1756.21  XX1
-4  32  16x16x16x32x8  41.9854  18.2228  226.364  1810.92  XX1
-5  32  16x16x16x32x8  50.3352  17.4775  236.018  1888.14  XX1
-6  32  16x16x16x32x8  58.8291  17.0223  242.329  1938.63  XX1
-7  32  16x16x16x32x8  67.4229  16.7219  246.682  1973.45  XX1
-8  32  16x16x16x32x8  75.5311  16.3913  251.658  2013.26  XX1
-9  32  16x16x16x32x8  82.7585  15.9642  258.391  2067.12  XX1
-10  32  16x16x16x32x8  89.1918  15.4847  266.392  2131.14  XX1
-11  32  16x16x16x32x8  96.0107  15.1532  272.22  2177.76  XX1
-12  32  16x16x16x32x8  101.931  14.747  279.719  2237.75  XX1
-
- * Result: only minor benefit, performance worse than riri
- *         PF U?
  */
 
 #include <stdio.h>

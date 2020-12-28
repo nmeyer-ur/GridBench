@@ -3,27 +3,6 @@
  *
  * - rearranged PF
  * - U constant
- *
- * FX700 / GCC
-
-$ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
-
-# Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site
-1  32  16x16x16x32x8  11.8826  20.6294  199.957  1599.66  XX1
-2  32  16x16x16x32x8  21.7439  18.8749  218.544  1748.35  XX1
-3  32  16x16x16x32x8  31.2889  18.107  227.813  1822.5  XX1
-4  32  16x16x16x32x8  39.5611  17.1706  240.236  1921.89  XX1
-5  32  16x16x16x32x8  49.1586  17.069  241.667  1933.33  XX1
-6  32  16x16x16x32x8  57.7211  16.7017  246.981  1975.84  XX1
-7  32  16x16x16x32x8  65.9381  16.3537  252.236  2017.89  XX1
-8  32  16x16x16x32x8  67.5507  14.6594  281.389  2251.11  XX1
-9  32  16x16x16x32x8  81.0862  15.6416  263.719  2109.75  XX1
-10  32  16x16x16x32x8  87.7673  15.2374  270.716  2165.73  XX1
-11  32  16x16x16x32x8  94.0789  14.8483  277.809  2222.48  XX1
-12  32  16x16x16x32x8  99.5923  14.4086  286.287  2290.3  XX1
-
-* Result: no benefit, performance worse than riri
-          same for fcc, performance worse than riri
  */
 
 #include <stdio.h>
