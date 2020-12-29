@@ -1,0 +1,298 @@
+=== description ===
+empty
+
+=== commit ===
+commit 5a04d5c9e4b148f3566bef40340d81d65be63f9d
+
+=== timestamp ===
+Mon Dec 28 22:58:13 JST 2020
+
+=== compiler ===
+
+=== clock frequency in GHz ===
+2.2
+
+=== node ===
+pm3s1b0-12
+
+=== current working directory ===
+/home/users/gre/gre-1/rrii/GridBench
+
+=== this script name ===
+./runme.fcc.sh
+
+=== this script ===
+#!/bin/bash
+
+# copy to GridBench folder
+# compile and run all registered templates 
+
+DESCRIPTION="empty"
+SUFFIX="fcc"
+CXX="FCC"
+BIND=7
+
+
+# compile and execute
+
+g () {
+  echo -e "\n================ $1 ================"
+  cd arch/sve/rrii/
+  rm -f SVE_rrii.h
+  ./intrinsify_rrii.py $1 > SVE_rrii.h
+  cd ../../../
+  rm -f bench.rrii.sve.intrinsics.${SUFFIX}
+  make CXX=${CXX} bench.rrii.sve.intrinsics.${SUFFIX}
+  echo -e "------- $1 -------"
+  for i in `seq 1 12` ; do OMP_NUM_THREADS=$i numactl --cpunodebind=${BIND} --membind=${BIND} ./bench.rrii.sve.intrinsics.${SUFFIX} 32 100 2> /dev/null | grep XX1 ; done
+  echo -e "------- $1 -------"
+  echo -e ""
+  mv bench.rrii.sve.intrinsics.${SUFFIX} bench.rrii.sve.intrinsics.${SUFFIX}.`basename $1 .h`
+}
+
+# main
+
+echo -e "=== description ==="
+echo -e "${DESCRIPTION}"
+
+echo -e "\n=== commit ==="
+git log | head -n 1
+
+echo -e "\n=== timestamp ==="
+date
+
+echo -e "\n=== compiler ==="
+${CXX} -v
+
+echo -e "\n=== clock frequency in GHz ==="
+cat freq.txt
+
+echo -e "\n=== node ==="
+hostname
+
+echo -e "\n=== current working directory ==="
+pwd
+
+echo -e "\n=== this script name ==="
+echo -e "$0"
+
+echo -e "\n=== this script ==="
+cat $0
+
+echo -e "=== end this script ==="
+
+echo -e "\n=== runs ==="
+
+g "SVETemplate0.h"
+g "SVETemplate1.h"
+g "SVETemplate2.h"
+g "SVETemplate3.h"
+g "SVETemplate3_constantU_1.h"
+g "SVETemplate3_constantU_2.h"
+g "SVETemplate3_constantU_3.h"
+g "SVETemplate3_noLoadUInInnerLoop.h"
+g "SVETemplate4.h"
+g "SVETemplate5_integratedPF.h"
+g "SVETemplate5.h"
+
+=== end this script ===
+
+=== runs ===
+
+================ SVETemplate0.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate0.h -------
+1  32  16x16x16x32x8  11.1444  15.8301  260.58  2084.64  XX1
+2  32  16x16x16x32x8  22.1282  15.716  262.471  2099.76  XX1
+3  32  16x16x16x32x8  32.6428  15.4559  266.889  2135.11  XX1
+4  32  16x16x16x32x8  43.2701  15.3658  268.453  2147.63  XX1
+5  32  16x16x16x32x8  53.7682  15.2751  270.048  2160.39  XX1
+6  32  16x16x16x32x8  63.9356  15.1363  272.524  2180.2  XX1
+7  32  16x16x16x32x8  72.401  14.6918  280.77  2246.16  XX1
+8  32  16x16x16x32x8  81.5311  14.4764  284.946  2279.57  XX1
+9  32  16x16x16x32x8  89.6224  14.1449  291.624  2332.99  XX1
+10  32  16x16x16x32x8  96.259  13.6731  301.686  2413.49  XX1
+11  32  16x16x16x32x8  100.215  12.941  318.754  2550.03  XX1
+12  32  16x16x16x32x8  100.803  11.9322  345.703  2765.62  XX1
+------- SVETemplate0.h -------
+
+
+================ SVETemplate1.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate1.h -------
+1  32  16x16x16x32x8  10.8471  15.4078  267.721  2141.77  XX1
+2  32  16x16x16x32x8  21.662  15.385  268.119  2144.95  XX1
+3  32  16x16x16x32x8  32.1593  15.2269  270.901  2167.21  XX1
+4  32  16x16x16x32x8  42.6472  15.1446  272.374  2178.99  XX1
+5  32  16x16x16x32x8  52.7374  14.9822  275.326  2202.61  XX1
+6  32  16x16x16x32x8  62.522  14.8016  278.686  2229.49  XX1
+7  32  16x16x16x32x8  71.5369  14.5164  284.161  2273.29  XX1
+8  32  16x16x16x32x8  80.4378  14.2823  288.819  2310.56  XX1
+9  32  16x16x16x32x8  88.6644  13.9937  294.774  2358.2  XX1
+10  32  16x16x16x32x8  94.9061  13.481  305.987  2447.89  XX1
+11  32  16x16x16x32x8  99.1626  12.8051  322.138  2577.1  XX1
+12  32  16x16x16x32x8  100.935  11.9479  345.25  2762  XX1
+------- SVETemplate1.h -------
+
+
+================ SVETemplate2.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate2.h -------
+1  32  16x16x16x32x8  11.4556  16.2722  253.5  2028  XX1
+2  32  16x16x16x32x8  21.9814  15.6118  264.224  2113.79  XX1
+3  32  16x16x16x32x8  31.6453  14.9836  275.301  2202.41  XX1
+4  32  16x16x16x32x8  40.7951  14.4869  284.74  2277.92  XX1
+5  32  16x16x16x32x8  48.8585  13.8803  297.185  2377.48  XX1
+6  32  16x16x16x32x8  57.0085  13.4963  305.639  2445.11  XX1
+7  32  16x16x16x32x8  64.4419  13.0767  315.447  2523.57  XX1
+8  32  16x16x16x32x8  71.1009  12.6244  326.747  2613.98  XX1
+9  32  16x16x16x32x8  76.835  12.1267  340.157  2721.26  XX1
+10  32  16x16x16x32x8  81.7274  11.609  355.328  2842.62  XX1
+11  32  16x16x16x32x8  86.1445  11.124  370.819  2966.55  XX1
+12  32  16x16x16x32x8  89.3428  10.5756  390.048  3120.39  XX1
+------- SVETemplate2.h -------
+
+
+================ SVETemplate3.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate3.h -------
+1  32  16x16x16x32x8  12.5717  17.8575  230.996  1847.96  XX1
+2  32  16x16x16x32x8  23.1956  16.4741  250.393  2003.14  XX1
+3  32  16x16x16x32x8  33.1924  15.7161  262.47  2099.76  XX1
+4  32  16x16x16x32x8  42.4835  15.0865  273.424  2187.39  XX1
+5  32  16x16x16x32x8  52.0144  14.7768  279.154  2233.23  XX1
+6  32  16x16x16x32x8  61.2788  14.5073  284.34  2274.72  XX1
+7  32  16x16x16x32x8  69.6284  14.1291  291.95  2335.6  XX1
+8  32  16x16x16x32x8  77.1171  13.6927  301.256  2410.05  XX1
+9  32  16x16x16x32x8  83.2113  13.1331  314.092  2512.74  XX1
+10  32  16x16x16x32x8  88.2652  12.5377  329.009  2632.07  XX1
+11  32  16x16x16x32x8  91.7436  11.8471  348.188  2785.5  XX1
+12  32  16x16x16x32x8  94.4025  11.1745  369.143  2953.14  XX1
+------- SVETemplate3.h -------
+
+
+================ SVETemplate3_constantU_1.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate3_constantU_1.h -------
+1  32  16x16x16x32x8  14.4571  20.5356  200.871  1606.96  XX1
+2  32  16x16x16x32x8  25.1141  17.8367  231.265  1850.12  XX1
+3  32  16x16x16x32x8  35.494  16.8059  245.45  1963.6  XX1
+4  32  16x16x16x32x8  44.4654  15.7903  261.237  2089.89  XX1
+5  32  16x16x16x32x8  53.7162  15.2603  270.31  2162.48  XX1
+6  32  16x16x16x32x8  62.4695  14.7892  278.92  2231.36  XX1
+7  32  16x16x16x32x8  70.5115  14.3083  288.294  2306.35  XX1
+8  32  16x16x16x32x8  77.8324  13.8197  298.488  2387.9  XX1
+9  32  16x16x16x32x8  84.0455  13.2648  310.975  2487.8  XX1
+10  32  16x16x16x32x8  89.1821  12.6679  325.626  2605.01  XX1
+11  32  16x16x16x32x8  93.4637  12.0692  341.78  2734.24  XX1
+12  32  16x16x16x32x8  97.031  11.4857  359.143  2873.15  XX1
+------- SVETemplate3_constantU_1.h -------
+
+
+================ SVETemplate3_constantU_2.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate3_constantU_2.h -------
+1  32  16x16x16x32x8  14.1438  20.0907  205.319  1642.55  XX1
+2  32  16x16x16x32x8  24.6759  17.5255  235.372  1882.97  XX1
+3  32  16x16x16x32x8  34.8339  16.4933  250.101  2000.81  XX1
+4  32  16x16x16x32x8  43.7534  15.5374  265.488  2123.91  XX1
+5  32  16x16x16x32x8  52.5487  14.9286  276.315  2210.52  XX1
+6  32  16x16x16x32x8  61.366  14.5279  283.936  2271.49  XX1
+7  32  16x16x16x32x8  69.2851  14.0595  293.396  2347.17  XX1
+8  32  16x16x16x32x8  76.6769  13.6145  302.986  2423.89  XX1
+9  32  16x16x16x32x8  83.1388  13.1217  314.366  2514.93  XX1
+10  32  16x16x16x32x8  88.5674  12.5806  327.886  2623.09  XX1
+11  32  16x16x16x32x8  93.287  12.0464  342.427  2739.42  XX1
+12  32  16x16x16x32x8  96.8947  11.4695  359.648  2877.19  XX1
+------- SVETemplate3_constantU_2.h -------
+
+
+================ SVETemplate3_constantU_3.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate3_constantU_3.h -------
+1  32  16x16x16x32x8  14.657  20.8197  198.13  1585.04  XX1
+2  32  16x16x16x32x8  25.2536  17.9358  229.987  1839.9  XX1
+3  32  16x16x16x32x8  35.9374  17.0158  242.422  1939.37  XX1
+4  32  16x16x16x32x8  46.0702  16.3601  252.137  2017.1  XX1
+5  32  16x16x16x32x8  55.8527  15.8672  259.969  2079.76  XX1
+6  32  16x16x16x32x8  65.1667  15.4277  267.376  2139.01  XX1
+7  32  16x16x16x32x8  73.3454  14.8834  277.154  2217.23  XX1
+8  32  16x16x16x32x8  80.4894  14.2914  288.634  2309.07  XX1
+9  32  16x16x16x32x8  86.672  13.6793  301.551  2412.41  XX1
+10  32  16x16x16x32x8  91.4051  12.9837  317.707  2541.65  XX1
+11  32  16x16x16x32x8  95.8519  12.3776  333.264  2666.11  XX1
+12  32  16x16x16x32x8  98.6846  11.6814  353.125  2825  XX1
+------- SVETemplate3_constantU_3.h -------
+
+
+================ SVETemplate3_noLoadUInInnerLoop.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate3_noLoadUInInnerLoop.h -------
+1  32  16x16x16x32x8  12.2351  17.3794  237.35  1898.8  XX1
+2  32  16x16x16x32x8  22.3956  15.906  259.337  2074.69  XX1
+3  32  16x16x16x32x8  32.1219  15.2092  271.217  2169.74  XX1
+4  32  16x16x16x32x8  41.2059  14.6328  281.901  2255.21  XX1
+5  32  16x16x16x32x8  49.7749  14.1406  291.713  2333.71  XX1
+6  32  16x16x16x32x8  58.285  13.7985  298.945  2391.56  XX1
+7  32  16x16x16x32x8  65.8697  13.3664  308.609  2468.87  XX1
+8  32  16x16x16x32x8  72.6831  12.9054  319.634  2557.07  XX1
+9  32  16x16x16x32x8  78.9237  12.4564  331.155  2649.24  XX1
+10  32  16x16x16x32x8  84.6365  12.0222  343.114  2744.92  XX1
+11  32  16x16x16x32x8  89.5338  11.5617  356.781  2854.25  XX1
+12  32  16x16x16x32x8  93.6339  11.0836  372.173  2977.38  XX1
+------- SVETemplate3_noLoadUInInnerLoop.h -------
+
+
+================ SVETemplate4.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate4.h -------
+1  32  16x16x16x32x8  11.4624  16.2818  253.351  2026.8  XX1
+2  32  16x16x16x32x8  23.3559  16.588  248.674  1989.39  XX1
+3  32  16x16x16x32x8  34.3174  16.2488  253.865  2030.92  XX1
+4  32  16x16x16x32x8  45.4674  16.1461  255.48  2043.84  XX1
+5  32  16x16x16x32x8  56.3114  15.9976  257.852  2062.82  XX1
+6  32  16x16x16x32x8  67.0996  15.8853  259.674  2077.39  XX1
+7  32  16x16x16x32x8  76.797  15.5838  264.698  2117.58  XX1
+8  32  16x16x16x32x8  86.3381  15.3299  269.082  2152.65  XX1
+9  32  16x16x16x32x8  94.3307  14.888  277.068  2216.54  XX1
+10  32  16x16x16x32x8  100.255  14.2408  289.662  2317.29  XX1
+11  32  16x16x16x32x8  102.374  13.2198  312.031  2496.25  XX1
+12  32  16x16x16x32x8  102.113  12.0873  341.268  2730.14  XX1
+------- SVETemplate4.h -------
+
+
+================ SVETemplate5_integratedPF.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate5_integratedPF.h -------
+1  32  16x16x16x32x8  10.869  15.439  267.181  2137.45  XX1
+2  32  16x16x16x32x8  21.8578  15.524  265.718  2125.74  XX1
+3  32  16x16x16x32x8  31.8139  15.0634  273.843  2190.74  XX1
+4  32  16x16x16x32x8  42.0429  14.93  276.289  2210.32  XX1
+5  32  16x16x16x32x8  52.1498  14.8153  278.429  2227.43  XX1
+6  32  16x16x16x32x8  62.0072  14.6797  281  2248  XX1
+7  32  16x16x16x32x8  71.0112  14.4097  286.265  2290.12  XX1
+8  32  16x16x16x32x8  79.9824  14.2014  290.464  2323.71  XX1
+9  32  16x16x16x32x8  88.0568  13.8979  296.808  2374.47  XX1
+10  32  16x16x16x32x8  94.6401  13.4432  306.847  2454.77  XX1
+11  32  16x16x16x32x8  99.0072  12.785  322.643  2581.14  XX1
+12  32  16x16x16x32x8  101.219  11.9814  344.282  2754.26  XX1
+------- SVETemplate5_integratedPF.h -------
+
+
+================ SVETemplate5.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate5.h -------
+1  32  16x16x16x32x8  10.8324  15.3869  268.086  2144.68  XX1
+2  32  16x16x16x32x8  21.5201  15.2842  269.887  2159.1  XX1
+3  32  16x16x16x32x8  31.7002  15.0095  274.825  2198.6  XX1
+4  32  16x16x16x32x8  41.9134  14.884  277.143  2217.14  XX1
+5  32  16x16x16x32x8  51.7681  14.7069  280.481  2243.85  XX1
+6  32  16x16x16x32x8  61.6296  14.5903  282.721  2261.77  XX1
+7  32  16x16x16x32x8  71.1438  14.4367  285.731  2285.85  XX1
+8  32  16x16x16x32x8  79.8413  14.1764  290.977  2327.82  XX1
+9  32  16x16x16x32x8  87.7394  13.8478  297.882  2383.06  XX1
+10  32  16x16x16x32x8  94.4168  13.4115  307.573  2460.58  XX1
+11  32  16x16x16x32x8  99.399  12.8356  321.371  2570.97  XX1
+12  32  16x16x16x32x8  101.464  12.0104  343.451  2747.61  XX1
+------- SVETemplate5.h -------
+
