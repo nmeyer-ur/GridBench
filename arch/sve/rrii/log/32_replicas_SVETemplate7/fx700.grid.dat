@@ -1,0 +1,14 @@
+# for i in `seq 1 12` ; do OMP_NUM_THREADS=$i srun -n 1 numactl --cpunodebind=3 --membind=3 ./Benchmark_dwf --mpi 1.1.1.1 --grid 16.16.16.32 -Ls 8 --dslash-asm | grep ": mflop/s =" ; done
+1 Grid : Message : 135.188930 s : mflop/s =   10604.4
+2 Grid : Message : 68.150670 s : mflop/s =   21183.7
+3 Grid : Message : 45.820607 s : mflop/s =   31634.9
+4 Grid : Message : 34.688011 s : mflop/s =   42043.7
+5 Grid : Message : 28.137477 s : mflop/s =   52129.6
+6 Grid : Message : 23.580650 s : mflop/s =   62607
+7 Grid : Message : 20.523248 s : mflop/s =   72352.9
+8 Grid : Message : 18.786900 s : mflop/s =   82661.8
+9 Grid : Message : 16.229249 s : mflop/s =   92670.4
+10 Grid : Message : 14.753068 s : mflop/s =   102570
+11 Grid : Message : 13.553721 s : mflop/s =   112364
+12 Grid : Message : 12.606563 s : mflop/s =   121538
+
