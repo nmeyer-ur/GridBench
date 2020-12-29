@@ -104,13 +104,30 @@ int main(int argc, char* argv[])
   int nrep = argc > 2 ? atoi(argv[2]) : 1000;
   int psi_pf_dist_L1 = argc > 3 ? atoi(argv[3]) : 3;
   int psi_pf_dist_L2 = argc > 4 ? atoi(argv[4]) : 0;
-  int u_pf_dist_L2   = argc > 5 ? atoi(argv[5]) : -3;
+  int u_pf_dist_L2   = argc > 5 ? atoi(argv[5]) : -4;
 
   // check iterations
   assert(nrep > 0);
   // check if nreplica is > 0 and power of 2
   assert(nreplica > 0);
   assert( (nreplica & (nreplica - 1)) == 0 );
+
+  // near optimal PF measured using SVETemplate7.h and GCC
+  if (argc <= 3) {
+    std::cout << "Auto-picking PF distances" << std::endl;
+    switch(nreplica) {
+      1:  psi_pf_dist_L1 = 2;
+          psi_pf_dist_L2 = 0;
+          u_pf_dist_L2   = -3;
+          break;
+      default:
+          psi_pf_dist_L1 = 3;
+          psi_pf_dist_L2 = 0;
+          u_pf_dist_L2   = -4;
+    }
+  } else {
+    std::cout << "User-defined PF distances" << std::endl;
+  }
 
   int threads = 1;
 //#ifdef _OPENMP
