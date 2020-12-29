@@ -9,26 +9,10 @@
 #include <arm_sve.h>
     
 /*
- * SVETemplate5.h
+ * SVETemplate6.h
  *
- * - introduced permutes
- * (reverted complex multiplication split into 2 rounds due to performance penalty (single thread 206.303 cy instead of 193.879))
-
-$ for i in `seq 1 12` ; do OMP_NUM_THREADS=$i ./bench.rrii.sve.intrinsics.gcc 32 100 2> /dev/null | grep XX1 ; done
-1  32  16x16x16x32x8  12.255  21.2761  193.879  1551.04  XX1
-2  32  16x16x16x32x8  21.9419  19.0468  216.572  1732.57  XX1
-3  32  16x16x16x32x8  31.819  18.4138  224.017  1792.14  XX1
-4  32  16x16x16x32x8  40.9357  17.7672  232.169  1857.35  XX1
-5  32  16x16x16x32x8  49.5587  17.2079  239.716  1917.73  XX1
-6  32  16x16x16x32x8  58.0701  16.8027  245.496  1963.97  XX1
-7  32  16x16x16x32x8  65.9289  16.3514  252.272  2018.18  XX1
-8  32  16x16x16x32x8  73.6632  15.9859  258.039  2064.32  XX1
-9  32  16x16x16x32x8  80.8846  15.6027  264.377  2115.01  XX1
-10  32  16x16x16x32x8  87.57  15.2031  271.326  2170.61  XX1
-11  32  16x16x16x32x8  93.8792  14.8168  278.4  2227.2  XX1
-12  32  16x16x16x32x8  99.7469  14.431  285.844  2286.75  XX1
-
- * No significant impact of permute on performance
+ * - fine tuning of psi PF -> 122.628 GF/s using 12 threads
+ * 
  */
 
 #include <stdio.h>
@@ -602,8 +586,8 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
-  pf_L1  = nbr[ss*8+DIR+2];				\
-  pf_L2  = nbr[ssn*8+DIR-1];				\
+  pf_L1  = nbr[ss*8+DIR+psi_pf_dist_L1];	        \
+  pf_L2  = nbr[ssn*8+DIR+psi_pf_dist_L2];	        \
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
@@ -669,7 +653,7 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 // PREFETCH_GAUGE_L2 (prefetch to L2)
 #define PREFETCH_GAUGE_L2(A)  \
 { \
-  const auto & ref(U[sUn][A]); baseU = (uint64_t)&ref; \
+  const auto & ref(U[sUn][A+u_pf_dist_L2]); baseU = (uint64_t)&ref; \
   svprfd_vnum(pg1, (long*)(baseU), (int64_t)(0), SV_PLDL2STRM); \
   svprfd_vnum(pg1, (long*)(baseU), (int64_t)(4), SV_PLDL2STRM); \
   svprfd_vnum(pg1, (long*)(baseU), (int64_t)(8), SV_PLDL2STRM); \
@@ -807,7 +791,7 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #ifdef GRID_OMP_THREAD
 template<class SimdVec>
-double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm)
+double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm, int psi_pf_dist_L1, int psi_pf_dist_L2, int u_pf_dist_L2)
 {
   typedef  std::chrono::system_clock          Clock;
   typedef  std::chrono::time_point<Clock> TimePoint;

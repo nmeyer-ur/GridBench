@@ -98,10 +98,13 @@ int main(int argc, char* argv[])
   uint64_t fmax   = nsite*24*Ls*vComplexD::Nsimd();
   uint64_t vol    = nsite*Ls*vComplexD::Nsimd();
 
-  std::cout << "Usage: bench.* [<replicas=1 of 8x8x8x8xLs lattice, Ls=8 is fixed>] [<iterations=1000>]" << std::endl << std::endl;
+  std::cout << "Usage: bench.* [<replicas=1 of 8x8x8x8xLs lattice, Ls=8 is fixed>] [<iterations=1000>] [psi PF dist L1] [next psi PF dist L2] [next U PF dist L2]" << std::endl << std::endl;
 
   nreplica = argc > 1 ? atoi(argv[1]) : 1;
   int nrep = argc > 2 ? atoi(argv[2]) : 1000;
+  int psi_pf_dist_L1 = argc > 3 ? atoi(argv[3]) : 3;
+  int psi_pf_dist_L2 = argc > 4 ? atoi(argv[4]) : 0;
+  int u_pf_dist_L2   = argc > 5 ? atoi(argv[5]) : -3;
 
   // check iterations
   assert(nrep > 0);
@@ -120,6 +123,12 @@ threads = omp_thread_count();
   std::cout << "Nsimd      = " << vComplexD::Nsimd() << std::endl;
   std::cout << "Replicas   = " << nreplica << std::endl;
   std::cout << "Iterations = " << nrep << std::endl;
+
+  std::cout << std::endl;
+
+  std::cout << "     psi PF dist L1 = " << psi_pf_dist_L1 << std::endl;
+  std::cout << "next psi PF dist L2 = " << psi_pf_dist_L2 << std::endl;
+  std::cout << "next   U PF dist L2 = " << u_pf_dist_L2   << std::endl;
 
   std::cout << std::endl;
 
@@ -232,14 +241,18 @@ threads = omp_thread_count();
   double flops = 1320.0*vol*nreplica;
   //int nrep=1000; // cache warm
 #ifdef DOUBLE
-  double usec = dslash_kernel<vComplexD>(nrep,
-			   (vComplexD *)&U[0],
-			   (vComplexD *)&Psi[0],
-			   (vComplexD *)&Phi[0],
-			   &nbr[0],
-			   nsite*nreplica,
-			   Ls,
-			   &prm[0]);
+  double usec;
+  usec = dslash_kernel<vComplexD>(nrep,
+                           (vComplexD *)&U[0],
+                           (vComplexD *)&Psi[0],
+                           (vComplexD *)&Phi[0],
+                           &nbr[0],
+                           nsite*nreplica,
+                           Ls,
+                           &prm[0],
+			   psi_pf_dist_L1,
+			   psi_pf_dist_L2,
+			   u_pf_dist_L2);
 #else
   double usec = dslash_kernel<vComplexF>(nrep,
 			   (vComplexF *)&fU[0],
@@ -319,7 +332,7 @@ threads = omp_thread_count();
   std::cout << std::endl;
 
   // One liner result output
-  std::cout << "# Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site" << std::endl;
+  std::cout << "# Threads     Replicas    Volume    GFlop/s    % peak    Cycles per single site    Cycles per vector site    psi PF dist L1    next psi PF dist L2    next U PF dist L2" << std::endl;
   std::cout
     << threads       << "  "
     << nreplica      << "  "
@@ -328,6 +341,9 @@ threads = omp_thread_count();
     << percent_peak  << "  "
     << cycles_per_Ls * threads / EXPAND_SIMD << "  "
     << cycles_per_Ls * threads << "  "
+    << psi_pf_dist_L1 << "  "
+    << psi_pf_dist_L2 << "  "
+    << u_pf_dist_L2 << "  "
     << "XX1" << std::endl << std::endl;
 
   // Check results
