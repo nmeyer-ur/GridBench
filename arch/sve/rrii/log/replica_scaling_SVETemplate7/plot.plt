@@ -128,7 +128,8 @@ set x2label ""
 set x2label  font "" textcolor lt -1 norotate
 set xrange [ 1.00000 : 16.0000 ] noreverse writeback
 set x2range [ * : * ] noreverse writeback
-set ylabel "cycles per single site" 
+set ylabel "GFlop/s" 
+#set ylabel "cycles per single site" 
 set ylabel  font "" textcolor lt -1 rotate
 set y2label "" 
 set y2label  font "" textcolor lt -1 rotate
@@ -166,5 +167,6 @@ set psdir
 set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap v5
 GNUTERM = "qt"
 ## Last datafile plotted: "fx700.gcc.12threads.dat"
-plot 'fx700.gcc.1thread.dat' u 2:6 w lp title 'FX700, GCC: GridBench, split layout, 1 thread', 'fx700.gcc.6threads.dat' u 2:6 w lp title 'FX700, GCC: GridBench, split layout, 6 threads', 'fx700.gcc.12threads.dat' u 2:6 w lp title 'FX700, GCC: GridBench, split layout, 12 threads'
+plot 'fx700.gcc.1thread.dat' u 2:4 w lp title 'FX700, GCC: GridBench, split layout, 1 thread', 'fx700.gcc.6threads.dat' u 2:4 w lp title 'FX700, GCC: GridBench, split layout, 6 threads', 'fx700.gcc.12threads.dat' u 2:4 w lp title 'FX700, GCC: GridBench, split layout, 12 threads'
+#plot 'fx700.gcc.1thread.dat' u 2:6 w lp title 'FX700, GCC: GridBench, split layout, 1 thread', 'fx700.gcc.6threads.dat' u 2:6 w lp title 'FX700, GCC: GridBench, split layout, 6 threads', 'fx700.gcc.12threads.dat' u 2:6 w lp title 'FX700, GCC: GridBench, split layout, 12 threads'
 #    EOF

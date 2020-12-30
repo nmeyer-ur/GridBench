@@ -1,7 +1,6 @@
 /*
- * SVETemplate6.h
+ * SVETemplate7.h
  *
- * - fine tuning of psi PF -> 122.628 GF/s using 12 threads
  * 
  */
 

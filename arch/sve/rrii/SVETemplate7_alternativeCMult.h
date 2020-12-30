@@ -1,7 +1,7 @@
 /*
- * SVETemplate7_constantU_1.h
+ * SVETemplate7_alternativeCMult.h
  *
- *
+ * - alternative implementation of complex multiplication separating operands
  */
 
 #include <stdio.h>
@@ -82,33 +82,51 @@
 
 #define MULT_2SPIN(A)\
   { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
-    U_00=duplicate(1);\
-    U_10=duplicate(2);\
-    U_20=duplicate(3);\
-    U_01=duplicate(4);\
-    U_11=duplicate(5);\
-    U_21=duplicate(6);\
-    UChi_00 = U_00*Chi_00;                                      \
-    UChi_10 = U_00*Chi_10;                                      \
-    UChi_01 = U_10*Chi_00;                                      \
-    UChi_11 = U_10*Chi_10;                                      \
-    UChi_02 = U_20*Chi_00;                                      \
-    UChi_12 = U_20*Chi_10;                                      \
-    UChi_00+= U_01*Chi_01;                                      \
-    UChi_10+= U_01*Chi_11;                                      \
-    UChi_01+= U_11*Chi_01;                                      \
-    UChi_11+= U_11*Chi_11;                                      \
-    UChi_02+= U_21*Chi_01;                                      \
-    UChi_12+= U_21*Chi_11;                                      \
-    U_00=duplicate(7);\
-    U_10=duplicate(8);\
-    U_20=duplicate(9);\
-    UChi_00+= U_00*Chi_02;                                      \
-    UChi_10+= U_00*Chi_12;                                      \
-    UChi_01+= U_10*Chi_02;                                      \
-    UChi_11+= U_10*Chi_12;                                      \
-    UChi_02+= U_20*Chi_02;                                      \
-    UChi_12+= U_20*Chi_12;}
+    U_00=coalescedRead(ref[0][0],mylane);				\
+    U_10=coalescedRead(ref[1][0],mylane);				\
+    U_20=coalescedRead(ref[2][0],mylane);				\
+    U_01=coalescedRead(ref[0][1],mylane);				\
+    U_11=coalescedRead(ref[1][1],mylane);				\
+    U_21=coalescedRead(ref[2][1],mylane);				\
+    UChi_00 = U_00**Chi_00;					\
+    UChi_10 = U_00**Chi_10;					\
+    UChi_01 = U_10**Chi_00;					\
+    UChi_11 = U_10**Chi_10;					\
+    UChi_02 = U_20**Chi_00;					\
+    UChi_12 = U_20**Chi_10;					\
+    UChi_00 = U_00***Chi_00;					\
+    UChi_10 = U_00***Chi_10;					\
+    UChi_01 = U_10***Chi_00;					\
+    UChi_11 = U_10***Chi_10;					\
+    UChi_02 = U_20***Chi_00;					\
+    UChi_12 = U_20***Chi_10;					\
+    UChi_00+= U_01**Chi_01;					\
+    UChi_10+= U_01**Chi_11;					\
+    UChi_01+= U_11**Chi_01;					\
+    UChi_11+= U_11**Chi_11;					\
+    UChi_02+= U_21**Chi_01;					\
+    UChi_12+= U_21**Chi_11;					\
+    UChi_00+= U_01***Chi_01;					\
+    UChi_10+= U_01***Chi_11;					\
+    UChi_01+= U_11***Chi_01;					\
+    UChi_11+= U_11***Chi_11;					\
+    UChi_02+= U_21***Chi_01;					\
+    UChi_12+= U_21***Chi_11;					\
+    U_00=coalescedRead(ref[0][2],mylane);				\
+    U_10=coalescedRead(ref[1][2],mylane);				\
+    U_20=coalescedRead(ref[2][2],mylane);				\
+    UChi_00+= U_00**Chi_02;					\
+    UChi_10+= U_00**Chi_12;					\
+    UChi_01+= U_10**Chi_02;					\
+    UChi_11+= U_10**Chi_12;					\
+    UChi_02+= U_20**Chi_02;					\
+    UChi_12+= U_20**Chi_12;          \
+    UChi_00+= U_00***Chi_02;					\
+    UChi_10+= U_00***Chi_12;					\
+    UChi_01+= U_10***Chi_02;					\
+    UChi_11+= U_10***Chi_12;					\
+    UChi_02+= U_20***Chi_02;					\
+    UChi_12+= U_20***Chi_12;}
 
 //      hspin(0)=fspin(0)+timesI(fspin(3));
 //      hspin(1)=fspin(1)+timesI(fspin(2));
@@ -337,6 +355,9 @@
   PREFETCH_CHIMU_L2; 					\
   PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
+  if (s == 0) {                                           \
+   if ((DIR == 0) || (DIR == 2) || (DIR == 4) || (DIR == 6)) { PREFETCH_GAUGE_L2(DIR); } \
+  }                                                       \
   RECON;
 
 #define HAND_RESULT(ss)				\
