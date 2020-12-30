@@ -2,6 +2,9 @@
  * SVETemplate7_alternativeCMult.h
  *
  * - alternative implementation of complex multiplication separating operands
+ *
+ * performs worse than SVETemplate7.h (124 GF/s)
+ * 12  32  16x16x16x32x8  119.974  17.3574  237.651  1901.21  3  0  -4  XX1
  */
 
 #include <stdio.h>
