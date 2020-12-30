@@ -1,0 +1,9 @@
+# for i in 1 ; do OMP_NUM_THREADS=12 numactl --cpunodebind=0 --membind=0 ./bench.rrii.sve.intrinsics.gcc $i 5000 2 -3 -3 2> /dev/null | grep XX1 ; done
+12  1  8x8x8x8x8  153.818  22.2538  185.362  1482.9  2  -3  -3  XX1
+# for i in 2 4 8 16 32 ; do OMP_NUM_THREADS=12 numactl --cpunodebind=0 --membind=0 ./bench.rrii.sve.intrinsics.gcc $i 5000 3 -2 -4 2> /dev/null | grep XX1 ; done
+12  2  8x8x8x16x8  142.317  20.5899  200.341  1602.73  3  -2  -4  XX1
+12  4  8x8x16x16x8  128.432  18.581  222.001  1776.01  3  -2  -4  XX1
+12  8  8x16x16x16x8  129.12  18.6806  220.817  1766.54  3  -2  -4  XX1
+12  16  16x16x16x16x8  129.377  18.7177  220.379  1763.03  3  -2  -4  XX1
+12  32  16x16x16x32x8  130.904  18.9387  217.808  1742.47  3  -2  -4  XX1
+

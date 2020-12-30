@@ -1,0 +1,146 @@
+=== description ===
+empty
+
+=== commit ===
+commit 504b2145642f935a48e101428438049157d18233
+
+=== timestamp ===
+Wed Dec 30 20:17:56 JST 2020
+
+=== compiler ===
+
+=== clock frequency in GHz ===
+2.2
+
+=== node ===
+pm3s1b0-12
+
+=== current working directory ===
+/home/users/gre/gre-1/rrii/GridBench
+
+=== this script name ===
+./runme.fcc.sh
+
+=== this script ===
+#!/bin/bash
+
+# copy to GridBench folder
+# compile and run all registered templates 
+
+DESCRIPTION="empty"
+SUFFIX="fcc"
+CXX="FCC"
+BIND=7
+
+
+# compile and execute
+
+g () {
+  echo -e "\n================ $1 ================"
+  cd arch/sve/rrii/
+  rm -f SVE_rrii.h
+  ./intrinsify_rrii.py $1 > SVE_rrii.h
+  cd ../../../
+  rm -f bench.rrii.sve.intrinsics.${SUFFIX}
+  make CXX=${CXX} bench.rrii.sve.intrinsics.${SUFFIX}
+  echo -e "------- $1 -------"
+  for i in `seq 1 12` ; do OMP_NUM_THREADS=$i numactl --cpunodebind=${BIND} --membind=${BIND} ./bench.rrii.sve.intrinsics.${SUFFIX} 32 100 2> /dev/null | grep XX1 ; done
+  echo -e "------- $1 -------"
+  echo -e ""
+  mv bench.rrii.sve.intrinsics.${SUFFIX} bench.rrii.sve.intrinsics.${SUFFIX}.`basename $1 .h`
+}
+
+# main
+
+echo -e "=== description ==="
+echo -e "${DESCRIPTION}"
+
+echo -e "\n=== commit ==="
+git log | head -n 1
+
+echo -e "\n=== timestamp ==="
+date
+
+echo -e "\n=== compiler ==="
+${CXX} -v
+
+echo -e "\n=== clock frequency in GHz ==="
+cat freq.txt
+
+echo -e "\n=== node ==="
+hostname
+
+echo -e "\n=== current working directory ==="
+pwd
+
+echo -e "\n=== this script name ==="
+echo -e "$0"
+
+echo -e "\n=== this script ==="
+cat $0
+
+echo -e "=== end this script ==="
+
+echo -e "\n=== runs ==="
+
+g "SVETemplate7.h"
+g "SVETemplate7_constantU_1.h"
+g "SVETemplate7_alternativeCMult.h"
+
+=== end this script ===
+
+=== runs ===
+
+================ SVETemplate7.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate7.h -------
+1  32  16x16x16x32x8  10.5955  15.0504  274.079  2192.63  3  0  -4  XX1
+2  32  16x16x16x32x8  21.2067  15.0615  273.876  2191.01  3  0  -4  XX1
+3  32  16x16x16x32x8  31.5011  14.9153  276.562  2212.49  3  0  -4  XX1
+4  32  16x16x16x32x8  41.1452  14.6112  282.317  2258.54  3  0  -4  XX1
+5  32  16x16x16x32x8  51.1909  14.5429  283.644  2269.15  3  0  -4  XX1
+6  32  16x16x16x32x8  60.8604  14.4082  286.295  2290.36  3  0  -4  XX1
+7  32  16x16x16x32x8  70.4044  14.2866  288.732  2309.85  3  0  -4  XX1
+8  32  16x16x16x32x8  78.8656  14.0031  294.577  2356.62  3  0  -4  XX1
+9  32  16x16x16x32x8  87.1196  13.7499  300.001  2400.01  3  0  -4  XX1
+10  32  16x16x16x32x8  94.0099  13.3537  308.904  2471.23  3  0  -4  XX1
+11  32  16x16x16x32x8  99.0296  12.7879  322.57  2580.56  3  0  -4  XX1
+12  32  16x16x16x32x8  101.522  12.0172  343.257  2746.05  3  0  -4  XX1
+------- SVETemplate7.h -------
+
+
+================ SVETemplate7_constantU_1.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate7_constantU_1.h -------
+1  32  16x16x16x32x8  14.4121  20.4717  201.498  1611.98  3  0  -4  XX1
+2  32  16x16x16x32x8  28.6932  20.3787  202.417  1619.34  3  0  -4  XX1
+3  32  16x16x16x32x8  42.6243  20.1819  204.391  1635.12  3  0  -4  XX1
+4  32  16x16x16x32x8  56.0773  19.9138  207.143  1657.14  3  0  -4  XX1
+5  32  16x16x16x32x8  67.7453  19.2458  214.332  1714.66  3  0  -4  XX1
+6  32  16x16x16x32x8  80.6954  19.104  215.923  1727.38  3  0  -4  XX1
+7  32  16x16x16x32x8  92.6133  18.7933  219.493  1755.95  3  0  -4  XX1
+8  32  16x16x16x32x8  104.081  18.4803  223.21  1785.68  3  0  -4  XX1
+9  32  16x16x16x32x8  112.206  17.7092  232.93  1863.44  3  0  -4  XX1
+10  32  16x16x16x32x8  116.323  16.5231  249.651  1997.2  3  0  -4  XX1
+11  32  16x16x16x32x8  115.9  14.9664  275.617  2204.94  3  0  -4  XX1
+12  32  16x16x16x32x8  114.035  13.4985  305.59  2444.72  3  0  -4  XX1
+------- SVETemplate7_constantU_1.h -------
+
+
+================ SVETemplate7_alternativeCMult.h ================
+FCC -DRRII  -Nclang -Kfast -std=c++11 -DSVM -DOMP -fopenmp -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE bench.cc arch/gen64/static_data.cc -lm  -o bench.rrii.sve.intrinsics.fcc
+------- SVETemplate7_alternativeCMult.h -------
+1  32  16x16x16x32x8  10.6152  15.0784  273.571  2188.57  3  0  -4  XX1
+2  32  16x16x16x32x8  21.108  14.9915  275.156  2201.25  3  0  -4  XX1
+3  32  16x16x16x32x8  31.2219  14.7831  279.035  2232.28  3  0  -4  XX1
+4  32  16x16x16x32x8  41.3851  14.6964  280.681  2245.45  3  0  -4  XX1
+5  32  16x16x16x32x8  51.2631  14.5634  283.245  2265.96  3  0  -4  XX1
+6  32  16x16x16x32x8  61.1461  14.4759  284.957  2279.66  3  0  -4  XX1
+7  32  16x16x16x32x8  69.0792  14.0177  294.271  2354.17  3  0  -4  XX1
+8  32  16x16x16x32x8  77.8902  13.8299  298.266  2386.13  3  0  -4  XX1
+9  32  16x16x16x32x8  86.1065  13.59  303.531  2428.25  3  0  -4  XX1
+10  32  16x16x16x32x8  93.1202  13.2273  311.855  2494.84  3  0  -4  XX1
+11  32  16x16x16x32x8  98.2264  12.6842  325.208  2601.66  3  0  -4  XX1
+12  32  16x16x16x32x8  100.669  11.9163  346.165  2769.32  3  0  -4  XX1
+------- SVETemplate7_alternativeCMult.h -------
+
