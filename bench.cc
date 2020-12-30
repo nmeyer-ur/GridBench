@@ -1,6 +1,11 @@
 #define  DOUBLE
+#if defined(SVE) && defined(RIRI)    
+#define DATA_SIMD 4  // Size in static data   // workaround until clearer how to handle this implementation correctly
+#define EXPAND_SIMD 4  // Size in static data // result will be wrong
+#else
 #define DATA_SIMD 8  // Size in static data
 #define EXPAND_SIMD 8  // Size in static data
+#endif
 
 // Invoke dslash.s - test for compiler-gsnerated code
 #include <stdio.h>

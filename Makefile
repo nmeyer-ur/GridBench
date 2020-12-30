@@ -55,6 +55,7 @@ RRII_CXXFLAGSXX   := -DRRII  -march=knl  $(OMP) -DGEN_SIMD_WIDTH=128
 RRII_CXXFLAGS_SVE_GCC               := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DSVE
 RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -DRIRI  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+#RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 #RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -march=armv8-a+sve $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -mcpu=a64fx $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 RRII_CXXFLAGS_SVE_INTRIN_FCC        := -DRRII  -Nclang -Kfast $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
@@ -120,6 +121,9 @@ bench.rrii.sve.intrinsics.fcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefi
 # SVE RIRI
 bench.riri.sve.intrinsics.gcc: bench.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile arch/sve/riri/wi.h arch/sve/riri/SVE_riri.h
 	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
+#bench.riri.sve.intrinsics.gcc: bench.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile arch/sve/riri/wi.h arch/sve/riri/SVE_riri.h
+#	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) -O0 bench.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
+
 
 
 bench.rrii.sycl.cpu: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile

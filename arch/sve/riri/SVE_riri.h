@@ -73,9 +73,9 @@ static constexpr int Tm = 7;
 #ifdef INTERIOR_AND_EXTERIOR
 
 #define ASM_LEG(Dir,NxtDir,PERMUTE_DIR,PROJ,RECON)			\
-        offset = nbr[ssn*8+Dir-1]; {auto & ref(in[offset]); basep = (uint64_t)&ref;} \
+        offset = nbr[ssn*8+Dir+psi_pf_dist_L2]; {auto & ref(in[offset]); basep = (uint64_t)&ref;} \
         offset = nbr[ss*8+NxtDir]; {auto & ref(in[offset]); base2 = (uint64_t)&ref;} \
-        offset = nbr[ss*8+Dir+2]; {auto & ref(in[offset]); base3 = (uint64_t)&ref;} \
+        offset = nbr[ss*8+Dir+psi_pf_dist_L1]; {auto & ref(in[offset]); base3 = (uint64_t)&ref;} \
     LOAD_CHIMU(base);                                       \
     LOAD_TABLE(PERMUTE_DIR);                                \
     PROJ;							                        \
@@ -91,9 +91,9 @@ static constexpr int Tm = 7;
     PREFETCH_CHIMU_L2(basep);                               \
     /* PREFETCH_GAUGE_L1(NxtDir); */                        \
     MULT_2SPIN_2;					                        \
-  /*  if (s == 0) {                                  */         \
-  /*    if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2(Dir); } */  \
-  /*  }                                              */      \
+    if (s == 0) {                                          \
+      if ((Dir == 0) || (Dir == 4)) { PREFETCH_GAUGE_L2((Dir+u_pf_dist_L2)); }  \
+    }                                                    \
     RECON;
 
 /*
@@ -194,7 +194,7 @@ static constexpr int Tm = 7;
 #endif
 
 template<class SimdVec>
-double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm)
+double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm,int psi_pf_dist_L1, int psi_pf_dist_L2, int u_pf_dist_L2)
 {
 
     #ifdef __ARM_FEATURE_SVE

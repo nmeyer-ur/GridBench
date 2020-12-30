@@ -1,12 +1,12 @@
 #!/usr/bin/gnuplot -persist
 #
-#
+#    
 #    	G N U P L O T
-#    	Version 5.2 patchlevel 8    last modified 2019-12-01
-#
+#    	Version 5.2 patchlevel 8    last modified 2019-12-01 
+#    
 #    	Copyright (C) 1986-1993, 1998, 2004, 2007-2019
 #    	Thomas Williams, Colin Kelley and many others
-#
+#    
 #    	gnuplot home:     http://www.gnuplot.info
 #    	faq, bugs, etc:   type "help FAQ"
 #    	immediate help:   type "help"  (plot window: hit 'h')
@@ -15,26 +15,26 @@
 unset clip points
 set clip one
 unset clip two
-set errorbars front 1.000000
+set errorbars front 1.000000 
 set border 31 front lt black linewidth 1.000 dashtype solid
-set zdata
-set ydata
-set xdata
-set y2data
-set x2data
+set zdata 
+set ydata 
+set xdata 
+set y2data 
+set x2data 
 set boxwidth
 set style fill  empty border
 set style rectangle back fc  bgnd fillstyle   solid 1.00 border lt -1
-set style circle radius graph 0.02
+set style circle radius graph 0.02 
 set style ellipse size graph 0.05, 0.03 angle 0 units xy
 set dummy x, y
-set format x "% h"
-set format y "% h"
-set format x2 "% h"
-set format y2 "% h"
-set format z "% h"
-set format cb "% h"
-set format r "% h"
+set format x "% h" 
+set format y "% h" 
+set format x2 "% h" 
+set format y2 "% h" 
+set format z "% h" 
+set format cb "% h" 
+set format r "% h" 
 set ttics format "% h"
 set timefmt "%d/%m/%y,%H:%M"
 set angles radians
@@ -44,8 +44,8 @@ unset raxis
 set theta counterclockwise right
 set style parallel front  lt black linewidth 2.000 dashtype solid
 set key title "" center
-set key fixed left top vertical Right noreverse enhanced autotitle nobox
-set key noinvert samplen 4 spacing 1 width 0 height 0
+set key fixed right bottom vertical Right noreverse enhanced autotitle nobox
+set key noinvert samplen 4 spacing 1 width 0 height 0 
 set key maxcolumns 0 maxrows 0
 set key noopaque
 unset label
@@ -70,7 +70,7 @@ set view azimuth 0
 set rgbmax 255
 set samples 100, 100
 set isosamples 10, 10
-set surface
+set surface 
 unset contour
 set cntrlabel  format '%8.3g' font '' start 5 interval 20
 set mapping cartesian
@@ -102,45 +102,45 @@ set mcbtics default
 set mrtics default
 set nomttics
 set xtics border in scale 1,0.5 mirror norotate  autojustify
-set xtics  norangelimit autofreq
+set xtics  norangelimit autofreq 
 set ytics border in scale 1,0.5 mirror norotate  autojustify
-set ytics  norangelimit autofreq
+set ytics  norangelimit autofreq 
 set ztics border in scale 1,0.5 nomirror norotate  autojustify
-set ztics  norangelimit autofreq
+set ztics  norangelimit autofreq 
 unset x2tics
 unset y2tics
 set cbtics border in scale 1,0.5 mirror norotate  autojustify
-set cbtics  norangelimit autofreq
+set cbtics  norangelimit autofreq 
 set rtics axis in scale 1,0.5 nomirror norotate  autojustify
-set rtics  norangelimit autofreq
+set rtics  norangelimit autofreq 
 unset ttics
-set title "Domain wall (32 replicas, eq. to 16x16x16x32x8 lattice) using SVETemplate7*.h"
+set title "Domain wall (32 replicas, eq. to 16x16x16x32x8 lattice) using SVETemplate7*.h" 
 set title  font "" textcolor lt -1 norotate
-set timestamp bottom
-set timestamp ""
+set timestamp bottom 
+set timestamp "" 
 set timestamp  font "" textcolor lt -1 norotate
 set trange [ * : * ] noreverse nowriteback
 set urange [ * : * ] noreverse nowriteback
 set vrange [ * : * ] noreverse nowriteback
-set xlabel "threads"
+set xlabel "threads" 
 set xlabel  font "" textcolor lt -1 norotate
-set x2label ""
+set x2label "" 
 set x2label  font "" textcolor lt -1 norotate
 set xrange [ 1.00000 : 12.0000 ] noreverse writeback
 set x2range [ * : * ] noreverse writeback
-set ylabel "GFlop/s"
+set ylabel "GFlop/s" 
 set ylabel  font "" textcolor lt -1 rotate
-set y2label ""
+set y2label "" 
 set y2label  font "" textcolor lt -1 rotate
 set yrange [ * : * ] noreverse writeback
 set y2range [ * : * ] noreverse writeback
-set zlabel ""
+set zlabel "" 
 set zlabel  font "" textcolor lt -1 norotate
 set zrange [ * : * ] noreverse writeback
-set cblabel ""
+set cblabel "" 
 set cblabel  font "" textcolor lt -1 rotate
 set cbrange [ * : * ] noreverse writeback
-set rlabel ""
+set rlabel "" 
 set rlabel  font "" textcolor lt -1 norotate
 set rrange [ * : * ] noreverse writeback
 unset logscale
@@ -155,17 +155,16 @@ set pm3d explicit at s
 set pm3d scansautomatic
 set pm3d interpolate 1,1 flush begin noftriangles noborder corners2color mean
 set pm3d nolighting
-set palette positive nops_allcF maxcolors 0 gamma 1.5 color model RGB
+set palette positive nops_allcF maxcolors 0 gamma 1.5 color model RGB 
 set palette rgbformulae 7, 5, 15
 set colorbox default
 set colorbox vertical origin screen 0.9, 0.2 size screen 0.05, 0.6 front  noinvert bdefault
 set style boxplot candles range  1.50 outliers pt 7 separation 1 labels auto unsorted
-set loadpath
-set fontpath
+set loadpath 
+set fontpath 
 set psdir
 set fit brief errorvariables nocovariancevariables errorscaling prescale nowrap v5
 GNUTERM = "qt"
 ## Last datafile plotted: "fx1000.fcc_rrii.dat"
-plot 'fx700.grid.dat' u 1:($11 / 1000) w lp lw 2 title 'FX700, GCC: Grid reference, interleaved layout', 'fx700.gcc_rrii.dat'  u 1:4 w lp title 'FX700, GCC: GridBench, split layout', 'fx700.armclang_rrii.dat'  u 1:4 w lp title 'FX700, armclang: GridBench, split layout','fx700.gcc_rrii.constantU.dat'  u 1:4 w lp title 'FX700, GCC: GridBench, no U loads, U=constant, split layout', 'fx1000.gcc_rrii.dat'  u 1:4 w lp title 'FX1000, GCC: GridBench, split layout', 'fx1000.fcc_rrii.dat'  u 1:4 w lp title 'FX1000, FCC: GridBench, split layout'
-#plot 'fx700.grid.dat' u 1:($11 / 1000) w lp lw 2 title 'FX700, GCC: Grid reference, interleaved layout', 'fx700.gcc_rrii.dat'  u 1:4 w lp title 'FX700, GCC: GridBench, split layout', 'fx700.armclang_rrii.dat'  u 1:4 w lp title 'FX700, armclang: GridBench, split layout', 'fx1000.gcc_rrii.dat'  u 1:4 w lp title 'FX1000, GCC: GridBench, split layout', 'fx1000.fcc_rrii.dat'  u 1:4 w lp title 'FX1000, FCC: GridBench, split layout'
+plot 'fx700.grid.dat' u 1:($11 / 1000) w lp lw 2 title 'FX700, GCC: Grid reference, interleaved layout', 'fx700.gcc_riri.preliminary.dat'  u 1:4 w lp title 'FX700, GCC: GridBench, interleaved layout (preliminary)', 'fx700.gcc_rrii.dat'  u 1:4 w lp title 'FX700, GCC: GridBench, split layout', 'fx700.armclang_rrii.dat'  u 1:4 w lp title 'FX700, armclang: GridBench, split layout', 'fx700.gcc_rrii.constantU.dat'  u 1:4 w lp title 'FX700, GCC: GridBench, no U loads, U=constant, split layout', 'fx1000.gcc_rrii.dat'  u 1:4 w lp title 'FX1000, GCC: GridBench, split layout', 'fx1000.fcc_rrii.dat'  u 1:4 w lp title 'FX1000, FCC: GridBench, split layout'
 #    EOF
