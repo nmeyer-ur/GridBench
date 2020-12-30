@@ -115,14 +115,15 @@ int main(int argc, char* argv[])
   // near optimal PF measured using SVETemplate7.h and GCC
   if (argc <= 3) {
     std::cout << "Auto-picking PF distances" << std::endl;
-    if (nreplica == 1) {
-      psi_pf_dist_L1 = 2;
-      psi_pf_dist_L2 = 0;
-      u_pf_dist_L2   = -3;
-    } else {
-      psi_pf_dist_L1 = 3;
-      psi_pf_dist_L2 = 0;
-      u_pf_dist_L2   = -4;
+    switch(nreplica) {
+      case 1:  psi_pf_dist_L1 = 2;
+               psi_pf_dist_L2 = 0;
+               u_pf_dist_L2   = -3;
+               break;
+      default:
+               psi_pf_dist_L1 = 3;
+               psi_pf_dist_L2 = 0;
+               u_pf_dist_L2   = -4;
     }
   } else {
     std::cout << "User-defined PF distances" << std::endl;
