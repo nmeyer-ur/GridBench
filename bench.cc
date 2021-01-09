@@ -1,11 +1,24 @@
 #define  DOUBLE
 #if defined(SVE) && defined(RIRI)    
-#define DATA_SIMD 4  // Size in static data   // workaround until clearer how to handle this implementation correctly
-#define EXPAND_SIMD 4  // Size in static data // result will be wrong
+#define DATA_SIMD 4  // Size in riri static data
+#define EXPAND_SIMD 4 // Target size riri
 #else
-#define DATA_SIMD 8  // Size in static data
-#define EXPAND_SIMD 8  // Size in static data
+#define DATA_SIMD 8  // Size in riri static data
+#define EXPAND_SIMD 8  // Target size rrii
 #endif
+
+/* SVE
+ *
+ * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateD; 
+ * use riri dslash kernel with settings
+ *   DATA_SIMD   4
+ *   EXPAND_SIMD 4
+ *
+ * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateF; 
+ * use rrii dslash kernel with settings
+ *   DATA_SIMD   8
+ *   EXPAND_SIMD 8
+ */
 
 // Invoke dslash.s - test for compiler-gsnerated code
 #include <stdio.h>
@@ -64,11 +77,19 @@ int omp_thread_count() {
 #endif
 
 #ifdef RRII
+#ifdef SVE
+#include "arch/sve/rrii/static_data.h"
+#else
 #include "arch/gen64/static_data.h"
+#endif
 #endif
 
 #ifdef RIRI
+#ifdef SVE
+#include "arch/sve/riri/static_data.h"
+#else
 #include "arch/gen64/static_data.h"
+#endif
 #endif
 
 // read CPU frequency from file
@@ -105,6 +126,11 @@ int main(int argc, char* argv[])
 
   std::cout << "Usage: bench.* [<replicas=1 of 8x8x8x8xLs lattice, Ls=8 is fixed>] [<iterations=1000>] [psi PF dist L1] [next psi PF dist L2] [next U PF dist L2]" << std::endl << std::endl;
 
+  //std::cout << "umax = " << umax << std::endl;
+  //std::cout << "fmax = " << fmax << std::endl;
+
+  std::cout << std::endl;
+
   nreplica = argc > 1 ? atoi(argv[1]) : 1;
   int nrep = argc > 2 ? atoi(argv[2]) : 1000;
   int psi_pf_dist_L1 = argc > 3 ? atoi(argv[3]) : 3;
@@ -119,7 +145,7 @@ int main(int argc, char* argv[])
 
   // near optimal PF measured using SVETemplate7.h and GCC
   if (argc <= 3) {
-    std::cout << "Auto-picking PF distances" << std::endl;
+    std::cout << "Auto-picking PF distances (tuned for rrii, 32 replicas, nsite 512, 12 threads, FX700 using SVETemplate7.h / GCC 10.1.1)" << std::endl;
     switch(nreplica) {
       case 1:  psi_pf_dist_L1 = 2;
                psi_pf_dist_L2 = 0;
@@ -184,6 +210,15 @@ threads = omp_thread_count();
     << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
     << " -Ls 8 --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
     << std::endl << std::endl;
+
+  /*
+  std::FILE *fp;
+
+  Vector<double>   U_static(umax);
+  std::fopen("static_data.U.dat", "rb");
+  std::fread(&U_static[0]; sizeof(double), umax, fp); 
+  std::fclose(fp);
+  */
 
   Vector<double>   U(umax*nreplica);
   Vector<double>   Psi(fmax*nreplica);

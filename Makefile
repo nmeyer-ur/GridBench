@@ -30,6 +30,9 @@ AVX_DATA      := arch/avx/static_data_gauge.cc arch/avx/static_data_fermion.cc
 SSE_DATA      := arch/sse/static_data.cc
 RRII_DATA     := arch/gen64/static_data.cc
 RIRI_DATA     := arch/gen64/static_data.cc
+RRII_DATA_SVE := arch/sve/rrii/static_data.cc
+RIRI_DATA_SVE := arch/sve/riri/static_data.cc
+
 
 #############################################
 # Intel
@@ -53,7 +56,7 @@ RRII_CXXFLAGSXX   := -DRRII  -march=knl  $(OMP) -DGEN_SIMD_WIDTH=128
 
 
 RRII_CXXFLAGS_SVE_GCC               := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DSVE
-RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE -g
 RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -DRIRI  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 #RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 #RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -march=armv8-a+sve $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
@@ -106,21 +109,22 @@ bench.rrii.omp.cpu: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 
 
 # SVE RRII
-bench.rrii.sve.gccvectors.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
-	$(CXX) $(RRII_CXXFLAGS_SVE_GCC) $(CXXFLAGS_SVE_NOSCHED_GCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.gccvectors.gcc
+bench.rrii.sve.gccvectors.gcc: bench.cc $(RRII_DATA_SVE)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
+	$(CXX) $(RRII_CXXFLAGS_SVE_GCC) $(CXXFLAGS_SVE_NOSCHED_GCC) bench.cc $(RRII_DATA_SVE) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.gccvectors.gcc
 
-bench.rrii.sve.intrinsics.gcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
-	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.gcc
+bench.rrii.sve.intrinsics.gcc: bench.cc $(RRII_DATA_SVE)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RRII_DATA_SVE) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.gcc
 
-bench.rrii.sve.intrinsics.armclang: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
-	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG) $(CXXFLAGS_SVE_O3) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.armclang
+bench.rrii.sve.intrinsics.armclang: bench.cc $(RRII_DATA_SVE)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG) $(CXXFLAGS_SVE_O3) bench.cc $(RRII_DATA_SVE) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.armclang
 
-bench.rrii.sve.intrinsics.fcc: bench.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
-	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_FCC) bench.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.fcc
+bench.rrii.sve.intrinsics.fcc: bench.cc $(RRII_DATA_SVE)  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
+	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_FCC) bench.cc $(RRII_DATA_SVE) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.fcc
 
 # SVE RIRI
-bench.riri.sve.intrinsics.gcc: bench.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile arch/sve/riri/wi.h arch/sve/riri/SVE_riri.h
-	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
+bench.riri.sve.intrinsics.gcc: bench.cc $(RIRI_DATA_SVE)  WilsonKernelsHand.h Makefile arch/sve/riri/wi.h arch/sve/riri/SVE_riri.h
+	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench.cc $(RIRI_DATA_SVE) $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
+
 #bench.riri.sve.intrinsics.gcc: bench.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile arch/sve/riri/wi.h arch/sve/riri/SVE_riri.h
 #	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) -O0 bench.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
 
@@ -174,6 +178,6 @@ bench.sycl: bench_sycl.cc $(SIMPLEDATA) dslash_simple.h Makefile
 #
 
 clean:
-	rm -f  bench.avx512 bench.avx2 bench.avx bench.sse bench.gen  bench.simple TableGenerate bench.gpu bench.sycl bench.rrii*
+	rm -f  bench.avx512 bench.avx2 bench.avx bench.sse bench.gen  bench.simple TableGenerate bench.gpu bench.sycl bench.rrii* bench.riri*
 	rm -rf  *.dSYM*
 	rm -f  *~
