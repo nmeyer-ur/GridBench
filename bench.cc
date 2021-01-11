@@ -206,10 +206,19 @@ threads = omp_thread_count();
   std::cout << std::endl;
 
   std::cout << "Grid reference benchmark: " << std::endl;
-  std::cout << "srun -n 1 ./Benchmark_dwf --mpi 1.1.1.1 --grid "
-    << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
-    << " -Ls 8 --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
-    << std::endl << std::endl;
+
+  if (Ls > 1) {
+    std::cout << "srun -n 1 numactl --cpunodebind=0 --membind=0 ./Benchmark_dwf --mpi 1.1.1.1 --grid "
+      << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
+      << " -Ls " << Ls << " --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
+      << std::endl << std::endl;
+  } else {
+    std::cout << "srun -n 1 numactl --cpunodebind=0 --membind=0 ./Benchmark_wilson --mpi 1.1.1.1 --grid "
+      << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
+      << " --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
+      << std::endl << std::endl; 
+  }
+
 
   /*
   std::FILE *fp;

@@ -8,7 +8,7 @@
 #include <Grid/Grid.h>
 using namespace Grid;
 
-const int Ls=8;
+//const int Ls=8;
 
 #define  FMT std::dec
 int main(int argc, char* argv[])
@@ -19,6 +19,14 @@ int main(int argc, char* argv[])
   Grid_init(&argc,&argv);
 
   Coordinate latt4 = GridDefaultLatt();
+
+  int Ls=8;
+  for(int i=0;i<argc;i++)
+    if(std::string(argv[i]) == "-Ls"){
+      std::stringstream ss(argv[i+1]); ss >> Ls;
+    }
+
+  GridLogLayout();
 
   GridCartesian         * UGrid   = SpaceTimeGrid::makeFourDimGrid(GridDefaultLatt(), 
 								   GridDefaultSimd(Nd,vComplexF::Nsimd()),

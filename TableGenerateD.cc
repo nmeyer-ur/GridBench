@@ -8,7 +8,7 @@
 #include <Grid/Grid.h>
 using namespace Grid;
 
-const int Ls=8;
+//const int Ls=8;
 
 #define  FMT std::dec
 int main(int argc, char* argv[])
@@ -19,6 +19,14 @@ int main(int argc, char* argv[])
   Grid_init(&argc,&argv);
 
   Coordinate latt4 = GridDefaultLatt();
+  int Ls=8;
+  for(int i=0;i<argc;i++)
+    if(std::string(argv[i]) == "-Ls"){
+      std::stringstream ss(argv[i+1]); ss >> Ls;
+    }
+
+  GridLogLayout();
+
 
   GridCartesian         * UGrid   = SpaceTimeGrid::makeFourDimGrid(GridDefaultLatt(), 
 								   GridDefaultSimd(Nd,vComplex::Nsimd()),
@@ -122,7 +130,7 @@ int main(int argc, char* argv[])
     fprintf(fp,"    0}; \n ");
 
     fclose(fp);
-
+/*
     // ---- binary data ----
     fp = std::fopen("static_data.U.dat", "wb");
     for(uint64_t n=0;n<umax;n++) { double d = U[n]; std::fwrite(&d, sizeof(double), 1, fp); } std::fclose(fp);
@@ -138,9 +146,10 @@ int main(int argc, char* argv[])
 
     fp = std::fopen("static_data.prm.dat", "wb");
     for(uint64_t n=0;n<nbrmax;n++) { uint8_t d = (unsigned)prm[n]; std::fwrite(&d, sizeof(uint8_t), 1, fp); } std::fclose(fp);
+*/
    } 
 
-  {
+   {
     /////////////////////////////
     // write static data to disk
     /////////////////////////////
