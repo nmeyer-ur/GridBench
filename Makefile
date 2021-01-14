@@ -1,12 +1,17 @@
 
 SIMPLEDATA := arch/sse/static_data.cc
-
+USE_LIKWID := false
 CXXFLAGS_SVE_O1 := -O1
 CXXFLAGS_SVE_O3 := -O3
 CXXFLAGS_SVE_NOSCHED_GCC := -O3 -fno-schedule-insns -fno-schedule-insns2
 
 #OMP:=-std=c++11 -DSVM
-OMP:=-std=c++11 -DSVM -DOMP -fopenmp
+ifeq (${USE_LIKWID},true)
+	OMP:=-std=c++11 -DSVM -DOMP -fopenmp  -I${LIKWID_INCDIR} -DLIKWID_PERFMON 
+else
+	OMP:=-std=c++11 -DSVM -DOMP -fopenmp
+endif
+
 #OMP:=-std=c++11  -O3 -fno-schedule-insns -fno-schedule-insns2 -fno-sched-interblock -DSVM
 #OMP:=-std=c++11 -O3
 
@@ -92,7 +97,11 @@ GPU_LDFLAGS  := -link -ccbin g++
 GPU_DATA      := arch/avx512/static_data.cc
 ################################################################################
 LDLIBS    := -lm
-LDFLAGS   :=
+ifeq (${USE_LIKWID},true)
+	LDFLAGS   := -llikwid -L${LIKWID_LIBDIR}
+else
+	LDFLAGS   :=
+endif
 
 all: bench.avx512 bench.avx2 bench.avx bench.sse bench.gen bench.simple bench.sycl \
 	bench.rrii.omp.cpu bench.rrii.sycl.cpu bench.rrii.sycl.cpu.simt  bench.rrii.sycl.gpu bench.rrii.sycl.gpu.simt bench.riri.sycl.gpu.simt
