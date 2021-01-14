@@ -92,6 +92,10 @@ int omp_thread_count() {
 #endif
 #endif
 
+#ifdef LIKWID_PERFMON
+	#include <likwid.h>
+#endif
+
 // read CPU frequency from file
 double read_freq() {
 
@@ -112,6 +116,10 @@ double read_freq() {
 #define  FMT std::dec
 int main(int argc, char* argv[])
 {
+#ifdef LIKWID_PERFMON
+  LIKWID_MARKER_INIT;
+#endif
+
   double frequency = read_freq();
 
   ////////////////////////////////////////////////////////////////////
@@ -133,9 +141,10 @@ int main(int argc, char* argv[])
 
   nreplica = argc > 1 ? atoi(argv[1]) : 1;
   int nrep = argc > 2 ? atoi(argv[2]) : 1000;
-  int psi_pf_dist_L1 = argc > 3 ? atoi(argv[3]) : 3;
-  int psi_pf_dist_L2 = argc > 4 ? atoi(argv[4]) : 0;
-  int u_pf_dist_L2   = argc > 5 ? atoi(argv[5]) : -4;
+  int psi_pf_dist_L1 = argc > 3 ? atoi(argv[3]) : 1;
+  int psi_pf_dist_L2 = argc > 4 ? atoi(argv[4]) : 4;
+  int u_pf_dist_L2   = argc > 5 ? atoi(argv[5]) : 0;
+
 
   // check iterations
   assert(nrep > 0);
@@ -145,7 +154,10 @@ int main(int argc, char* argv[])
 
   // near optimal PF measured using SVETemplate7.h and GCC
   if (argc <= 3) {
-    std::cout << "Auto-picking PF distances (tuned for rrii, 32 replicas, nsite 512, 12 threads, FX700 using SVETemplate7.h / GCC 10.1.1)" << std::endl;
+  /*  not needed anymore
+   *  for RRII version use 1 4 0
+   *  for RIRI version use 2 4 0
+   *  std::cout << "Auto-picking PF distances (tuned for rrii, 32 replicas, nsite 512, 12 threads, FX700 using SVETemplate7.h / GCC 10.1.1)" << std::endl;
     switch(nreplica) {
       case 1:  psi_pf_dist_L1 = 2;
                psi_pf_dist_L2 = 0;
@@ -155,7 +167,7 @@ int main(int argc, char* argv[])
                psi_pf_dist_L1 = 3;
                psi_pf_dist_L2 = 0;
                u_pf_dist_L2   = -4;
-    }
+    }*/
   } else {
     std::cout << "User-defined PF distances" << std::endl;
   }
@@ -306,6 +318,18 @@ threads = omp_thread_count();
 
   double flops = 1320.0*vol*nreplica;
   //int nrep=1000; // cache warm
+
+#ifdef LIKWID_PERFMON
+#pragma omp parallel
+  {
+	  LIKWID_MARKER_REGISTER("dslash_kernel");
+  }
+#pragma omp parallel
+  {
+	  LIKWID_MARKER_START("dslash_kernel");
+  }
+#endif
+
 #ifdef DOUBLE
   double usec;
   usec = dslash_kernel<vComplexD>(nrep,
@@ -334,6 +358,14 @@ threads = omp_thread_count();
     Psi[i]=fPsi[i];
   }
 #endif
+
+#ifdef LIKWID_PERFMON
+#pragma omp parallel
+  {
+	  LIKWID_MARKER_STOP("dslash_kernel");
+  }
+#endif
+
 
   std::cout << std::endl;
 #ifdef DOUBLE
@@ -411,6 +443,10 @@ threads = omp_thread_count();
     << psi_pf_dist_L2 << "  "
     << u_pf_dist_L2 << "  "
     << "XX1" << std::endl << std::endl;
+
+#ifdef LIKWID_PERFMON
+  LIKWID_MARKER_CLOSE;
+#endif
 
   // Check results
   vComplexD *Psi_p = (vComplexD *) &Psi[0];

@@ -107,7 +107,105 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #endif
 
+#if 1
 
+//reordered for better OoO
+
+#define MULT_2SPIN(A)\
+  { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
+    U_00_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 0 + 2 * 0));\
+    U_00_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 0 + 2 * 0 + 1));\
+    UChi_00_re = svmul_x(pg1, U_00_re, Chi_00_re);\
+    UChi_00_im = svmul_x(pg1, U_00_re, Chi_00_im);\
+    UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_00_im);\
+    UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_im, Chi_00_re);\
+    UChi_10_re = svmul_x(pg1, U_00_re, Chi_10_re);\
+    UChi_10_im = svmul_x(pg1, U_00_re, Chi_10_im);\
+    UChi_10_re = svmls_x(pg1, UChi_10_re, U_00_im, Chi_10_im);\
+    UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_im, Chi_10_re);\
+    U_10_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 1 + 2 * 0));\
+    U_10_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 1 + 2 * 0 + 1));\
+    UChi_01_re = svmul_x(pg1, U_10_re, Chi_00_re);\
+    UChi_01_im = svmul_x(pg1, U_10_re, Chi_00_im);\
+    UChi_01_re = svmls_x(pg1, UChi_01_re, U_10_im, Chi_00_im);\
+    UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_im, Chi_00_re);\
+    UChi_11_re = svmul_x(pg1, U_10_re, Chi_10_re);\
+    UChi_11_im = svmul_x(pg1, U_10_re, Chi_10_im);\
+    UChi_11_re = svmls_x(pg1, UChi_11_re, U_10_im, Chi_10_im);\
+    UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_im, Chi_10_re);\
+    U_20_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 2 + 2 * 0));\
+    U_20_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 2 + 2 * 0 + 1));\
+    UChi_02_re = svmul_x(pg1, U_20_re, Chi_00_re);\
+    UChi_02_im = svmul_x(pg1, U_20_re, Chi_00_im);\
+    UChi_02_re = svmls_x(pg1, UChi_02_re, U_20_im, Chi_00_im);\
+    UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_im, Chi_00_re);\
+    UChi_12_re = svmul_x(pg1, U_20_re, Chi_10_re);\
+    UChi_12_im = svmul_x(pg1, U_20_re, Chi_10_im);\
+    UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_10_im);\
+    UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_im, Chi_10_re);\
+    U_00_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 0 + 2 * 1));\
+    U_00_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 0 + 2 * 1 + 1));\
+    UChi_00_re = svmla_x(pg1, UChi_00_re, U_00_re, Chi_01_re);\
+    UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_re, Chi_01_im);\
+    UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_01_im);\
+    UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_im, Chi_01_re);\
+    UChi_10_re = svmla_x(pg1, UChi_10_re, U_00_re, Chi_11_re);\
+    UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_re, Chi_11_im);\
+    UChi_10_re = svmls_x(pg1, UChi_10_re, U_00_im, Chi_11_im);\
+    UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_im, Chi_11_re);\
+    U_10_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 1 + 2 * 1));\
+    U_10_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 1 + 2 * 1 + 1));\
+    UChi_01_re = svmla_x(pg1, UChi_01_re, U_10_re, Chi_01_re);\
+    UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_re, Chi_01_im);\
+    UChi_01_re = svmls_x(pg1, UChi_01_re, U_10_im, Chi_01_im);\
+    UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_im, Chi_01_re);\
+    UChi_11_re = svmla_x(pg1, UChi_11_re, U_10_re, Chi_11_re);\
+    UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_re, Chi_11_im);\
+    UChi_11_re = svmls_x(pg1, UChi_11_re, U_10_im, Chi_11_im);\
+    UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_im, Chi_11_re);\
+    U_20_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 2 + 2 * 1));\
+    U_20_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 2 + 2 * 1 + 1));\
+    UChi_02_re = svmla_x(pg1, UChi_02_re, U_20_re, Chi_01_re);\
+    UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_re, Chi_01_im);\
+    UChi_02_re = svmls_x(pg1, UChi_02_re, U_20_im, Chi_01_im);\
+    UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_im, Chi_01_re);\
+    UChi_12_re = svmla_x(pg1, UChi_12_re, U_20_re, Chi_11_re);\
+    UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_re, Chi_11_im);\
+    UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_11_im);\
+    UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_im, Chi_11_re);\
+    U_00_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 0 + 2 * 2));\
+    U_00_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 0 + 2 * 2 + 1));\
+    UChi_00_re = svmla_x(pg1, UChi_00_re, U_00_re, Chi_02_re);\
+    UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_re, Chi_02_im);\
+    UChi_00_re = svmls_x(pg1, UChi_00_re, U_00_im, Chi_02_im);\
+    UChi_00_im = svmla_x(pg1, UChi_00_im, U_00_im, Chi_02_re);\
+    UChi_10_re = svmla_x(pg1, UChi_10_re, U_00_re, Chi_12_re);\
+    UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_re, Chi_12_im);\
+    UChi_10_re = svmls_x(pg1, UChi_10_re, U_00_im, Chi_12_im);\
+    UChi_10_im = svmla_x(pg1, UChi_10_im, U_00_im, Chi_12_re);\
+    U_10_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 1 + 2 * 2));\
+    U_10_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 1 + 2 * 2 + 1));\
+    UChi_01_re = svmla_x(pg1, UChi_01_re, U_10_re, Chi_02_re);\
+    UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_re, Chi_02_im);\
+    UChi_01_re = svmls_x(pg1, UChi_01_re, U_10_im, Chi_02_im);\
+    UChi_01_im = svmla_x(pg1, UChi_01_im, U_10_im, Chi_02_re);\
+    UChi_11_re = svmla_x(pg1, UChi_11_re, U_10_re, Chi_12_re);\
+    UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_re, Chi_12_im);\
+    UChi_11_re = svmls_x(pg1, UChi_11_re, U_10_im, Chi_12_im);\
+    UChi_11_im = svmla_x(pg1, UChi_11_im, U_10_im, Chi_12_re);\
+    U_20_re = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 2 + 2 * 2));\
+    U_20_im = svld1_vnum(pg1, (float64_t*)(base), (int64_t)(2 * 3 * 2 + 2 * 2 + 1));\
+    UChi_02_re = svmla_x(pg1, UChi_02_re, U_20_re, Chi_02_re);\
+    UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_re, Chi_02_im);\
+    UChi_02_re = svmls_x(pg1, UChi_02_re, U_20_im, Chi_02_im);\
+    UChi_02_im = svmla_x(pg1, UChi_02_im, U_20_im, Chi_02_re);\
+    UChi_12_re = svmla_x(pg1, UChi_12_re, U_20_re, Chi_12_re);\
+    UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_re, Chi_12_im);\
+    UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_12_im);\
+    UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_im, Chi_12_re);}
+
+
+#else
 #define MULT_2SPIN(A)\
   { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
     U_00_re = svld1_vnum(pg1, (float64_t*)(base + 64 * (8)), (int64_t)(-8));\
@@ -200,6 +298,8 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_re, Chi_12_im);\
     UChi_12_re = svmls_x(pg1, UChi_12_re, U_20_im, Chi_12_im);\
     UChi_12_im = svmla_x(pg1, UChi_12_im, U_20_im, Chi_12_re);}
+#endif
+
 
 //      hspin(0)=fspin(0)+timesI(fspin(3));
 //      hspin(1)=fspin(1)+timesI(fspin(2));
@@ -856,6 +956,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
       HAND_STENCIL_LEG(TP_PROJ,0,Tm,TP_RECON_ACCUM);
       HAND_RESULT(ss);
       ss++;
+      ssn++;
       }
     }
   }
