@@ -1,5 +1,5 @@
 #define  DOUBLE
-#if defined(SVE) && defined(RIRI)    
+#if defined(SVE) && defined(RIRI)
 #define DATA_SIMD 4  // Size in riri static data
 #define EXPAND_SIMD 4 // Target size riri
 #else
@@ -9,12 +9,12 @@
 
 /* SVE
  *
- * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateD; 
+ * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateD;
  * use riri dslash kernel with settings
  *   DATA_SIMD   4
  *   EXPAND_SIMD 4
  *
- * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateF; 
+ * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateF;
  * use rrii dslash kernel with settings
  *   DATA_SIMD   8
  *   EXPAND_SIMD 8
@@ -220,15 +220,15 @@ threads = omp_thread_count();
   std::cout << "Grid reference benchmark: " << std::endl;
 
   if (Ls > 1) {
-    std::cout << "srun -n 1 numactl --cpunodebind=0 --membind=0 ./Benchmark_dwf --mpi 1.1.1.1 --grid "
+    std::cout << "srun -n 1 ./Benchmark_dwf --mpi 1.1.1.1 --grid "
       << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
       << " -Ls " << Ls << " --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
       << std::endl << std::endl;
   } else {
-    std::cout << "srun -n 1 numactl --cpunodebind=0 --membind=0 ./Benchmark_wilson --mpi 1.1.1.1 --grid "
+    std::cout << "srun -n 1 ./Benchmark_wilson --mpi 1.1.1.1 --grid "
       << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
       << " --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
-      << std::endl << std::endl; 
+      << std::endl << std::endl;
   }
 
 
@@ -237,7 +237,7 @@ threads = omp_thread_count();
 
   Vector<double>   U_static(umax);
   std::fopen("static_data.U.dat", "rb");
-  std::fread(&U_static[0]; sizeof(double), umax, fp); 
+  std::fread(&U_static[0]; sizeof(double), umax, fp);
   std::fclose(fp);
   */
 
@@ -248,6 +248,26 @@ threads = omp_thread_count();
   Vector<uint64_t> nbr(nsite*Ls*8*nreplica);
   Vector<uint8_t>  prm(nsite*Ls*8*nreplica);
 
+  // enable compute on full chip respecting first touch
+  #pragma omp parallel for schedule(static)
+  for(size_t i=0;i<U.size()  ;++i) {
+    U[i]       = 0.;
+  }
+
+  #pragma omp parallel for schedule(static)
+  for(size_t i=0;i<Psi.size();++i) {
+    Psi[i]     = 0.;
+    Phi[i]     = 0.;
+    Psi_cpp[i] = 0.;
+  }
+
+  #pragma omp parallel for schedule(static)
+  for(size_t i=0;i<nbr.size();++i) {
+    nbr[i]     = 0;
+    prm[i]     = 0;
+  }
+
+  // replicas
   for(int replica=0;replica<nreplica;replica++){
     int u=replica*umax;
     int f=replica*fmax;
