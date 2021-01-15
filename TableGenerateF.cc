@@ -144,11 +144,14 @@ int main(int argc, char* argv[])
       FILE *fp = std::fopen("data_rrii.bin", "w");
       std::fwrite(&nsite, sizeof(uint64_t), 1, fp);
       std::fwrite(&Ls, sizeof(int), 1, fp);
+      // need conversion to double here
       for(uint64_t n=0;n<umax;n++)   { double d   = U[n]; std::fwrite(&d, sizeof(double), 1, fp); }
       for(uint64_t n=0;n<fmax;n++)   { double d   = Phi[n]; std::fwrite(&d, sizeof(double), 1, fp); }
       for(uint64_t n=0;n<fmax;n++)   { double d   = Psi_cpp[n]; std::fwrite(&d, sizeof(double), 1, fp); }
-      for(uint64_t n=0;n<nbrmax;n++) { uint64_t d = nbr[n]; std::fwrite(&d, sizeof(uint64_t), 1, fp); }
-      for(uint64_t n=0;n<nbrmax;n++) { uint8_t d  = (unsigned)prm[n]; std::fwrite(&d, sizeof(uint8_t), 1, fp); }
+      //for(uint64_t n=0;n<nbrmax;n++) { uint64_t d = nbr[n]; std::fwrite(&d, sizeof(uint64_t), 1, fp); }
+      //for(uint64_t n=0;n<nbrmax;n++) { uint8_t d  = (unsigned)prm[n]; std::fwrite(&d, sizeof(uint8_t), 1, fp); }
+      std::fwrite(&nbr[0], sizeof(uint64_t), nbrmax, fp);
+      std::fwrite(&prm[0], sizeof(uint8_t), nbrmax, fp);
       fclose(fp);
    }
   }
