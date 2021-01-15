@@ -77,17 +77,13 @@ int omp_thread_count() {
 #endif
 
 #ifdef RRII
-#ifdef SVE
-#include "arch/sve/rrii/static_data.h"
-#else
+#ifndef SVE
 #include "arch/gen64/static_data.h"
 #endif
 #endif
 
 #ifdef RIRI
-#ifdef SVE
-#include "arch/sve/riri/static_data.h"
-#else
+#ifndef SVE
 #include "arch/gen64/static_data.h"
 #endif
 #endif
@@ -103,8 +99,8 @@ double read_freq() {
   std::ifstream ifile("freq.txt", std::ios::in);
 
   if (!ifile.is_open()) {
-        std::cout << "There was a problem opening the input file!\n";
-        exit(1);
+    std::cout << "There was a problem opening freq.txt!\n";
+    exit(1);
   }
 
   ifile >> freq;
@@ -116,26 +112,57 @@ double read_freq() {
 #define  FMT std::dec
 int main(int argc, char* argv[])
 {
+  ////////////////////////////////////////////////////////////////////
+  // Option 2: retrieve data from file
+  ////////////////////////////////////////////////////////////////////
+
 #ifdef LIKWID_PERFMON
   LIKWID_MARKER_INIT;
 #endif
 
+  std::cout << "Usage: bench.* [<replicas=1>] [<iterations=1000>] [psi PF dist L1] [next psi PF dist L2] [next U PF dist L2]" << std::endl << std::endl;
+
   double frequency = read_freq();
 
-  ////////////////////////////////////////////////////////////////////
-  // Option 2: copy from static arrays
-  ////////////////////////////////////////////////////////////////////
+  int Ls = 1;
+  uint64_t nsite = 1;
   uint64_t nreplica = 1;
-  uint64_t nbrmax = nsite*Ls*8;
+  uint64_t nbrmax;
+  uint64_t umax;
+  uint64_t fmax;
+  uint64_t vol;
 
-  uint64_t umax   = nsite*18*8 *vComplexD::Nsimd();
-  uint64_t fmax   = nsite*24*Ls*vComplexD::Nsimd();
-  uint64_t vol    = nsite*Ls*vComplexD::Nsimd();
+#ifdef RIRI
+  FILE *fp = std::fopen("data_riri.bin", "r");
+#else
+  FILE *fp = std::fopen("data_rrii.bin", "r");
+#endif
+  if (!fp) {
+    std::cout << "There was a problem opening data file!\n";
+    exit(1);
+  }
+  std::fread((void*)&nsite, sizeof(uint64_t), 1, fp);
+  std::fread((void*)&Ls, sizeof(int), 1, fp);
+  nbrmax = nsite*Ls*8;
+  umax   = nsite*18*8 *vComplexD::Nsimd();
+  fmax   = nsite*24*Ls*vComplexD::Nsimd();
+  vol    = nsite*Ls*vComplexD::Nsimd();
+  double* U_static = (double*)malloc(umax * sizeof(double));
+  std::fread((void*)U_static, sizeof(double), umax, fp);
+  double* Phi_static = (double*)malloc(fmax * sizeof(double));
+  std::fread((void*)Phi_static, sizeof(double), fmax, fp);
+  double* Psi_cpp_static = (double*)malloc(fmax * sizeof(double));
+  std::fread((void*)Psi_cpp_static, sizeof(double), fmax, fp);
+  uint64_t* nbr_static = (uint64_t*)malloc(nbrmax * sizeof(uint64_t));
+  std::fread((void*)nbr_static, sizeof(uint64_t), nbrmax, fp);
+  uint8_t* prm_static = (uint8_t*)malloc(nbrmax * sizeof(uint8_t));
+  std::fread((void*)prm_static, sizeof(uint8_t), nbrmax, fp);
+  fclose(fp);
 
-  std::cout << "Usage: bench.* [<replicas=1 of 8x8x8x8xLs lattice, Ls=8 is fixed>] [<iterations=1000>] [psi PF dist L1] [next psi PF dist L2] [next U PF dist L2]" << std::endl << std::endl;
-
-  //std::cout << "umax = " << umax << std::endl;
-  //std::cout << "fmax = " << fmax << std::endl;
+  if ((Ls <= 0) && (nsite <= 1)) {
+    std::cout << "Illegal Ls and nsite!\n";
+    exit(1);
+  }
 
   std::cout << std::endl;
 
@@ -462,6 +489,11 @@ threads = omp_thread_count();
     << psi_pf_dist_L1 << "  "
     << psi_pf_dist_L2 << "  "
     << u_pf_dist_L2 << "  "
+#ifdef RIRI
+    << " RIRI "
+#else
+    << " RRII "
+#endif
     << "XX1" << std::endl << std::endl;
 
 #ifdef LIKWID_PERFMON
