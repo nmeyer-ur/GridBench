@@ -143,6 +143,8 @@ int main(int argc, char* argv[])
       // ---- binary data ----
       FILE *fp = std::fopen("data_rrii.bin", "w");
       std::fwrite(&nsite, sizeof(uint64_t), 1, fp);
+      int l4[4] = {latt4[0],latt4[1],latt4[2],latt4[3]};
+      std::fwrite(&l4[0], sizeof(int), 4, fp);
       std::fwrite(&Ls, sizeof(int), 1, fp);
       // need conversion to double here
       Vector<double> dU(umax);   for(uint64_t n=0;n<umax;n++) dU[n]   = U[n];
@@ -167,6 +169,7 @@ int main(int argc, char* argv[])
       fprintf(fp,"// header file for use of static data, static_data.cc\n");
       fprintf(fp,"#include <stdint.h>\n");
       fprintf(fp,"const uint64_t nsite = %llu ; \n",nsite);
+      fprintf(fp,"const int latt4 = {%d,%d,%d,%d} ; \n",latt4[0],latt4[1],latt4[2],latt4[3]);
       fprintf(fp,"const int Ls = %d ; \n",Ls);
 
       fprintf(fp,"extern double   U_static[] ; \n");

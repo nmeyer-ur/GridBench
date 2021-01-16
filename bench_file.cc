@@ -124,6 +124,7 @@ int main(int argc, char* argv[])
 
   double frequency = read_freq();
 
+  int latt4[4] = {0};
   int Ls = 1;
   uint64_t nsite = 1;
   uint64_t nreplica = 1;
@@ -142,6 +143,7 @@ int main(int argc, char* argv[])
     exit(1);
   }
   std::fread((void*)&nsite, sizeof(uint64_t), 1, fp);
+  std::fread((void*)&latt4[0], sizeof(int), 4, fp);
   std::fread((void*)&Ls, sizeof(int), 1, fp);
   nbrmax = nsite*Ls*8;
   umax   = nsite*18*8 *vComplexD::Nsimd();
@@ -219,10 +221,13 @@ threads = omp_thread_count();
 
   std::cout << std::endl;
 
+  std::cout << "  Latt4    = " << latt4[0] << " x " << latt4[1] << " x " << latt4[2] << " x " << latt4[3] << std::endl;
   std::cout << "  Ls       = " << Ls << std::endl;
   std::cout << "  nsite    = " << nsite * nreplica << std::endl;
   std::cout << "  volume   = " << vol * nreplica << std::endl;
+  std::cout << "           = " << latt4[0] << " x " << latt4[1] << " x " << latt4[2] << " x " << latt4[3] << " x " << Ls << std::endl;
   // decompose
+  /*
   int Latt[5] = {1,1,1,1,Ls};
   int j = 0;
   auto v = nsite * vComplexD::Nsimd() * nreplica;
@@ -232,7 +237,7 @@ threads = omp_thread_count();
     j++;
   }
   std::cout << "           = " << Latt[3] << " x " << Latt[2] << " x " << Latt[1] << " x " << Latt[0] << " x " << Latt[4] << std::endl;
-
+*/
   std::cout << std::endl;
 
   uint64_t udata = umax * sizeof(double) * nreplica;
@@ -481,7 +486,7 @@ threads = omp_thread_count();
   std::cout
     << threads       << "  "
     << nreplica      << "  "
-    << Latt[3] << "x" << Latt[2] << "x" << Latt[1] << "x" << Latt[0] << "x" << Latt[4] << "  "
+    << latt4[0] << "x" << latt4[1] << "x" << latt4[2] << "x" << latt4[3] << "x" << Ls << "  "
     << gflops_per_s  << "  "
     << percent_peak  << "  "
     << cycles_per_Ls * threads / EXPAND_SIMD << "  "
