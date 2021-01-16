@@ -253,12 +253,12 @@ threads = omp_thread_count();
 
   if (Ls > 1) {
     std::cout << "srun -n 1 ./Benchmark_dwf --mpi 1.1.1.1 --grid "
-      << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
+      << latt4[0] << "." << latt4[1] << "." << latt4[2] << "." << latt4[3]
       << " -Ls " << Ls << " --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
       << std::endl << std::endl;
   } else {
     std::cout << "srun -n 1 ./Benchmark_wilson --mpi 1.1.1.1 --grid "
-      << Latt[3] << "." << Latt[2] << "." << Latt[1] << "." << Latt[0]
+      << latt4[0] << "." << latt4[1] << "." << latt4[2] << "." << latt4[3]
       << " --dslash-asm --threads " << threads << " | grep \": mflop/s =\" "
       << std::endl << std::endl;
   }
@@ -457,7 +457,7 @@ threads = omp_thread_count();
 
   std::cout << std::endl;
 
-  total_data = (8 * 9 + 8 * 12 + 12) * 2 * sizeof(double) * vComplexD::Nsimd() * nsite * nreplica * Ls;
+  total_data = (8 * 9 + 8 * 12 + 12) * Ls * 2 * sizeof(double) * vComplexD::Nsimd() * nsite * nreplica;
   tp10 = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
   tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
   std::cout <<"\t"<< tp10 << "  GB/s RF throughput (base 10)" <<std::endl;
@@ -469,9 +469,9 @@ threads = omp_thread_count();
   total_data = (8 * 9 + (8 * 12 + 12) * Ls) * 2 * sizeof(double) * vComplexD::Nsimd() * nsite * nreplica;
   tp10 = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
   tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
-  std::cout <<"\t"<< tp10 << "  GB/s memory throughput (base 10)" <<std::endl;
-  std::cout <<"\t"<< tp2  << " GiB/s memory throughput (base  2)" <<std::endl;
-  std::cout << "\tdata transfer memory per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
+  std::cout <<"\t"<< tp10 << "  GB/s eff. memory throughput (base 10)" <<std::endl;
+  std::cout <<"\t"<< tp2  << " GiB/s eff. memory throughput (base  2)" <<std::endl;
+  std::cout << "\teff. data transfer memory per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
 
   std::cout << std::endl;
 

@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
       // need conversion to double here
       Vector<double> dU(umax);   for(uint64_t n=0;n<umax;n++) dU[n]   = U[n];
       Vector<double> dPhi(fmax); for(uint64_t n=0;n<fmax;n++) dPhi[n] = Phi[n];
-      Vector<double> dPsi(fmax); for(uint64_t n=0;n<fmax;n++) dPsi[n] = Phi_cpp[n];
+      Vector<double> dPsi(fmax); for(uint64_t n=0;n<fmax;n++) dPsi[n] = Psi_cpp[n];
 
       std::fwrite(&dU[0], sizeof(double), umax, fp);
       std::fwrite(&dPhi[0], sizeof(double), fmax, fp);
