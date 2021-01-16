@@ -119,7 +119,7 @@ bench.rrii.omp.cpu: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 
 # SVE RRII
 bench.rrii.sve.gccvectors.gcc: bench_file.cc  WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
-	$(CXX) $(RRII_CXXFLAGS_SVE_GCC) $(CXXFLAGS_SVE_NOSCHED_GCC) bench_static.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.gccvectors.gcc
+	$(CXX) $(RRII_CXXFLAGS_SVE_GCC) $(CXXFLAGS_SVE_NOSCHED_GCC) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.gccvectors.gcc
 
 bench.rrii.sve.intrinsics.gcc: bench_file.cc   WilsonKernelsHand.h Makefile arch/sve/rrii/SVE_rrii.h
 	$(CXX) $(RRII_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.sve.intrinsics.gcc

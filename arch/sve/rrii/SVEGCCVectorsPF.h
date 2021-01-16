@@ -332,8 +332,8 @@
 
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
-  pf_L1  = nbr[ss*8+DIR+2];				\
-  pf_L2  = nbr[ssn*8+DIR-1];				\
+  pf_L1  = nbr[ss*8+DIR+psi_pf_dist_L1];	        \
+  pf_L2  = nbr[ssn*8+DIR+psi_pf_dist_L2];	        \
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
@@ -343,6 +343,9 @@
   PREFETCH_CHIMU_L2; 					\
   PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
+  if (s == 0) {                                           \
+   if ((DIR == 0) || (DIR == 2) || (DIR == 4) || (DIR == 6)) { PREFETCH_GAUGE_L2(DIR); } \
+  }                                                       \
   RECON;
 
 #define HAND_RESULT(ss)				\
@@ -380,6 +383,21 @@
     svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL1STRM); \
     svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL1STRM); \
     svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL1STRM); \
+}
+
+// PREFETCH_GAUGE_L2 (prefetch to L2)
+#define PREFETCH_GAUGE_L2(A)  \
+{ \
+  const auto & ref(U[sUn][A+u_pf_dist_L2]); baseU = (uint64_t)&ref; \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(0), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(4), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(8), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(12), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(16), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(20), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(24), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(28), SV_PLDL2STRM); \
+  svprfd_vnum(pg1, (long*)(baseU), (int64_t)(32), SV_PLDL2STRM); \
 }
 
 #define HAND_DECLARATIONS(Simd)			\
@@ -437,7 +455,7 @@
 
 #ifdef GRID_OMP_THREAD
 template<class SimdVec>
-double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm)
+double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm, int psi_pf_dist_L1, int psi_pf_dist_L2, int u_pf_dist_L2)
 {
   typedef  std::chrono::system_clock          Clock;
   typedef  std::chrono::time_point<Clock> TimePoint;
@@ -484,10 +502,13 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     int offset,perm;
     uint64_t base;
     uint64_t sU = ssite;
+    uint64_t sUn = ssite+1;
+    if (sUn == nsite) sUn = 0;
     uint64_t ss = sU*Ls;
     uint64_t ssn = ss + 1; // for prefetching to L2
       if (ssn == nsite) ssn = 0;
-    uint64_t pf_L1, pf_L2; // pf addresses
+    uint64_t pf_L1, pf_L2; // pf addresses psi
+    uint64_t baseU;        // pf U
     for(uint64_t s=0;s<Ls;s++){
       HAND_STENCIL_LEG(XM_PROJ,3,Xp,XM_RECON);
       HAND_STENCIL_LEG(YM_PROJ,2,Yp,YM_RECON_ACCUM);
@@ -499,6 +520,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
       HAND_STENCIL_LEG(TP_PROJ,0,Tm,TP_RECON_ACCUM);
       HAND_RESULT(ss);
       ss++;
+      ssn++;
       }
     }
   }
