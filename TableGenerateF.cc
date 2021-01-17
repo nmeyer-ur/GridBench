@@ -20,13 +20,13 @@ int main(int argc, char* argv[])
 
   Coordinate latt4 = GridDefaultLatt();
   int Ls=8;
-  int tofile = 0;
+  int tofile = 1;
   for(int i=0;i<argc;i++) {
     if(std::string(argv[i]) == "-Ls"){
       std::stringstream ss(argv[i+1]); ss >> Ls;
     }
-    if(std::string(argv[i]) == "-tofile"){
-      tofile = 1;
+    if(std::string(argv[i]) == "-static"){
+      tofile = 0;
     }
   }
 
@@ -141,6 +141,7 @@ int main(int argc, char* argv[])
       fclose(fp);
     } else {
       // ---- binary data ----
+      std::cout << "writing data_rrii.bin" << std::endl;
       FILE *fp = std::fopen("data_rrii.bin", "w");
       std::fwrite(&nsite, sizeof(uint64_t), 1, fp);
       int l4[4] = {latt4[0],latt4[1],latt4[2],latt4[3]};
