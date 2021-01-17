@@ -115,6 +115,7 @@ int main(int argc, char* argv[])
     // write static data to disk
     /////////////////////////////
     if (!tofile) {
+      std::cout << "writing static data" << std::endl;
       FILE *fp = fopen("static_data.cc","w");
 
       fprintf(fp,"#include <stdint.h>\n");
