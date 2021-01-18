@@ -12,8 +12,8 @@
 #include "arch/avx/Simd_avx.h"
 #undef SIMT
 #endif
-#if defined AVX512
-//#include "arch/avx512/Simd_avx512.h"
+#if defined (AVX512) && defined (RIRI)
+#include "arch/avx512/Simd_avx512.h"
 #undef SIMT
 #endif
 #if defined VGPU

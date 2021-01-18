@@ -118,16 +118,16 @@ bench.rrii.omp.cpu: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 
 # AVX512 RRII
 
-bench.rrii.avx512.gccvectors.clang: bench_file.cc  WilsonKernelsHand.h Makefile
-	clang++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.avx512.intrinsics.clang
+bench.rrii.avx512.gccvectors.clang: bench_file.cc  WilsonKernelsHand.h Makefile arch/avx512/rrii/AVX512GCCVectors.h
+	clang++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.avx512.gccvectors.clang
 
-bench.rrii.avx512.gccvectors.clang: bench_file.cc  WilsonKernelsHand.h Makefile
-	g++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.avx512.intrinsics.gcc
+bench.rrii.avx512.gccvectors.gcc: bench_file.cc  WilsonKernelsHand.h Makefile arch/avx512/rrii/AVX512GCCVectors.h
+	g++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.avx512.gccvectors.gcc
 
 # AVX512 RIRI
 
-bench.riri.avx512.intrinsics.clang: bench_file.cc  WilsonKernelsHand.h Makefile
-	clang++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.avx512.intrinsics.clang
+bench.riri.avx512.intrinsics.clang: bench_file.cc  WilsonKernelsHand.h Makefile arch/avx512/Simd_avx512.h
+	clang++ -DRIRI -DINTRIN $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.avx512.intrinsics.clang
 
 
 # SVE RRII
@@ -163,25 +163,6 @@ bench.rrii.sve.intrinsics.fcc: bench_file.cc  WilsonKernelsHand.h Makefile arch/
 bench.riri.sve.intrinsics.gcc: bench_file.cc WilsonKernelsHand.h Makefile arch/sve/riri/wi.h arch/sve/riri/SVE_riri.h
 	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
 
-
-
-bench.rrii.sycl.cpu: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RRII_CXXFLAGS) bench_static.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sycl.cpu -DGRID_SYCL
-
-bench.rrii.sycl.cpu.simt: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RRII_CXXFLAGS) bench_static.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sycl.cpu.simt -DGRID_SYCL -DGRID_SYCL_SIMT
-
-bench.rrii.sycl.gpu: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RRII_CXXFLAGS) bench_static.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sycl.gpu  -DGRID_SYCL -DGRID_SYCL_GPU
-
-bench.rrii.sycl.gpu.simt: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RRII_CXXFLAGS) bench_static.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.sycl.gpu.simt -DGRID_SYCL -DGRID_SYCL_SIMT -DGRID_SYCL_GPU
-
-bench.riri.sycl.gpu.simt: bench_static.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RIRI_CXXFLAGS) bench_static.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sycl.gpu.simt -DGRID_SYCL -DGRID_SYCL_SIMT -DGRID_SYCL_GPU
-
-bench.riri.sycl.cpu.simt: bench_static.cc $(RIRI_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(RIRI_CXXFLAGS) bench_static.cc $(RIRI_DATA) $(LDLIBS) $(LDFLAGS) -o bench.riri.sycl.cpu.simt -DGRID_SYCL -DGRID_SYCL_SIMT
 
 bench.avx: bench_static.cc $(AVX_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(AVX_CXXFLAGS) bench_static.cc $(AVX_DATA) $(LDLIBS) $(LDFLAGS) -o bench.avx

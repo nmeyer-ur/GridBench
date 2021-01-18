@@ -52,12 +52,19 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
     #endif
   #endif
 
-#else
+#else // RIRI
 
   #ifdef INTRIN
-    #ifdef SVE
-      #pragma message ("RIRI kernel using SVE ACLE")
-      #include "arch/sve/riri/SVE_riri.h"
+    #if defined (SVE) || defined(AVX512)
+      #if defined(SVE)
+        #pragma message ("RIRI kernel using SVE ACLE")
+        #include "arch/sve/riri/SVE_riri.h"
+      #endif
+      #if defined(AVX512)
+        #pragma message ("RIRI kernel using AVX512 intrinsics")
+        //#include "arch/avx512/rrii/AVX512GCCVectors.h"
+        #include "WilsonKernelsHandCpu.h"
+      #endif
     #else
       #pragma message ("RIRI kernel undefined")
       #pragma error
