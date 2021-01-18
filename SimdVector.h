@@ -12,7 +12,7 @@
 #include "arch/avx/Simd_avx.h"
 #undef SIMT
 #endif
-#if defined (AVX512) && defined (RIRI)
+#if defined (AVX512) && defined(RIRI) 
 #include "arch/avx512/Simd_avx512.h"
 #undef SIMT
 #endif
@@ -20,14 +20,14 @@
 #include "arch/gpu/Simd_gpu_vec.h"
 #define SIMT
 #endif
-//#if defined RRII
-//#include "arch/rrii/Simd_rrii_vec.h"
+#if defined RRII
+#include "arch/rrii/Simd_rrii_vec.h"
 //#define SIMT
-//#endif
-//#if defined RIRI
-//#include "arch/riri/Simd_riri_vec.h"
+#endif
+#if defined (SVE) && defined (RIRI)
+#include "arch/riri/Simd_riri_vec.h"
 //#define SIMT
-//#endif
+#endif
 
 #ifndef SIMT
 /*Trivial accessors for SIMD*/
@@ -385,7 +385,7 @@ accelerator_inline Simd<S, V> timesMinusI(const Simd<S, V> &in) {
   return in;
 }
 
-/*
+
 #ifdef RRII 
 template <class pair>
 accelerator_inline GpuComplex<pair> timesMinusI( const GpuComplex<pair> &in) {
@@ -400,7 +400,8 @@ accelerator_inline GpuComplex<pair> timesI( const GpuComplex<pair> &in) {
   return ret;
 }
 #endif
-#ifdef RIRI
+
+#if defined (SVE) && defined (RIRI)
 template <class pair>
 accelerator_inline GpuComplex<pair> timesMinusI( const GpuComplex<pair> &in) {
   GpuComplex<pair> ret;
@@ -416,7 +417,7 @@ accelerator_inline GpuComplex<pair> timesI( const GpuComplex<pair> &in) {
   return ret;
 }
 #endif
-*/
+
 
 
 ///////////////////////

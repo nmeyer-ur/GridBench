@@ -62,7 +62,6 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
       #endif
       #if defined(AVX512)
         #pragma message ("RIRI kernel using AVX512 intrinsics")
-        //#include "arch/avx512/rrii/AVX512GCCVectors.h"
         #include "WilsonKernelsHandCpu.h"
       #endif
     #else
