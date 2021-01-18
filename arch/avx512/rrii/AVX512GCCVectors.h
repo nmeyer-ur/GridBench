@@ -345,22 +345,10 @@
 
 #define PREFETCH_CHIMU_L2  \
 { const SiteSpinor & ref (in[pf_L2]);	base = (uint64_t)ref; \
-  svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL2STRM); \
-  svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL2STRM); \
 }
 
 #define PREFETCH_CHIMU_L1  \
 { const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)ref;   \
-    svprfd(pg1, (int64_t*)(base +  0 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  1 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  2 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  3 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  4 * 256), SV_PLDL1STRM); \
-    svprfd(pg1, (int64_t*)(base +  5 * 256), SV_PLDL1STRM); \
 }
 
 // PREFETCH_GAUGE_L2 (prefetch to L2)
