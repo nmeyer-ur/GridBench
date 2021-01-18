@@ -118,8 +118,8 @@ bench.rrii.omp.cpu: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 
 # AVX512 RRII
 
-bench.rrii.avx512.intrinsics.clang: bench_file.cc  WilsonKernelsHand.h Makefile
-	clang++ -DRRII -DINTRIN $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.avx512.intrinsics.clang
+bench.rrii.avx512.gccvectors.clang: bench_file.cc  WilsonKernelsHand.h Makefile
+	clang++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.rrii.avx512.intrinsics.clang
 
 # AVX512 RIRI
 
