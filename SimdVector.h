@@ -20,14 +20,14 @@
 #include "arch/gpu/Simd_gpu_vec.h"
 #define SIMT
 #endif
-#if defined RRII
-#include "arch/rrii/Simd_rrii_vec.h"
+//#if defined RRII
+//#include "arch/rrii/Simd_rrii_vec.h"
 //#define SIMT
-#endif
-#if defined RIRI
-#include "arch/riri/Simd_riri_vec.h"
-#define SIMT
-#endif
+//#endif
+//#if defined RIRI
+//#include "arch/riri/Simd_riri_vec.h"
+//#define SIMT
+//#endif
 
 #ifndef SIMT
 /*Trivial accessors for SIMD*/
@@ -385,6 +385,7 @@ accelerator_inline Simd<S, V> timesMinusI(const Simd<S, V> &in) {
   return in;
 }
 
+/*
 #ifdef RRII 
 template <class pair>
 accelerator_inline GpuComplex<pair> timesMinusI( const GpuComplex<pair> &in) {
@@ -415,6 +416,8 @@ accelerator_inline GpuComplex<pair> timesI( const GpuComplex<pair> &in) {
   return ret;
 }
 #endif
+*/
+
 
 ///////////////////////
 // timesI
