@@ -51,7 +51,8 @@ RIRI_DATA_SVE := arch/sve/riri/static_data.cc
 #############################################
 # CLANG
 #############################################
-AVX512_CXXFLAGS  := -DAVX512 -mavx512f -mavx512pf -mavx512er -mavx512cd -O3 $(OMP)
+AVX512_CXXFLAGS  := -DAVX512 -march=knl -O3 $(OMP)
+#AVX512_CXXFLAGS  := -DAVX512 -mavx512f -mavx512pf -mavx512er -mavx512cd -O3 $(OMP)
 AVX2_CXXFLAGS    := -DAVX2  -mavx2 -mfma $(OMP)
 AVX_CXXFLAGS     := -DAVX1  -mavx $(OMP)
 SSE_CXXFLAGS     := -DSSE4  -msse4.2  $(OMP)

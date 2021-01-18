@@ -48,7 +48,7 @@
     Chimu_31=coalescedRead(ref[3][1],mylane);	\
     Chimu_32=coalescedRead(ref[3][2],mylane);	}
 
-/*
+
 #define PERMUTE_DIR(dir)			\
       permute##dir(Chi_00,Chi_00);\
       permute##dir(Chi_01,Chi_01);\
@@ -56,9 +56,9 @@
       permute##dir(Chi_10,Chi_10);\
       permute##dir(Chi_11,Chi_11);\
       permute##dir(Chi_12,Chi_12);
-*/
 
-#define PERMUTE_DIR(dir)
+
+//#define PERMUTE_DIR(dir)
 
 #endif
 
