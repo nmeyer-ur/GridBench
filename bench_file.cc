@@ -85,9 +85,9 @@ int omp_thread_count() {
 #include "arch/avx/static_data.h"
 #endif
 
-#ifdef AVX512
-#include "arch/avx512/static_data.h"
-#endif
+//#ifdef AVX512
+//#include "arch/avx512/static_data.h"
+//#endif
 
 #ifdef RRII
 #ifndef SVE

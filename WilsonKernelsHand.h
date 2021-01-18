@@ -23,7 +23,7 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
 #ifdef RRII
 
   #ifdef INTRIN
-    #if defined (SVE) || defined(AV512)
+    #if defined (SVE) || defined(AVX512)
       #if defined(SVE)
         #pragma message ("RRII kernel using SVE ACLE")
         #include "arch/sve/rrii/SVE_rrii.h"
@@ -37,7 +37,7 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
       #pragma error
     #endif
   #else
-    #if defined (SVE) || defined(AV512)
+    #if defined (SVE) || defined(AVX512)
       #if defined(SVE)
         #pragma message ("RRII kernel using GCC vectors and SVE ACLE for prefetching")
         #include "arch/sve/rrii/SVEGCCVectorsPF.h"
