@@ -13,7 +13,7 @@
 #undef SIMT
 #endif
 #if defined AVX512
-#include "arch/avx512/Simd_avx512.h"
+//#include "arch/avx512/Simd_avx512.h"
 #undef SIMT
 #endif
 #if defined VGPU
