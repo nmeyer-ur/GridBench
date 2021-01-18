@@ -106,8 +106,8 @@ endif
 all: bench.avx512 bench.avx2 bench.avx bench.sse bench.gen bench.simple bench.sycl \
 	bench.rrii.omp.cpu bench.rrii.sycl.cpu bench.rrii.sycl.cpu.simt  bench.rrii.sycl.gpu bench.rrii.sycl.gpu.simt bench.riri.sycl.gpu.simt
 
-bench.avx512: bench_static.cc $(AVX512_DATA)  WilsonKernelsHand.h Makefile
-	$(CXX) $(AVX512_CXXFLAGS) bench_static.cc $(AVX512_DATA) $(LDLIBS) $(LDFLAGS) -o bench.avx512
+#bench.avx512: bench_static.cc $(AVX512_DATA)  WilsonKernelsHand.h Makefile
+#	$(CXX) $(AVX512_CXXFLAGS) bench_static.cc $(AVX512_DATA) $(LDLIBS) $(LDFLAGS) -o bench.avx512
 
 bench.avx2: bench_static.cc $(AVX2_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(AVX2_CXXFLAGS) bench_static.cc $(AVX2_DATA) $(LDLIBS) $(LDFLAGS) -o bench.avx2
@@ -115,6 +115,16 @@ bench.avx2: bench_static.cc $(AVX2_DATA)  WilsonKernelsHand.h Makefile
 bench.rrii.omp.cpu: bench_static.cc $(RRII_DATA)  WilsonKernelsHand.h Makefile
 	$(CXX) $(RRII_CXXFLAGS) bench_static.cc $(RRII_DATA) $(LDLIBS) $(LDFLAGS) -o bench.rrii.omp.cpu
 
+
+# AVX512 RRII
+
+bench.rrii.avx512.intrinsics.clang: bench_file.cc  WilsonKernelsHand.h Makefile
+	clang++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.avx512.intrinsics.clang
+
+# AVX512 RIRI
+
+bench.riri.avx512.intrinsics.clang: bench_file.cc  WilsonKernelsHand.h Makefile
+	clang++ -DRRII $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.avx512.intrinsics.clang
 
 
 # SVE RRII

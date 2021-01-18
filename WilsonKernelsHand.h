@@ -23,21 +23,29 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
 #ifdef RRII
 
   #ifdef INTRIN
-    #ifdef SVE
-      #pragma message ("RRII kernel using SVE ACLE")
-      #include "arch/sve/rrii/SVE_rrii.h"
-      //#include "WilsonKernelsHandCpuSVETemplate.h"
-      //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
-      //#include "WilsonKernelsHandCpuSVETemplateDebug1.h"
+    #if defined (SVE) || defined(AV512)
+      #if defined(SVE)
+        #pragma message ("RRII kernel using SVE ACLE")
+        #include "arch/sve/rrii/SVE_rrii.h"
+      #endif
+      #if defined(AVX512)
+        #pragma message ("RRII kernel using AVX512 intrinsics undefined")
+        #pragma error
+      #endif
     #else
       #pragma message ("RRII kernel undefined")
       #pragma error
     #endif
   #else
-    #ifdef SVE
-      #pragma message ("RRII kernel using GCC vectors and SVE ACLE for prefetching")
-      //#include "WilsonKernelsHandCpuSVETemplateDebug.h"
-      #include "arch/sve/rrii/SVEGCCVectorsPF.h"
+    #if defined (SVE) || defined(AV512)
+      #if defined(SVE)
+        #pragma message ("RRII kernel using GCC vectors and SVE ACLE for prefetching")
+        #include "arch/sve/rrii/SVEGCCVectorsPF.h"
+      #endif
+      #if defined(AVX512)
+        #pragma message ("RRII kernel using GCC vectors")
+        #include "arch/avx512/rrii/AVX512GCCVectors.h"
+      #endif
     #else
       #pragma message ("GridBench RRII kernel using GCC vectors")
       #include "WilsonKernelsHandCpu.h"

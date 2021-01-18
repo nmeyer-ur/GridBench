@@ -2,8 +2,19 @@
 #if defined(SVE) && defined(RIRI)
 #define DATA_SIMD 4  // Size in riri static data
 #define EXPAND_SIMD 4 // Target size riri
-#else
+#endif
+#if defined(SVE) && defined(RRII)
 #define DATA_SIMD 8  // Size in riri static data
+#define EXPAND_SIMD 8  // Target size rrii
+#endif
+
+//#if defined(AVX512) //&& defined(RIRI)
+#if defined(AVX512) && defined(RIRI)
+#define DATA_SIMD 4  // Size of riri data
+#define EXPAND_SIMD 4 // Target size riri
+#endif
+#if defined(AVX512) && defined(RRII)
+#define DATA_SIMD 8  // Size of rrii data
 #define EXPAND_SIMD 8  // Target size rrii
 #endif
 
@@ -121,7 +132,7 @@ int main(int argc, char* argv[])
 #endif
 
   std::cout << "Usage: bench.* [<replicas=1>] [<iterations=1000>] [psi PF dist L1] [next psi PF dist L2] [next U PF dist L2]" << std::endl << std::endl;
-  
+
   double frequency = read_freq();
 
   ////////////////////////////////////////////////////////////////////
@@ -290,6 +301,10 @@ threads = omp_thread_count();
   //std::cout << "&U   = " << &U[0] << std::endl;
   //std::cout << "&Psi = " << &Psi[0] << std::endl;
   //std::cout << "&Phi = " << &Phi[0] << std::endl;
+
+  std::cout << "vComplexD::Nsimd() = " << vComplexD::Nsimd() << std::endl;
+  std::cout << "DATA_SIMD          = " << DATA_SIMD << std::endl;
+  std::cout << "EXPAND_SIMD        = " << EXPAND_SIMD << std::endl;
 
   assert(vComplexD::Nsimd()==EXPAND_SIMD);
   //assert(vComplexF::Nsimd()==EXPAND_SIMD);

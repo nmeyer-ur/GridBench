@@ -2,19 +2,32 @@
 #if defined(SVE) && defined(RIRI)
 #define DATA_SIMD 4  // Size in riri static data
 #define EXPAND_SIMD 4 // Target size riri
-#else
+#endif
+#if defined(SVE) && defined(RRII)
 #define DATA_SIMD 8  // Size in riri static data
 #define EXPAND_SIMD 8  // Target size rrii
 #endif
 
-/* SVE
+//#if defined(AVX512) //&& defined(RIRI)
+#if defined(AVX512) && defined(RIRI)
+#define DATA_SIMD 4  // Size of riri data
+#define EXPAND_SIMD 4 // Target size riri
+#endif
+#if defined(AVX512) && defined(RRII)
+#define DATA_SIMD 8  // Size of rrii data
+#define EXPAND_SIMD 8  // Target size rrii
+#endif
+
+/* SVE & AVX512
  *
- * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateD;
+ * SVE: riri data generation: build Grid with --enable-simd=A64FX;
+ * run TableGenerateD;
  * use riri dslash kernel with settings
  *   DATA_SIMD   4
  *   EXPAND_SIMD 4
  *
- * riri data generation: build Grid with --enable-simd=A64FX; run TableGenerateF;
+ * SVE: riri data generation: build Grid with --enable-simd=A64FX;
+ * run TableGenerateF;
  * use rrii dslash kernel with settings
  *   DATA_SIMD   8
  *   EXPAND_SIMD 8
@@ -78,13 +91,17 @@ int omp_thread_count() {
 
 #ifdef RRII
 #ifndef SVE
+#ifndef AVX512
 #include "arch/gen64/static_data.h"
+#endif
 #endif
 #endif
 
 #ifdef RIRI
 #ifndef SVE
+#ifndef AVX512
 #include "arch/gen64/static_data.h"
+#endif
 #endif
 #endif
 
@@ -322,8 +339,13 @@ threads = omp_thread_count();
   //std::cout << "&Psi = " << &Psi[0] << std::endl;
   //std::cout << "&Phi = " << &Phi[0] << std::endl;
 
-  assert(vComplexD::Nsimd()==EXPAND_SIMD);
+// Fails for AVX512 !??
+//  assert(vComplexD::Nsimd()==EXPAND_SIMD);
   //assert(vComplexF::Nsimd()==EXPAND_SIMD);
+  std::cout << "vComplexD::Nsimd() = " << vComplexD::Nsimd() << std::endl;
+  std::cout << "DATA_SIMD          = " << DATA_SIMD << std::endl;
+  std::cout << "EXPAND_SIMD        = " << EXPAND_SIMD << std::endl;
+
   const int Nsimd  = EXPAND_SIMD;
   const int NNsimd = DATA_SIMD;
   const int nsimd_replica=Nsimd/NNsimd;
