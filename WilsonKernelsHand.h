@@ -29,8 +29,8 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
         #include "arch/sve/rrii/SVE_rrii.h"
       #endif
       #if defined(AVX512)
-        #pragma message ("RRII kernel using AVX512 intrinsics undefined")
-        #pragma error
+        #pragma message ("RRII kernel using AVX512 intrinsics")
+        #include "arch/avx512/rrii/AVX512_rrii.h"
       #endif
     #else
       #pragma message ("RRII kernel undefined")
@@ -48,7 +48,8 @@ double dslash_kernel(int nrep,Simd *Up,Simd *outp,Simd *inp,uint64_t *nbr,uint64
       #endif
     #else
       #pragma message ("GridBench RRII kernel using GCC vectors")
-      #include "WilsonKernelsHandCpu.h"
+      //#include "WilsonKernelsHandCpu.h"
+      #pragma error
     #endif
   #endif
 
