@@ -54,17 +54,39 @@
     Chimu_31=coalescedRead(ref[3][1],mylane);	\
     Chimu_32=coalescedRead(ref[3][2],mylane); }
 
-/*
-#define PERMUTE_DIR(dir)			\
-      permute##dir(Chi_00,Chi_00);\
-      permute##dir(Chi_01,Chi_01);\
-      permute##dir(Chi_02,Chi_02);\
-      permute##dir(Chi_10,Chi_10);\
-      permute##dir(Chi_11,Chi_11);\
-      permute##dir(Chi_12,Chi_12);
-*/
 
-#define PERMUTE_DIR(dir)
+#define PERMUTE_DIR(dir)			\
+    if (dir == 0) {\
+      permute0(Chi_00,Chi_00);\
+      permute0(Chi_01,Chi_01);\
+      permute0(Chi_02,Chi_02);\
+      permute0(Chi_10,Chi_10);\
+      permute0(Chi_11,Chi_11);\
+      permute0(Chi_12,Chi_12);\
+    } else if (dir == 1) {\
+      permute1(Chi_00,Chi_00);\
+      permute1(Chi_01,Chi_01);\
+      permute1(Chi_02,Chi_02);\
+      permute1(Chi_10,Chi_10);\
+      permute1(Chi_11,Chi_11);\
+      permute1(Chi_12,Chi_12);\
+    } else if (dir == 2) {\
+      permute2(Chi_00,Chi_00);\
+      permute2(Chi_01,Chi_01);\
+      permute2(Chi_02,Chi_02);\
+      permute2(Chi_10,Chi_10);\
+      permute2(Chi_11,Chi_11);\
+      permute2(Chi_12,Chi_12);\
+    } else if (dir == 3) {\
+      permute3(Chi_00,Chi_00);\
+      permute3(Chi_01,Chi_01);\
+      permute3(Chi_02,Chi_02);\
+      permute3(Chi_10,Chi_10);\
+      permute3(Chi_11,Chi_11);\
+      permute3(Chi_12,Chi_12);\
+    }
+
+//#define PERMUTE_DIR(dir)
 
 #endif
 
@@ -403,9 +425,7 @@
   Simd Chimu_22;      \
   Simd Chimu_30;      \
   Simd Chimu_31;      \
-  Simd Chimu_32;      \
-  const uint64_t lut[4][8] =    \
-  { {4,5,6,7,0,1,2,3}, {2,3,0,1,6,7,4,5}, {1,0,3,2,5,4,7,6}, {0,1,2,3,4,5,6,7} };
+  Simd Chimu_32;
 
 
 

@@ -76,17 +76,63 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     Chimu_32_re = _mm512_load_pd((double*)(base + 64 * 22));\
     Chimu_32_im = _mm512_load_pd((double*)(base + 64 * 23));}
 
-/*
-#define PERMUTE_DIR(dir)			\
-      permute##dir(Chi_00,Chi_00);\
-      permute##dir(Chi_01,Chi_01);\
-      permute##dir(Chi_02,Chi_02);\
-      permute##dir(Chi_10,Chi_10);\
-      permute##dir(Chi_11,Chi_11);\
-      permute##dir(Chi_12,Chi_12);
-*/
 
-#define PERMUTE_DIR(dir)
+#define PERMUTE_DIR(dir)			\
+    if (dir == 0) {\
+    Chi_00_re = _mm512_shuffle_f64x2(Chi_00_re,Chi_00_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_00_im = _mm512_shuffle_f64x2(Chi_00_im,Chi_00_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_01_re = _mm512_shuffle_f64x2(Chi_01_re,Chi_01_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_01_im = _mm512_shuffle_f64x2(Chi_01_im,Chi_01_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_02_re = _mm512_shuffle_f64x2(Chi_02_re,Chi_02_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_02_im = _mm512_shuffle_f64x2(Chi_02_im,Chi_02_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_10_re = _mm512_shuffle_f64x2(Chi_10_re,Chi_10_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_10_im = _mm512_shuffle_f64x2(Chi_10_im,Chi_10_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_11_re = _mm512_shuffle_f64x2(Chi_11_re,Chi_11_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_11_im = _mm512_shuffle_f64x2(Chi_11_im,Chi_11_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_12_re = _mm512_shuffle_f64x2(Chi_12_re,Chi_12_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    Chi_12_im = _mm512_shuffle_f64x2(Chi_12_im,Chi_12_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
+    } else if (dir == 1) {\
+    Chi_00_re = _mm512_shuffle_f64x2(Chi_00_re,Chi_00_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_00_im = _mm512_shuffle_f64x2(Chi_00_im,Chi_00_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_01_re = _mm512_shuffle_f64x2(Chi_01_re,Chi_01_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_01_im = _mm512_shuffle_f64x2(Chi_01_im,Chi_01_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_02_re = _mm512_shuffle_f64x2(Chi_02_re,Chi_02_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_02_im = _mm512_shuffle_f64x2(Chi_02_im,Chi_02_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_10_re = _mm512_shuffle_f64x2(Chi_10_re,Chi_10_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_10_im = _mm512_shuffle_f64x2(Chi_10_im,Chi_10_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_11_re = _mm512_shuffle_f64x2(Chi_11_re,Chi_11_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_11_im = _mm512_shuffle_f64x2(Chi_11_im,Chi_11_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_12_re = _mm512_shuffle_f64x2(Chi_12_re,Chi_12_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    Chi_12_im = _mm512_shuffle_f64x2(Chi_12_im,Chi_12_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
+    } else if (dir == 2) {\
+    Chi_00_re = _mm512_shuffle_pd(Chi_00_re,Chi_00_re,0x55);\
+    Chi_00_im = _mm512_shuffle_pd(Chi_00_im,Chi_00_im,0x55);\
+    Chi_01_re = _mm512_shuffle_pd(Chi_01_re,Chi_01_re,0x55);\
+    Chi_01_im = _mm512_shuffle_pd(Chi_01_im,Chi_01_im,0x55);\
+    Chi_02_re = _mm512_shuffle_pd(Chi_02_re,Chi_02_re,0x55);\
+    Chi_02_im = _mm512_shuffle_pd(Chi_02_im,Chi_02_im,0x55);\
+    Chi_10_re = _mm512_shuffle_pd(Chi_10_re,Chi_10_re,0x55);\
+    Chi_10_im = _mm512_shuffle_pd(Chi_10_im,Chi_10_im,0x55);\
+    Chi_11_re = _mm512_shuffle_pd(Chi_11_re,Chi_11_re,0x55);\
+    Chi_11_im = _mm512_shuffle_pd(Chi_11_im,Chi_11_im,0x55);\
+    Chi_12_re = _mm512_shuffle_pd(Chi_12_re,Chi_12_re,0x55);\
+    Chi_12_im = _mm512_shuffle_pd(Chi_12_im,Chi_12_im,0x55);\
+    } else if (dir == 3) {\
+    Chi_00_re = Chi_00_re;\
+    Chi_00_im = Chi_00_im;\
+    Chi_01_re = Chi_01_re;\
+    Chi_01_im = Chi_01_im;\
+    Chi_02_re = Chi_02_re;\
+    Chi_02_im = Chi_02_im;\
+    Chi_10_re = Chi_10_re;\
+    Chi_10_im = Chi_10_im;\
+    Chi_11_re = Chi_11_re;\
+    Chi_11_im = Chi_11_im;\
+    Chi_12_re = Chi_12_re;\
+    Chi_12_im = Chi_12_im;\
+    }
+
+//#define PERMUTE_DIR(dir)
 
 #endif
 
@@ -711,8 +757,6 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     __m512d Chimu_31_im;\
     __m512d Chimu_32_re;\
     __m512d Chimu_32_im;\
-  const uint64_t lut[4][8] =    \
-  { {4,5,6,7,0,1,2,3}, {2,3,0,1,6,7,4,5}, {1,0,3,2,5,4,7,6}, {0,1,2,3,4,5,6,7} };
 
 
 

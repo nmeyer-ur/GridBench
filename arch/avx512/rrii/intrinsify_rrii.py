@@ -234,12 +234,12 @@ class Emitter:
             return
 
         # permute
-        p = re.compile(r'(\w+)=svtbl\((\w+),(\w+)\)', re.I)
+        p = re.compile(r'permute(\d+)\((\w+),(\w+)\)', re.I)
         op = p.search(line)
         if op:
-            self.permute(op.group(1), op.group(2), op.group(3))
-            raise  # check AVX512 intrin
-            #return
+            self.permute(op.group(1), op.group(2), op.group(2), op.group(3));
+            #raise  # check AVX512 intrin
+            return
 
         # duplicate
         p = re.compile(r'(\w+)=duplicate\((\w+)\)', re.I)
@@ -511,12 +511,25 @@ class Emitter:
         self._collect(i)
         self._emit()
 
-    def permute(self, op1, op2, op3):
+    def permute(self, N, op1, op2, op3):
         """Emit permute
-           op1 = permute(op2, op3)"""
+           op1 = permuteN(op2, op3)"""
         # ok
-        r = intrin_permute.format(self.re(op1), self.re(op2), op3)
-        i = intrin_permute.format(self.im(op1), self.im(op2), op3)
+        N = int(N)
+        if (N == 0):
+            r = intrin_permute0.format(self.re(op1), self.re(op2), self.re(op3))
+            i = intrin_permute0.format(self.im(op1), self.im(op2), self.im(op3))
+        elif (N == 1):
+            r = intrin_permute1.format(self.re(op1), self.re(op2), self.re(op3))
+            i = intrin_permute1.format(self.im(op1), self.im(op2), self.im(op3))
+        elif (N == 2):
+            r = intrin_permute2.format(self.re(op1), self.re(op2), self.re(op3))
+            i = intrin_permute2.format(self.im(op1), self.im(op2), self.im(op3))
+        elif (N == 3):
+            #r = intrin_permute3.format(self.re(op1), self.re(op2), self.re(op3))
+            #i = intrin_permute3.format(self.im(op1), self.im(op2), self.im(op3))
+            r = intrin_mov.format(self.re(op2), self.re(op2))
+            i = intrin_mov.format(self.im(op2), self.im(op2))
         self._collect(r)
         self._collect(i)
         self._emit()

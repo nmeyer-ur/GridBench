@@ -74,6 +74,9 @@ intrin_fma  = "{} = _mm512_fmadd_pd({}, {}, {})"
 # fms op1 = op2 * op3 - op4
 intrin_fms  = "{} = _mm512_fmadd_pd({}, {}, {})"
 
-# permute op1 = permute op2 using table op3
+# permute op1 = permute# op2
 #intrin_permute = "{} = svtbl({}, {})"
-intrin_permute = "{} = XXXPERMUTE({}, {})"
+intrin_permute0 = "{} = _mm512_shuffle_f64x2({},{},_MM_SELECT_FOUR_FOUR(1,0,3,2))"
+intrin_permute1 = "{} = _mm512_shuffle_f64x2({},{},_MM_SELECT_FOUR_FOUR(2,3,0,1))"
+intrin_permute2 = "{} = _mm512_shuffle_pd({},{},0x55)"
+intrin_permute3 = "{} = XXXPERMUTE3({},{})"
