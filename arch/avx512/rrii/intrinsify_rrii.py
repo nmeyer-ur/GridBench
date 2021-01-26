@@ -398,8 +398,8 @@ class Emitter:
         # ok
         # rr-ii
         # ri+ir
-        r = intrin_mul.format(self.re(op1), self.im(op2), self.im(op3))
-        i = intrin_mul.format(self.im(op1), self.im(op2), self.re(op3))
+        r = intrin_mul.format(self.re(op1), self.re(op2), self.re(op3))
+        i = intrin_mul.format(self.im(op1), self.re(op2), self.im(op3))
         self._collect(r)
         self._collect(i)
         self._emit()
@@ -410,8 +410,8 @@ class Emitter:
         # ok
         # rr-ii
         # ri+ir
-        r = intrin_fms.format(self.re(op1), self.re(op2), self.re(op3), self.re(op1))
-        i = intrin_fma.format(self.im(op1), self.re(op2), self.im(op3), self.im(op1))
+        r = intrin_fnma.format(self.re(op1), self.im(op2), self.im(op3), self.re(op1))
+        i = intrin_fma.format (self.im(op1), self.im(op2), self.re(op3), self.im(op1))
         self._collect(r)
         self._collect(i)
         self._emit()
@@ -438,8 +438,8 @@ class Emitter:
         # r + rr-ii
         # i + ri+ir
         # ok
-        r = intrin_fma.format(self.re(op1), self.im(op3), self.im(op4), self.re(op2))
-        i = intrin_fma.format(self.im(op1), self.im(op3), self.re(op4), self.im(op2))
+        r = intrin_fma.format(self.re(op1), self.re(op3), self.re(op4), self.re(op2))
+        i = intrin_fma.format(self.im(op1), self.re(op3), self.im(op4), self.im(op2))
         self._collect(r)
         self._collect(i)
         self._emit()
@@ -450,8 +450,8 @@ class Emitter:
         # r + rr-ii
         # i + ri+ir
         # ok
-        r = intrin_fms.format(self.re(op1), self.re(op3), self.re(op4), self.re(op1))
-        i = intrin_fma.format(self.im(op1), self.re(op3), self.im(op4), self.im(op1))
+        r = intrin_fnma.format(self.re(op1), self.im(op3), self.im(op4), self.re(op1))
+        i = intrin_fma.format (self.im(op1), self.im(op3), self.re(op4), self.im(op1))
         self._collect(r)
         self._collect(i)
         self._emit()
