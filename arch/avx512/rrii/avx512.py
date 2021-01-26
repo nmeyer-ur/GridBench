@@ -72,7 +72,7 @@ intrin_mul  = "{} = _mm512_mul_pd({}, {})"
 intrin_fma  = "{} = _mm512_fmadd_pd({}, {}, {})"
 
 # fms op1 = op2 * op3 - op4
-intrin_fms  = "{} = _mm512_fmadd_pd({}, {}, {})"
+intrin_fms  = "{} = _mm512_fmsub_pd({}, {}, {})"
 
 # permute op1 = permute# op2
 #intrin_permute = "{} = svtbl({}, {})"
