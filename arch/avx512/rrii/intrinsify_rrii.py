@@ -526,10 +526,11 @@ class Emitter:
             r = intrin_permute2.format(self.re(op1), self.re(op2), self.re(op3))
             i = intrin_permute2.format(self.im(op1), self.im(op2), self.im(op3))
         elif (N == 3):
+            return
             #r = intrin_permute3.format(self.re(op1), self.re(op2), self.re(op3))
             #i = intrin_permute3.format(self.im(op1), self.im(op2), self.im(op3))
-            r = intrin_mov.format(self.re(op2), self.re(op2))
-            i = intrin_mov.format(self.im(op2), self.im(op2))
+            #r = intrin_mov.format(self.re(op2), self.re(op2))
+            #i = intrin_mov.format(self.im(op2), self.im(op2))
         self._collect(r)
         self._collect(i)
         self._emit()
