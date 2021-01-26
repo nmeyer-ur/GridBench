@@ -50,7 +50,7 @@ intrin_store_offset = "XXXSTOREOFFSET(pg1, {}({}), (int64_t)({}), {})"
 # tbd
 
 # op1 = scatter scalar typecast op2 op3
-intrin_dup = "{} = _mm512_set1_pd(({})({}))"
+intrin_dup = "{} = _mm512_set1_pd({}({}))"
 
 # copy op1 = op2
 intrin_mov  = "{} = {}"
