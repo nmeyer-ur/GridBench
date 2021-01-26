@@ -474,7 +474,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     //    static_assert(std::is_trivially_default_constructible<Simd>::value," SIMD is not trivial default constructible");
     //    static_assert(std::is_trivially_copyable<Simd>::value," SIMD is not copy constructible");
     //    static_assert(std::is_trivially_copyable<sycl::vec<double,4> >::value," sycl::vec is trivially copy constructible");
-#ifdef OMP
+#ifdef XXOMP
 //#define OMP5
   #ifdef OMP5
   #warning "OpenMP 5.0 target pragma"
