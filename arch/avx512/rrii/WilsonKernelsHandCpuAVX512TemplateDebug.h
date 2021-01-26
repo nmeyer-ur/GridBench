@@ -415,6 +415,7 @@
   Simd Chimu_30;      \
   Simd Chimu_31;      \
   Simd Chimu_32;      \
+  Simd tmp;           \
   Simd DEBUG1;      \
   Simd DEBUG2;      \
   Simd DEBUG3;      \

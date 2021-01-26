@@ -56,7 +56,6 @@ intrin_dup = "{} = _mm512_set1_pd({}({}))"
 intrin_mov  = "{} = {}"
 
 # negate op1 = -op2
-#intrin_neg  = "{} = XXXNEGATE({})"
 intrin_neg  = "{} = _mm512_sub_pd(_mm512_setzero_pd(), {})"
 
 # add op1 = op2 + op3
@@ -70,6 +69,9 @@ intrin_mul  = "{} = _mm512_mul_pd({}, {})"
 
 # fma op1 = op2 * op3 + op4
 intrin_fma  = "{} = _mm512_fmadd_pd({}, {}, {})"
+
+# fnma op1 = - op2 * op3 + op4
+intrin_fnma = "{} = _mm512_fnmadd_pd({}, {}, {})"
 
 # fms op1 = op2 * op3 - op4
 intrin_fms  = "{} = _mm512_fmsub_pd({}, {}, {})"

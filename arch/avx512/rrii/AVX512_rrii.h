@@ -8,11 +8,6 @@
 
 #include <immintrin.h>
     
-/*
- * AVX512Template1.h
- *
- */
-
 #include <stdio.h>
 #include <immintrin.h>
 
@@ -76,63 +71,17 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     Chimu_32_re = _mm512_load_pd((double*)(base + 64 * 22));\
     Chimu_32_im = _mm512_load_pd((double*)(base + 64 * 23));}
 
-
+/*
 #define PERMUTE_DIR(dir)			\
-    if (dir == 0) {\
-    Chi_00_re = _mm512_shuffle_f64x2(Chi_00_re,Chi_00_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_00_im = _mm512_shuffle_f64x2(Chi_00_im,Chi_00_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_01_re = _mm512_shuffle_f64x2(Chi_01_re,Chi_01_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_01_im = _mm512_shuffle_f64x2(Chi_01_im,Chi_01_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_02_re = _mm512_shuffle_f64x2(Chi_02_re,Chi_02_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_02_im = _mm512_shuffle_f64x2(Chi_02_im,Chi_02_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_10_re = _mm512_shuffle_f64x2(Chi_10_re,Chi_10_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_10_im = _mm512_shuffle_f64x2(Chi_10_im,Chi_10_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_11_re = _mm512_shuffle_f64x2(Chi_11_re,Chi_11_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_11_im = _mm512_shuffle_f64x2(Chi_11_im,Chi_11_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_12_re = _mm512_shuffle_f64x2(Chi_12_re,Chi_12_re,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    Chi_12_im = _mm512_shuffle_f64x2(Chi_12_im,Chi_12_im,_MM_SELECT_FOUR_FOUR(1,0,3,2));\
-    } else if (dir == 1) {\
-    Chi_00_re = _mm512_shuffle_f64x2(Chi_00_re,Chi_00_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_00_im = _mm512_shuffle_f64x2(Chi_00_im,Chi_00_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_01_re = _mm512_shuffle_f64x2(Chi_01_re,Chi_01_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_01_im = _mm512_shuffle_f64x2(Chi_01_im,Chi_01_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_02_re = _mm512_shuffle_f64x2(Chi_02_re,Chi_02_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_02_im = _mm512_shuffle_f64x2(Chi_02_im,Chi_02_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_10_re = _mm512_shuffle_f64x2(Chi_10_re,Chi_10_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_10_im = _mm512_shuffle_f64x2(Chi_10_im,Chi_10_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_11_re = _mm512_shuffle_f64x2(Chi_11_re,Chi_11_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_11_im = _mm512_shuffle_f64x2(Chi_11_im,Chi_11_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_12_re = _mm512_shuffle_f64x2(Chi_12_re,Chi_12_re,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    Chi_12_im = _mm512_shuffle_f64x2(Chi_12_im,Chi_12_im,_MM_SELECT_FOUR_FOUR(2,3,0,1));\
-    } else if (dir == 2) {\
-    Chi_00_re = _mm512_shuffle_pd(Chi_00_re,Chi_00_re,0x55);\
-    Chi_00_im = _mm512_shuffle_pd(Chi_00_im,Chi_00_im,0x55);\
-    Chi_01_re = _mm512_shuffle_pd(Chi_01_re,Chi_01_re,0x55);\
-    Chi_01_im = _mm512_shuffle_pd(Chi_01_im,Chi_01_im,0x55);\
-    Chi_02_re = _mm512_shuffle_pd(Chi_02_re,Chi_02_re,0x55);\
-    Chi_02_im = _mm512_shuffle_pd(Chi_02_im,Chi_02_im,0x55);\
-    Chi_10_re = _mm512_shuffle_pd(Chi_10_re,Chi_10_re,0x55);\
-    Chi_10_im = _mm512_shuffle_pd(Chi_10_im,Chi_10_im,0x55);\
-    Chi_11_re = _mm512_shuffle_pd(Chi_11_re,Chi_11_re,0x55);\
-    Chi_11_im = _mm512_shuffle_pd(Chi_11_im,Chi_11_im,0x55);\
-    Chi_12_re = _mm512_shuffle_pd(Chi_12_re,Chi_12_re,0x55);\
-    Chi_12_im = _mm512_shuffle_pd(Chi_12_im,Chi_12_im,0x55);\
-    } else if (dir == 3) {\
-    Chi_00_re = Chi_00_re;\
-    Chi_00_im = Chi_00_im;\
-    Chi_01_re = Chi_01_re;\
-    Chi_01_im = Chi_01_im;\
-    Chi_02_re = Chi_02_re;\
-    Chi_02_im = Chi_02_im;\
-    Chi_10_re = Chi_10_re;\
-    Chi_10_im = Chi_10_im;\
-    Chi_11_re = Chi_11_re;\
-    Chi_11_im = Chi_11_im;\
-    Chi_12_re = Chi_12_re;\
-    Chi_12_im = Chi_12_im;\
-    }
+      permute##dir(Chi_00,Chi_00);\
+      permute##dir(Chi_01,Chi_01);\
+      permute##dir(Chi_02,Chi_02);\
+      permute##dir(Chi_10,Chi_10);\
+      permute##dir(Chi_11,Chi_11);\
+      permute##dir(Chi_12,Chi_12);
+*/
 
-//#define PERMUTE_DIR(dir)
+#define PERMUTE_DIR(dir)
 
 #endif
 
@@ -151,84 +100,84 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     U_11_im = _mm512_load_pd((double*)(base + 64 * 9));\
     U_21_re = _mm512_load_pd((double*)(base + 64 * 14));\
     U_21_im = _mm512_load_pd((double*)(base + 64 * 15));\
-    UChi_00_re = _mm512_mul_pd(U_00_im, Chi_00_im);\
-    UChi_00_im = _mm512_mul_pd(U_00_im, Chi_00_re);\
-    UChi_00_re = _mm512_fmsub_pd(U_00_re, Chi_00_re, UChi_00_re);\
-    UChi_00_im = _mm512_fmadd_pd(U_00_re, Chi_00_im, UChi_00_im);\
-    UChi_10_re = _mm512_mul_pd(U_00_im, Chi_10_im);\
-    UChi_10_im = _mm512_mul_pd(U_00_im, Chi_10_re);\
-    UChi_10_re = _mm512_fmsub_pd(U_00_re, Chi_10_re, UChi_10_re);\
-    UChi_10_im = _mm512_fmadd_pd(U_00_re, Chi_10_im, UChi_10_im);\
-    UChi_01_re = _mm512_mul_pd(U_10_im, Chi_00_im);\
-    UChi_01_im = _mm512_mul_pd(U_10_im, Chi_00_re);\
-    UChi_01_re = _mm512_fmsub_pd(U_10_re, Chi_00_re, UChi_01_re);\
-    UChi_01_im = _mm512_fmadd_pd(U_10_re, Chi_00_im, UChi_01_im);\
-    UChi_11_re = _mm512_mul_pd(U_10_im, Chi_10_im);\
-    UChi_11_im = _mm512_mul_pd(U_10_im, Chi_10_re);\
-    UChi_11_re = _mm512_fmsub_pd(U_10_re, Chi_10_re, UChi_11_re);\
-    UChi_11_im = _mm512_fmadd_pd(U_10_re, Chi_10_im, UChi_11_im);\
-    UChi_02_re = _mm512_mul_pd(U_20_im, Chi_00_im);\
-    UChi_02_im = _mm512_mul_pd(U_20_im, Chi_00_re);\
-    UChi_02_re = _mm512_fmsub_pd(U_20_re, Chi_00_re, UChi_02_re);\
-    UChi_02_im = _mm512_fmadd_pd(U_20_re, Chi_00_im, UChi_02_im);\
-    UChi_12_re = _mm512_mul_pd(U_20_im, Chi_10_im);\
-    UChi_12_im = _mm512_mul_pd(U_20_im, Chi_10_re);\
-    UChi_12_re = _mm512_fmsub_pd(U_20_re, Chi_10_re, UChi_12_re);\
-    UChi_12_im = _mm512_fmadd_pd(U_20_re, Chi_10_im, UChi_12_im);\
-    UChi_00_re = _mm512_fmadd_pd(U_01_im, Chi_01_im, UChi_00_re);\
-    UChi_00_im = _mm512_fmadd_pd(U_01_im, Chi_01_re, UChi_00_im);\
-    UChi_00_re = _mm512_fmsub_pd(U_01_re, Chi_01_re, UChi_00_re);\
+    UChi_00_re = _mm512_mul_pd(U_00_re, Chi_00_re);\
+    UChi_00_im = _mm512_mul_pd(U_00_re, Chi_00_im);\
+    UChi_00_re = _mm512_fnmadd_pd(U_00_im, Chi_00_im, UChi_00_re);\
+    UChi_00_im = _mm512_fmadd_pd(U_00_im, Chi_00_re, UChi_00_im);\
+    UChi_10_re = _mm512_mul_pd(U_00_re, Chi_10_re);\
+    UChi_10_im = _mm512_mul_pd(U_00_re, Chi_10_im);\
+    UChi_10_re = _mm512_fnmadd_pd(U_00_im, Chi_10_im, UChi_10_re);\
+    UChi_10_im = _mm512_fmadd_pd(U_00_im, Chi_10_re, UChi_10_im);\
+    UChi_01_re = _mm512_mul_pd(U_10_re, Chi_00_re);\
+    UChi_01_im = _mm512_mul_pd(U_10_re, Chi_00_im);\
+    UChi_01_re = _mm512_fnmadd_pd(U_10_im, Chi_00_im, UChi_01_re);\
+    UChi_01_im = _mm512_fmadd_pd(U_10_im, Chi_00_re, UChi_01_im);\
+    UChi_11_re = _mm512_mul_pd(U_10_re, Chi_10_re);\
+    UChi_11_im = _mm512_mul_pd(U_10_re, Chi_10_im);\
+    UChi_11_re = _mm512_fnmadd_pd(U_10_im, Chi_10_im, UChi_11_re);\
+    UChi_11_im = _mm512_fmadd_pd(U_10_im, Chi_10_re, UChi_11_im);\
+    UChi_02_re = _mm512_mul_pd(U_20_re, Chi_00_re);\
+    UChi_02_im = _mm512_mul_pd(U_20_re, Chi_00_im);\
+    UChi_02_re = _mm512_fnmadd_pd(U_20_im, Chi_00_im, UChi_02_re);\
+    UChi_02_im = _mm512_fmadd_pd(U_20_im, Chi_00_re, UChi_02_im);\
+    UChi_12_re = _mm512_mul_pd(U_20_re, Chi_10_re);\
+    UChi_12_im = _mm512_mul_pd(U_20_re, Chi_10_im);\
+    UChi_12_re = _mm512_fnmadd_pd(U_20_im, Chi_10_im, UChi_12_re);\
+    UChi_12_im = _mm512_fmadd_pd(U_20_im, Chi_10_re, UChi_12_im);\
+    UChi_00_re = _mm512_fmadd_pd(U_01_re, Chi_01_re, UChi_00_re);\
     UChi_00_im = _mm512_fmadd_pd(U_01_re, Chi_01_im, UChi_00_im);\
-    UChi_10_re = _mm512_fmadd_pd(U_01_im, Chi_11_im, UChi_10_re);\
-    UChi_10_im = _mm512_fmadd_pd(U_01_im, Chi_11_re, UChi_10_im);\
-    UChi_10_re = _mm512_fmsub_pd(U_01_re, Chi_11_re, UChi_10_re);\
+    UChi_00_re = _mm512_fnmadd_pd(U_01_im, Chi_01_im, UChi_00_re);\
+    UChi_00_im = _mm512_fmadd_pd(U_01_im, Chi_01_re, UChi_00_im);\
+    UChi_10_re = _mm512_fmadd_pd(U_01_re, Chi_11_re, UChi_10_re);\
     UChi_10_im = _mm512_fmadd_pd(U_01_re, Chi_11_im, UChi_10_im);\
-    UChi_01_re = _mm512_fmadd_pd(U_11_im, Chi_01_im, UChi_01_re);\
-    UChi_01_im = _mm512_fmadd_pd(U_11_im, Chi_01_re, UChi_01_im);\
-    UChi_01_re = _mm512_fmsub_pd(U_11_re, Chi_01_re, UChi_01_re);\
+    UChi_10_re = _mm512_fnmadd_pd(U_01_im, Chi_11_im, UChi_10_re);\
+    UChi_10_im = _mm512_fmadd_pd(U_01_im, Chi_11_re, UChi_10_im);\
+    UChi_01_re = _mm512_fmadd_pd(U_11_re, Chi_01_re, UChi_01_re);\
     UChi_01_im = _mm512_fmadd_pd(U_11_re, Chi_01_im, UChi_01_im);\
-    UChi_11_re = _mm512_fmadd_pd(U_11_im, Chi_11_im, UChi_11_re);\
-    UChi_11_im = _mm512_fmadd_pd(U_11_im, Chi_11_re, UChi_11_im);\
-    UChi_11_re = _mm512_fmsub_pd(U_11_re, Chi_11_re, UChi_11_re);\
+    UChi_01_re = _mm512_fnmadd_pd(U_11_im, Chi_01_im, UChi_01_re);\
+    UChi_01_im = _mm512_fmadd_pd(U_11_im, Chi_01_re, UChi_01_im);\
+    UChi_11_re = _mm512_fmadd_pd(U_11_re, Chi_11_re, UChi_11_re);\
     UChi_11_im = _mm512_fmadd_pd(U_11_re, Chi_11_im, UChi_11_im);\
-    UChi_02_re = _mm512_fmadd_pd(U_21_im, Chi_01_im, UChi_02_re);\
-    UChi_02_im = _mm512_fmadd_pd(U_21_im, Chi_01_re, UChi_02_im);\
-    UChi_02_re = _mm512_fmsub_pd(U_21_re, Chi_01_re, UChi_02_re);\
+    UChi_11_re = _mm512_fnmadd_pd(U_11_im, Chi_11_im, UChi_11_re);\
+    UChi_11_im = _mm512_fmadd_pd(U_11_im, Chi_11_re, UChi_11_im);\
+    UChi_02_re = _mm512_fmadd_pd(U_21_re, Chi_01_re, UChi_02_re);\
     UChi_02_im = _mm512_fmadd_pd(U_21_re, Chi_01_im, UChi_02_im);\
-    UChi_12_re = _mm512_fmadd_pd(U_21_im, Chi_11_im, UChi_12_re);\
-    UChi_12_im = _mm512_fmadd_pd(U_21_im, Chi_11_re, UChi_12_im);\
-    UChi_12_re = _mm512_fmsub_pd(U_21_re, Chi_11_re, UChi_12_re);\
+    UChi_02_re = _mm512_fnmadd_pd(U_21_im, Chi_01_im, UChi_02_re);\
+    UChi_02_im = _mm512_fmadd_pd(U_21_im, Chi_01_re, UChi_02_im);\
+    UChi_12_re = _mm512_fmadd_pd(U_21_re, Chi_11_re, UChi_12_re);\
     UChi_12_im = _mm512_fmadd_pd(U_21_re, Chi_11_im, UChi_12_im);\
+    UChi_12_re = _mm512_fnmadd_pd(U_21_im, Chi_11_im, UChi_12_re);\
+    UChi_12_im = _mm512_fmadd_pd(U_21_im, Chi_11_re, UChi_12_im);\
     U_00_re = _mm512_load_pd((double*)(base + 64 * 4));\
     U_00_im = _mm512_load_pd((double*)(base + 64 * 5));\
     U_10_re = _mm512_load_pd((double*)(base + 64 * 10));\
     U_10_im = _mm512_load_pd((double*)(base + 64 * 11));\
     U_20_re = _mm512_load_pd((double*)(base + 64 * 16));\
     U_20_im = _mm512_load_pd((double*)(base + 64 * 17));\
-    UChi_00_re = _mm512_fmadd_pd(U_00_im, Chi_02_im, UChi_00_re);\
-    UChi_00_im = _mm512_fmadd_pd(U_00_im, Chi_02_re, UChi_00_im);\
-    UChi_00_re = _mm512_fmsub_pd(U_00_re, Chi_02_re, UChi_00_re);\
+    UChi_00_re = _mm512_fmadd_pd(U_00_re, Chi_02_re, UChi_00_re);\
     UChi_00_im = _mm512_fmadd_pd(U_00_re, Chi_02_im, UChi_00_im);\
-    UChi_10_re = _mm512_fmadd_pd(U_00_im, Chi_12_im, UChi_10_re);\
-    UChi_10_im = _mm512_fmadd_pd(U_00_im, Chi_12_re, UChi_10_im);\
-    UChi_10_re = _mm512_fmsub_pd(U_00_re, Chi_12_re, UChi_10_re);\
+    UChi_00_re = _mm512_fnmadd_pd(U_00_im, Chi_02_im, UChi_00_re);\
+    UChi_00_im = _mm512_fmadd_pd(U_00_im, Chi_02_re, UChi_00_im);\
+    UChi_10_re = _mm512_fmadd_pd(U_00_re, Chi_12_re, UChi_10_re);\
     UChi_10_im = _mm512_fmadd_pd(U_00_re, Chi_12_im, UChi_10_im);\
-    UChi_01_re = _mm512_fmadd_pd(U_10_im, Chi_02_im, UChi_01_re);\
-    UChi_01_im = _mm512_fmadd_pd(U_10_im, Chi_02_re, UChi_01_im);\
-    UChi_01_re = _mm512_fmsub_pd(U_10_re, Chi_02_re, UChi_01_re);\
+    UChi_10_re = _mm512_fnmadd_pd(U_00_im, Chi_12_im, UChi_10_re);\
+    UChi_10_im = _mm512_fmadd_pd(U_00_im, Chi_12_re, UChi_10_im);\
+    UChi_01_re = _mm512_fmadd_pd(U_10_re, Chi_02_re, UChi_01_re);\
     UChi_01_im = _mm512_fmadd_pd(U_10_re, Chi_02_im, UChi_01_im);\
-    UChi_11_re = _mm512_fmadd_pd(U_10_im, Chi_12_im, UChi_11_re);\
-    UChi_11_im = _mm512_fmadd_pd(U_10_im, Chi_12_re, UChi_11_im);\
-    UChi_11_re = _mm512_fmsub_pd(U_10_re, Chi_12_re, UChi_11_re);\
+    UChi_01_re = _mm512_fnmadd_pd(U_10_im, Chi_02_im, UChi_01_re);\
+    UChi_01_im = _mm512_fmadd_pd(U_10_im, Chi_02_re, UChi_01_im);\
+    UChi_11_re = _mm512_fmadd_pd(U_10_re, Chi_12_re, UChi_11_re);\
     UChi_11_im = _mm512_fmadd_pd(U_10_re, Chi_12_im, UChi_11_im);\
-    UChi_02_re = _mm512_fmadd_pd(U_20_im, Chi_02_im, UChi_02_re);\
-    UChi_02_im = _mm512_fmadd_pd(U_20_im, Chi_02_re, UChi_02_im);\
-    UChi_02_re = _mm512_fmsub_pd(U_20_re, Chi_02_re, UChi_02_re);\
+    UChi_11_re = _mm512_fnmadd_pd(U_10_im, Chi_12_im, UChi_11_re);\
+    UChi_11_im = _mm512_fmadd_pd(U_10_im, Chi_12_re, UChi_11_im);\
+    UChi_02_re = _mm512_fmadd_pd(U_20_re, Chi_02_re, UChi_02_re);\
     UChi_02_im = _mm512_fmadd_pd(U_20_re, Chi_02_im, UChi_02_im);\
-    UChi_12_re = _mm512_fmadd_pd(U_20_im, Chi_12_im, UChi_12_re);\
-    UChi_12_im = _mm512_fmadd_pd(U_20_im, Chi_12_re, UChi_12_im);\
-    UChi_12_re = _mm512_fmsub_pd(U_20_re, Chi_12_re, UChi_12_re);\
-    UChi_12_im = _mm512_fmadd_pd(U_20_re, Chi_12_im, UChi_12_im);}
+    UChi_02_re = _mm512_fnmadd_pd(U_20_im, Chi_02_im, UChi_02_re);\
+    UChi_02_im = _mm512_fmadd_pd(U_20_im, Chi_02_re, UChi_02_im);\
+    UChi_12_re = _mm512_fmadd_pd(U_20_re, Chi_12_re, UChi_12_re);\
+    UChi_12_im = _mm512_fmadd_pd(U_20_re, Chi_12_im, UChi_12_im);\
+    UChi_12_re = _mm512_fnmadd_pd(U_20_im, Chi_12_im, UChi_12_re);\
+    UChi_12_im = _mm512_fmadd_pd(U_20_im, Chi_12_re, UChi_12_im);}
 
 //      hspin(0)=fspin(0)+timesI(fspin(3));
 //      hspin(1)=fspin(1)+timesI(fspin(2));
@@ -614,20 +563,14 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define HAND_STENCIL_LEG(PROJ,PERM,DIR,RECON)		\
   offset = nbr[ss*8+DIR];				\
-  pf_L1  = nbr[ss*8+DIR+psi_pf_dist_L1];	        \
-  pf_L2  = nbr[ssn*8+DIR+psi_pf_dist_L2];	        \
   perm   = prm[ss*8+DIR];				\
   LOAD_CHIMU(PERM);					\
   PROJ;							\
   if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
-  PREFETCH_CHIMU_L2; 					\
-  PREFETCH_CHIMU_L1;        \
+  synchronise(); 					\
   MULT_2SPIN(DIR);					\
-  if (s == 0) {                                           \
-   if ((DIR == 0) || (DIR == 2) || (DIR == 4) || (DIR == 6)) { PREFETCH_GAUGE_L2(DIR); } \
-  }                                                       \
   RECON;
 
 #define HAND_RESULT(ss)				\
@@ -658,19 +601,53 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     _mm512_stream_pd((double*)(base + 64 * 23), result_32_im);\
   }
 
-#define PREFETCH_CHIMU_L2  \
-{ const SiteSpinor & ref (in[pf_L2]);	base = (uint64_t)ref; \
-}
+#define LOAD_T		\
+  { const SiteSpinor & ref (in[0]);	base = (uint64_t)ref; \
+    DEBUG1_re = _mm512_load_pd((double*)(base + 64 * 0));\
+    DEBUG1_im = _mm512_load_pd((double*)(base + 64 * 1));\
+    DEBUG2_re = _mm512_load_pd((double*)(base + 64 * 2));\
+    DEBUG2_im = _mm512_load_pd((double*)(base + 64 * 3));\
+    DEBUG3_re = _mm512_load_pd((double*)(base + 64 * 4));\
+    DEBUG3_im = _mm512_load_pd((double*)(base + 64 * 5));\
+    DEBUG4_re = _mm512_load_pd((double*)(base + 64 * 6));\
+    DEBUG4_im = _mm512_load_pd((double*)(base + 64 * 7));}
 
-#define PREFETCH_CHIMU_L1  \
-{ const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)ref;   \
-}
+#define STORE_T				\
+  {	SiteSpinor & ref (out[0]);	base = (uint64_t)ref;		\
+    _mm512_stream_pd((double*)(base + 64 * 0), DEBUG1_re);\
+    _mm512_stream_pd((double*)(base + 64 * 1), DEBUG1_im);\
+    _mm512_stream_pd((double*)(base + 64 * 2), DEBUG2_re);\
+    _mm512_stream_pd((double*)(base + 64 * 3), DEBUG2_im);\
+    _mm512_stream_pd((double*)(base + 64 * 4), DEBUG3_re);\
+    _mm512_stream_pd((double*)(base + 64 * 5), DEBUG3_im);\
+    _mm512_stream_pd((double*)(base + 64 * 6), DEBUG4_re);\
+    _mm512_stream_pd((double*)(base + 64 * 7), DEBUG4_im);\
+  }
 
-// PREFETCH_GAUGE_L2 (prefetch to L2)
-#define PREFETCH_GAUGE_L2(A)  \
-{ \
-  const auto & ref(U[sUn][A+u_pf_dist_L2]); baseU = (uint64_t)&ref; \
-}
+#define PRINT_T				\
+  {	SiteSpinor & ref (out[0]);	base = (uint64_t)ref;		\
+    std::cout << ref[0][0] << std::endl;		\
+    std::cout << ref[0][1] << std::endl;		\
+    std::cout << ref[0][2] << std::endl;		\
+    std::cout << ref[1][0] << std::endl;		\
+  }
+
+  #define STOREPRINT_T				\
+    {	SiteSpinor & ref (out[0]);	base = (uint64_t)ref;		\
+    _mm512_stream_pd((double*)(base + 64 * 0), DEBUG1_re);\
+    _mm512_stream_pd((double*)(base + 64 * 1), DEBUG1_im);\
+    _mm512_stream_pd((double*)(base + 64 * 2), DEBUG2_re);\
+    _mm512_stream_pd((double*)(base + 64 * 3), DEBUG2_im);\
+    _mm512_stream_pd((double*)(base + 64 * 4), DEBUG3_re);\
+    _mm512_stream_pd((double*)(base + 64 * 5), DEBUG3_im);\
+    _mm512_stream_pd((double*)(base + 64 * 6), DEBUG4_re);\
+    _mm512_stream_pd((double*)(base + 64 * 7), DEBUG4_im);\
+      std::cout << "XX " << ref[0][0] << std::endl;		\
+      std::cout << "XX " << ref[0][1] << std::endl;		\
+      std::cout << "XX " << ref[0][2] << std::endl;		\
+      std::cout << "XX " << ref[1][0] << std::endl;		\
+    }
+
 
 #define HAND_DECLARATIONS(Simd)			\
     __m512d result_00_re;\
@@ -757,6 +734,16 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
     __m512d Chimu_31_im;\
     __m512d Chimu_32_re;\
     __m512d Chimu_32_im;\
+    __m512d tmp_re;\
+    __m512d tmp_im;\
+    __m512d DEBUG1_re;\
+    __m512d DEBUG1_im;\
+    __m512d DEBUG2_re;\
+    __m512d DEBUG2_im;\
+    __m512d DEBUG3_re;\
+    __m512d DEBUG3_im;\
+    __m512d DEBUG4_re;\
+    __m512d DEBUG4_im;\
 
 
 
@@ -794,7 +781,7 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #ifdef GRID_OMP_THREAD
 template<class SimdVec>
-double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm, int psi_pf_dist_L1, int psi_pf_dist_L2, int u_pf_dist_L2)
+double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_t *nbr,uint64_t nsite,uint64_t Ls,uint8_t *prm,int psi_pf_dist_L1, int psi_pf_dist_L2, int u_pf_dist_L2)
 {
   typedef  std::chrono::system_clock          Clock;
   typedef  std::chrono::time_point<Clock> TimePoint;
@@ -823,7 +810,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     //    static_assert(std::is_trivially_default_constructible<Simd>::value," SIMD is not trivial default constructible");
     //    static_assert(std::is_trivially_copyable<Simd>::value," SIMD is not copy constructible");
     //    static_assert(std::is_trivially_copyable<sycl::vec<double,4> >::value," sycl::vec is trivially copy constructible");
-#ifdef OMP
+#ifdef XXOMP
 //#define OMP5
   #ifdef OMP5
   #warning "OpenMP 5.0 target pragma"
@@ -833,37 +820,100 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   #pragma omp parallel for
   #endif
 #endif
-  for(uint64_t ssite=0;ssite<nsite;ssite++){
 
+    // Debug
 
-    //HAND_DECLARATIONS(svfloat64_t);
     HAND_DECLARATIONS(Simd);
     int mylane=0;
-    int offset,perm;
+    int offset=0,perm;
     uint64_t base;
+    uint64_t ssite=0;
     uint64_t sU = ssite;
-    uint64_t sUn = ssite+1;
-    if (sUn == nsite) sUn = 0;
     uint64_t ss = sU*Ls;
-    uint64_t ssn = ss + 1; // for prefetching to L2
-    if (ssn == nsite) ssn = 0;
-    uint64_t pf_L1, pf_L2; // pf addresses psi
-    uint64_t baseU;        // pf U
-    for(uint64_t s=0;s<Ls;s++){
-      HAND_STENCIL_LEG(XM_PROJ,3,Xp,XM_RECON);
-      HAND_STENCIL_LEG(YM_PROJ,2,Yp,YM_RECON_ACCUM);
-      HAND_STENCIL_LEG(ZM_PROJ,1,Zp,ZM_RECON_ACCUM);
-      HAND_STENCIL_LEG(TM_PROJ,0,Tp,TM_RECON_ACCUM);
-      HAND_STENCIL_LEG(XP_PROJ,3,Xm,XP_RECON_ACCUM);
-      HAND_STENCIL_LEG(YP_PROJ,2,Ym,YP_RECON_ACCUM);
-      HAND_STENCIL_LEG(ZP_PROJ,1,Zm,ZP_RECON_ACCUM);
-      HAND_STENCIL_LEG(TP_PROJ,0,Tm,TP_RECON_ACCUM);
-      HAND_RESULT(ss);
-      ss++;
-      ssn++;
-      }
-    }
+
+    LOAD_T;
+
+    std::cout << "XX Load/store" << std::endl;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG4" << std::endl;
+    DEBUG1_re = DEBUG4_re;\
+    DEBUG1_im = DEBUG4_im;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2*DEBUG3" << std::endl;
+    DEBUG1_re = _mm512_mul_pd(DEBUG2_re, DEBUG3_re);\
+    DEBUG1_im = _mm512_mul_pd(DEBUG2_re, DEBUG3_im);\
+    DEBUG1_re = _mm512_fnmadd_pd(DEBUG2_im, DEBUG3_im, DEBUG1_re);\
+    DEBUG1_im = _mm512_fmadd_pd(DEBUG2_im, DEBUG3_re, DEBUG1_im);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 += DEBUG2*DEBUG3" << std::endl;
+    DEBUG1_re = _mm512_fmadd_pd(DEBUG2_re, DEBUG3_re, DEBUG1_re);\
+    DEBUG1_im = _mm512_fmadd_pd(DEBUG2_re, DEBUG3_im, DEBUG1_im);\
+    DEBUG1_re = _mm512_fnmadd_pd(DEBUG2_im, DEBUG3_im, DEBUG1_re);\
+    DEBUG1_im = _mm512_fmadd_pd(DEBUG2_im, DEBUG3_re, DEBUG1_im);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2-DEBUG3" << std::endl;
+    DEBUG1_re = _mm512_sub_pd(DEBUG2_re, DEBUG3_re);\
+    DEBUG1_im = _mm512_sub_pd(DEBUG2_im, DEBUG3_im);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 -= DEBUG2" << std::endl;
+    DEBUG1_re = _mm512_sub_pd(DEBUG1_re, DEBUG2_re);\
+    DEBUG1_im = _mm512_sub_pd(DEBUG1_im, DEBUG2_im);
+    STOREPRINT_T;
+        
+    std::cout << "XX DEBUG1 = DEBUG2+DEBUG3" << std::endl;
+    DEBUG1_re = _mm512_add_pd(DEBUG2_re, DEBUG3_re);\
+    DEBUG1_im = _mm512_add_pd(DEBUG2_im, DEBUG3_im);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 += DEBUG2" << std::endl;
+    DEBUG1_re = _mm512_add_pd(DEBUG1_re, DEBUG2_re);\
+    DEBUG1_im = _mm512_add_pd(DEBUG1_im, DEBUG2_im);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = timesI(DEBUG2)" << std::endl;
+    DEBUG1_re = _mm512_sub_pd(_mm512_setzero_pd(), DEBUG2_im);\
+    DEBUG1_im = DEBUG2_re;
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2+timesI(DEBUG3)" << std::endl;
+    DEBUG1_re = _mm512_sub_pd(DEBUG2_re, DEBUG3_im);\
+    DEBUG1_im = _mm512_add_pd(DEBUG2_im, DEBUG3_re);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 = DEBUG2-timesI(DEBUG3)" << std::endl;
+    DEBUG1_re = _mm512_add_pd(DEBUG2_re, DEBUG3_im);\
+    DEBUG1_im = _mm512_sub_pd(DEBUG2_im, DEBUG3_re);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 += timesI(DEBUG2)" << std::endl;
+    DEBUG1_re = _mm512_sub_pd(DEBUG1_re, DEBUG2_im);\
+    DEBUG1_im = _mm512_add_pd(DEBUG1_im, DEBUG2_re);
+    STOREPRINT_T;
+
+    std::cout << "XX DEBUG1 -= timesI(DEBUG2)" << std::endl;
+    DEBUG1_re = _mm512_add_pd(DEBUG1_re, DEBUG2_im);\
+    DEBUG1_im = _mm512_sub_pd(DEBUG1_im, DEBUG2_re);
+    STOREPRINT_T;
+
+    std::cout << "XX " << std::endl;
+    DEBUG1_re = DEBUG2_im;\
+    DEBUG1_im = _mm512_sub_pd(_mm512_setzero_pd(), DEBUG2_re);
+    STOREPRINT_T;
+
+    std::cout << "XX " << std::endl;
+    STOREPRINT_T;
+
+    std::cout << "XX " << std::endl;
+    STOREPRINT_T;
+
+    break; // exit loop
   }
+
   Usecs elapsed =std::chrono::duration_cast<Usecs>(Clock::now()-start);
   usec = elapsed.count();
   return usec;
@@ -914,7 +964,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   SimdVec * Usvm  =(SimdVec *) malloc_shared(_umax*sizeof(SimdVec),q);
   SimdVec * insvm =(SimdVec *) malloc_shared(_fmax*sizeof(SimdVec),q);
   SimdVec * outsvm=(SimdVec *) malloc_shared(_fmax*sizeof(SimdVec),q);
-  uvoid* nbrsvm=(uint64_t *) malloc_shared(_nbrmax*sizeof(uint64_t),q);
+  uint64_t* nbrsvm=(uint64_t *) malloc_shared(_nbrmax*sizeof(uint64_t),q);
   uint8_t * prmsvm=(uint8_t  *) malloc_shared(_nbrmax*sizeof(uint8_t),q);
   std::cout << "SVM allocated arrays for SIMD "<<Nsimd <<std::endl;
   for(uint64_t n=0;n<_umax;n++) Usvm[n] = Up[n];
