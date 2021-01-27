@@ -94,30 +94,30 @@
 #define MULT_2SPIN(A)\
   { auto & ref(U[sU][A]); base = (uint64_t)ref;	\
     U_00=coalescedRead(ref[0][0],mylane);				\
-    U_10=coalescedRead(ref[1][0],mylane);				\
-    U_20=coalescedRead(ref[2][0],mylane);				\
-    U_01=coalescedRead(ref[0][1],mylane);				\
-    U_11=coalescedRead(ref[1][1],mylane);				\
-    U_21=coalescedRead(ref[2][1],mylane);				\
     UChi_00 = U_00*Chi_00;                                      \
     UChi_10 = U_00*Chi_10;                                      \
+    U_10=coalescedRead(ref[1][0],mylane);				\
     UChi_01 = U_10*Chi_00;                                      \
     UChi_11 = U_10*Chi_10;                                      \
+    U_20=coalescedRead(ref[2][0],mylane);				\
     UChi_02 = U_20*Chi_00;                                      \
     UChi_12 = U_20*Chi_10;                                      \
-    UChi_00+= U_01*Chi_01;                                      \
-    UChi_10+= U_01*Chi_11;                                      \
-    UChi_01+= U_11*Chi_01;                                      \
-    UChi_11+= U_11*Chi_11;                                      \
-    UChi_02+= U_21*Chi_01;                                      \
-    UChi_12+= U_21*Chi_11;                                      \
+    U_00=coalescedRead(ref[0][1],mylane);				\
+    UChi_00+= U_00*Chi_01;                                      \
+    UChi_10+= U_00*Chi_11;                                      \
+    U_10=coalescedRead(ref[1][1],mylane);				\
+    UChi_01+= U_10*Chi_01;                                      \
+    UChi_11+= U_10*Chi_11;                                      \
+    U_20=coalescedRead(ref[2][1],mylane);				\
+    UChi_02+= U_20*Chi_01;                                      \
+    UChi_12+= U_20*Chi_11;                                      \
     U_00=coalescedRead(ref[0][2],mylane);				\
-    U_10=coalescedRead(ref[1][2],mylane);				\
-    U_20=coalescedRead(ref[2][2],mylane);				\
     UChi_00+= U_00*Chi_02;                                      \
     UChi_10+= U_00*Chi_12;                                      \
+    U_10=coalescedRead(ref[1][2],mylane);				\
     UChi_01+= U_10*Chi_02;                                      \
     UChi_11+= U_10*Chi_12;                                      \
+    U_20=coalescedRead(ref[2][2],mylane);				\
     UChi_02+= U_20*Chi_02;                                      \
     UChi_12+= U_20*Chi_12;}
 
@@ -487,7 +487,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   #pragma omp target map(in[0:nsite*Ls], out[0:nsite*Ls],U[0:nsite],nbr[0:nsite*8*Ls],prm[0:nsite*8*Ls])
   #pragma omp teams distribute parallel for
   #else
-  #pragma omp parallel for
+  #pragma omp parallel for schedule(static)
   #endif
 #endif
   for(uint64_t ssite=0;ssite<nsite;ssite++){
