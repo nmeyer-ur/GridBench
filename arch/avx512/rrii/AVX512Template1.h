@@ -447,7 +447,7 @@
   prefetchL2(ref + 64 * 15);\
   prefetchL2(ref + 64 * 16);\
   prefetchL2(ref + 64 * 17);\
-  prefetchL2(ref + 64 * 18);\ 
+  prefetchL2(ref + 64 * 18);\
 }
 
 #define HAND_DECLARATIONS(Simd)			\
@@ -569,7 +569,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     uint64_t sUn = ssite+1;
     if (sUn == nsite) sUn = 0;
     uint64_t ss = sU*Ls;
-    uint64_t ssn = ss + 1; // for prefetching to L2
+    uint64_t ssn = ss + 1; // for PF to L2
     if (ssn == nsite) ssn = 0;
     uint64_t pf_L1, pf_L2; // pf addresses psi
     uint64_t baseU;        // pf U
