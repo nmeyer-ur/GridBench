@@ -117,7 +117,6 @@ class Emitter:
         p = re.compile(r'prefetchL1\(([a-zA-Z+*0-9]+)\)', re.I)
         op = p.search(line)
         if op:
-            print('XXX')
             self.prefetchL1(op.group(1))
             return
 
