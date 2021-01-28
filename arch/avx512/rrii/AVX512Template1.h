@@ -371,16 +371,83 @@
 
 #define PREFETCH_CHIMU_L2  \
 { const SiteSpinor & ref (in[pf_L2]);	base = (uint64_t)ref; \
+  prefetchL2(ref + 64 *  0);\
+  prefetchL2(ref + 64 *  1);\
+  prefetchL2(ref + 64 *  2);\
+  prefetchL2(ref + 64 *  3);\
+  prefetchL2(ref + 64 *  4);\
+  prefetchL2(ref + 64 *  5);\
+  prefetchL2(ref + 64 *  6);\
+  prefetchL2(ref + 64 *  7);\
+  prefetchL2(ref + 64 *  8);\
+  prefetchL2(ref + 64 *  9);\
+  prefetchL2(ref + 64 * 10);\
+  prefetchL2(ref + 64 * 11);\
+  prefetchL2(ref + 64 * 12);\
+  prefetchL2(ref + 64 * 13);\
+  prefetchL2(ref + 64 * 14);\
+  prefetchL2(ref + 64 * 15);\
+  prefetchL2(ref + 64 * 16);\
+  prefetchL2(ref + 64 * 17);\
+  prefetchL2(ref + 64 * 18);\
+  prefetchL2(ref + 64 * 19);\
+  prefetchL2(ref + 64 * 20);\
+  prefetchL2(ref + 64 * 21);\
+  prefetchL2(ref + 64 * 22);\
+  prefetchL2(ref + 64 * 23);\
 }
 
 #define PREFETCH_CHIMU_L1  \
-{ const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)ref;   \
+{ const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)&ref;   \
+  prefetchL1(ref + 64 *  0);\
+  prefetchL1(ref + 64 *  1);\
+  prefetchL1(ref + 64 *  2);\
+  prefetchL1(ref + 64 *  3);\
+  prefetchL1(ref + 64 *  4);\
+  prefetchL1(ref + 64 *  5);\
+  prefetchL1(ref + 64 *  6);\
+  prefetchL1(ref + 64 *  7);\
+  prefetchL1(ref + 64 *  8);\
+  prefetchL1(ref + 64 *  9);\
+  prefetchL1(ref + 64 * 10);\
+  prefetchL1(ref + 64 * 11);\
+  prefetchL1(ref + 64 * 12);\
+  prefetchL1(ref + 64 * 13);\
+  prefetchL1(ref + 64 * 14);\
+  prefetchL1(ref + 64 * 15);\
+  prefetchL1(ref + 64 * 16);\
+  prefetchL1(ref + 64 * 17);\
+  prefetchL1(ref + 64 * 18);\
+  prefetchL1(ref + 64 * 19);\
+  prefetchL1(ref + 64 * 20);\
+  prefetchL1(ref + 64 * 21);\
+  prefetchL1(ref + 64 * 22);\
+  prefetchL1(ref + 64 * 23);\
 }
 
 // PREFETCH_GAUGE_L2 (prefetch to L2)
 #define PREFETCH_GAUGE_L2(A)  \
 { \
   const auto & ref(U[sUn][A+u_pf_dist_L2]); baseU = (uint64_t)&ref; \
+  prefetchL2(ref + 64 *  0);\
+  prefetchL2(ref + 64 *  1);\
+  prefetchL2(ref + 64 *  2);\
+  prefetchL2(ref + 64 *  3);\
+  prefetchL2(ref + 64 *  4);\
+  prefetchL2(ref + 64 *  5);\
+  prefetchL2(ref + 64 *  6);\
+  prefetchL2(ref + 64 *  7);\
+  prefetchL2(ref + 64 *  8);\
+  prefetchL2(ref + 64 *  9);\
+  prefetchL2(ref + 64 * 10);\
+  prefetchL2(ref + 64 * 11);\
+  prefetchL2(ref + 64 * 12);\
+  prefetchL2(ref + 64 * 13);\
+  prefetchL2(ref + 64 * 14);\
+  prefetchL2(ref + 64 * 15);\
+  prefetchL2(ref + 64 * 16);\
+  prefetchL2(ref + 64 * 17);\
+  prefetchL2(ref + 64 * 18);\ 
 }
 
 #define HAND_DECLARATIONS(Simd)			\

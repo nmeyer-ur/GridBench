@@ -62,7 +62,7 @@ class Emitter:
             self.addressing(Gauge=True)
 
         # pass through
-        if not (('result_' in line) or ('Chi_' in line) or ('Chimu_' in line) or ('U_' in line) or ('tmp' in line) or ('DEBUG' in line)): # or ('=' in line)):
+        if not (('result_' in line) or ('Chi_' in line) or ('Chimu_' in line) or ('U_' in line) or ('tmp' in line) or ('DEBUG' in line) or ('prefetch' in line)): # or ('=' in line)):
             print(line, end="")
             return
 
@@ -112,6 +112,21 @@ class Emitter:
 
         # remove spaces
         line = line.replace(' ', '')
+
+        # prefetch to L1
+        p = re.compile(r'prefetchL1\(([a-zA-Z+*0-9]+)\)', re.I)
+        op = p.search(line)
+        if op:
+            print('XXX')
+            self.prefetchL1(op.group(1))
+            return
+
+        # prefetch to L2
+        p = re.compile(r'prefetchL2\(([a-zA-Z+*0-9]+)\)', re.I)
+        op = p.search(line)
+        if op:
+            self.prefetchL2(op.group(1))
+            return
 
         # have line
         # expand op1 += ... -> op1 = op1 + ...
@@ -456,6 +471,17 @@ class Emitter:
         self._collect(i)
         self._emit()
 
+    def prefetchL1(self, op1):
+        """Emit prefetch to L1"""
+        r = intrin_prefetchL1.format(op1)
+        self._collect(r)
+        self._emit()
+
+    def prefetchL2(self, op1):
+        """Emit prefetch to L2"""
+        r = intrin_prefetchL2.format(op1)
+        self._collect(r)
+        self._emit()
 
     def cRead(self, op1, row, col):
         """Emit complex load"""

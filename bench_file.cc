@@ -491,9 +491,9 @@ threads = omp_thread_count();
   total_data = (8 * 9 + (8 * 12 + 12) * Ls) * 2 * sizeof(double) * vComplexD::Nsimd() * nsite * nreplica;
   tp10 = ((total_data * nrep) / sec) / (1000. * 1000. * 1000.);
   tp2  = ((total_data * nrep) / sec) / (1024. * 1024. * 1024.);
-  std::cout <<"\t"<< tp10 << "  GB/s eff. memory throughput (base 10)" <<std::endl;
-  std::cout <<"\t"<< tp2  << " GiB/s eff. memory throughput (base  2)" <<std::endl;
-  std::cout << "\teff. data transfer memory per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
+  //std::cout <<"\t"<< tp10 << "  GB/s eff. memory throughput (base 10)" <<std::endl;
+  //std::cout <<"\t"<< tp2  << " GiB/s eff. memory throughput (base  2)" <<std::endl;
+  //std::cout << "\teff. data transfer memory per iteration = " << total_data / (1024. * 1024) << " MiB" << std::endl;
 
   std::cout << std::endl;
 
@@ -548,6 +548,6 @@ threads = omp_thread_count();
       //std::cout<< i<<" ref "<<Psi_cpp[i]<< " result "<< Psi[i]<<std::endl;
     }
   }
-  assert(err <= 1.0e-6);
+  assert(err <= 1.0e-4);
   return 0;
 }

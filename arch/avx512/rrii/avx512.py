@@ -35,6 +35,12 @@ intrin_load_offset = "{} = XXXLOADOFFSET({}({}), (int64_t)({}))"
 # offset pf load
 # tbd
 
+# prefetch to L1
+intrin_prefetchL1 = "_mm_prefetch((const char*)({}), _MM_HINT_T0)"
+
+# prefetch to L2
+intrin_prefetchL2 = "_mm_prefetch((const char*)({}), _MM_HINT_T1)"
+
 # store op3 to typecast op1 address op2
 #intrin_store = "_mm512_store_pd({}({}), {})"
 intrin_store = "_mm512_stream_pd({}({}), {})"
