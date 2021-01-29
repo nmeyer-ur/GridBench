@@ -10,6 +10,7 @@
     
 /*
  * AVX512Template1.h
+ * no prefetches; for prefetches see AVX512Template1PF.h
  *
  */
 
@@ -610,12 +611,7 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
   if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
-  PREFETCH_CHIMU_L2; 					\
-  PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
-  if (s == 0) {                                           \
-   if ((DIR == 0) || (DIR == 2) || (DIR == 4) || (DIR == 6)) { PREFETCH_GAUGE_L2(DIR); } \
-  }                                                       \
   RECON;
 
 #define HAND_RESULT(ss)				\
@@ -648,16 +644,83 @@ Chimu_32=coalescedReadPermute<ptype>(ref[3][2],perm,mylane);}
 
 #define PREFETCH_CHIMU_L2  \
 { const SiteSpinor & ref (in[pf_L2]);	base = (uint64_t)ref; \
+    _mm_prefetch((const char*)(ref+64*0), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*1), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*2), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*3), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*4), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*5), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*6), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*7), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*8), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*9), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*10), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*11), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*12), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*13), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*14), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*15), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*16), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*17), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*18), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*19), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*20), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*21), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*22), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*23), _MM_HINT_T1);\
 }
 
 #define PREFETCH_CHIMU_L1  \
-{ const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)ref;   \
+{ const SiteSpinor & ref (in[pf_L1]);	base = (uint64_t)&ref;   \
+    _mm_prefetch((const char*)(ref+64*0), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*1), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*2), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*3), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*4), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*5), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*6), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*7), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*8), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*9), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*10), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*11), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*12), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*13), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*14), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*15), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*16), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*17), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*18), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*19), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*20), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*21), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*22), _MM_HINT_T0);\
+    _mm_prefetch((const char*)(ref+64*23), _MM_HINT_T0);\
 }
 
 // PREFETCH_GAUGE_L2 (prefetch to L2)
 #define PREFETCH_GAUGE_L2(A)  \
 { \
   const auto & ref(U[sUn][A+u_pf_dist_L2]); baseU = (uint64_t)&ref; \
+    _mm_prefetch((const char*)(ref+64*0), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*1), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*2), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*3), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*4), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*5), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*6), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*7), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*8), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*9), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*10), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*11), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*12), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*13), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*14), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*15), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*16), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*17), _MM_HINT_T1);\
+    _mm_prefetch((const char*)(ref+64*18), _MM_HINT_T1);\
 }
 
 #define HAND_DECLARATIONS(Simd)			\
@@ -833,7 +896,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
     uint64_t sUn = ssite+1;
     if (sUn == nsite) sUn = 0;
     uint64_t ss = sU*Ls;
-    uint64_t ssn = ss + 1; // for prefetching to L2
+    uint64_t ssn = ss + 1; // for PF to L2
     if (ssn == nsite) ssn = 0;
     uint64_t pf_L1, pf_L2; // pf addresses psi
     uint64_t baseU;        // pf U

@@ -1,6 +1,5 @@
 /*
  * AVX512Template1.h
- * no prefetches; for prefetches see AVX512Template1PF.h
  *
  */
 
@@ -346,7 +345,12 @@
   if (perm) {						\
     PERMUTE_DIR(PERM);					\
   }							\
+  PREFETCH_CHIMU_L2; 					\
+  PREFETCH_CHIMU_L1;        \
   MULT_2SPIN(DIR);					\
+  if (s == 0) {                                           \
+   if ((DIR == 0) || (DIR == 2) || (DIR == 4) || (DIR == 6)) { PREFETCH_GAUGE_L2(DIR); } \
+  }                                                       \
   RECON;
 
 #define HAND_RESULT(ss)				\
