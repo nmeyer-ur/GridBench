@@ -20,13 +20,13 @@ int main(int argc, char* argv[])
 
   Coordinate latt4 = GridDefaultLatt();
   int Ls=8;
-  int tofile = 1;
+  int binaryfile = 1;
   for(int i=0;i<argc;i++) {
     if(std::string(argv[i]) == "-Ls"){
       std::stringstream ss(argv[i+1]); ss >> Ls;
     }
     if(std::string(argv[i]) == "-static"){
-      tofile = 0;
+      binaryfile = 0;
     }
   }
 
@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     /////////////////////////////
     // write static data to disk
     /////////////////////////////
-    if (!tofile) {
+    if (!binaryfile) {
       std::cout << "writing static data" << std::endl;
       FILE *fp = fopen("static_data.cc","w");
 
@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
     /////////////////////////////
     // write static data to disk
     /////////////////////////////
-    if (!tofile) { // static data in static_data.cc
+    if (!binaryfile) { // static data in static_data.cc
       FILE *fp = fopen("static_data.h","w");
       fprintf(fp,"// header file for use of static data, static_data.cc\n");
       fprintf(fp,"#include <stdint.h>\n");
