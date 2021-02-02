@@ -32,7 +32,11 @@
 #ifndef SIMT
 /*Trivial accessors for SIMD*/
 template<class T> T coalescedRead(const T &in,int lane){ return in;}
+#if defined (AVX512)
+template<class T> void coalescedWrite(T &out,const T & in,int lane){ vstream(out, in); }
+#else
 template<class T> void coalescedWrite(T &out,const T & in,int lane){ out=in;}
+#endif
 #endif
 
 #ifdef GRID_SYCL
