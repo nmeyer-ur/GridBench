@@ -67,7 +67,9 @@ RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -DRIRI  -march=armv8-a+sve -msve-vector-b
 #RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 #RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -march=armv8-a+sve $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -mcpu=a64fx $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
-RRII_CXXFLAGS_SVE_INTRIN_FCC        := -DRRII  -Nclang -Kfast $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+RRII_CXXFLAGS_SVE_INTRIN_FCC        := -DRRII  -Nclang -Ofast $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+RIRI_CXXFLAGS_SVE_INTRIN_FCC        := -DRIRI  -Nclang -Ofast $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+#RRII_CXXFLAGS_SVE_INTRIN_FCC        := -DRRII  -Nclang -O1 $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 
 #############################################
 # G++
@@ -166,6 +168,10 @@ bench.rrii.sve.intrinsics.fcc: bench_file.cc  WilsonKernelsHand.h Makefile arch/
 
 bench.riri.sve.intrinsics.gcc: bench_file.cc WilsonKernelsHand.h Makefile arch/sve/riri/wi.h arch/sve/riri/SVE_riri.h
 	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_GCC) $(CXXFLAGS_SVE_O1) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.gcc
+
+bench.riri.sve.intrinsics.fcc: bench_file.cc  WilsonKernelsHand.h Makefile arch/sve/riri/SVE_riri.h
+	$(CXX) $(RIRI_CXXFLAGS_SVE_INTRIN_FCC) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.sve.intrinsics.fcc
+
 
 
 bench.avx: bench_static.cc $(AVX_DATA)  WilsonKernelsHand.h Makefile
