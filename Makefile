@@ -60,10 +60,10 @@ RRII_CXXFLAGS     := -DRRII  -mavx2 -mfma  $(OMP) -DGEN_SIMD_WIDTH=64
 RIRI_CXXFLAGS     := -DRIRI  -mavx2 -mfma  $(OMP) -DGEN_SIMD_WIDTH=64 -g
 RRII_CXXFLAGSXX   := -DRRII  -march=knl  $(OMP) -DGEN_SIMD_WIDTH=128
 
-
+FUGAKU_HUGEPAGE_LINKER := -Wl,-T/opt/FJSVxos/mmm/util/bss-2mb.lds -L/opt/FJSVxos/mmm/lib64 -lmpg
 RRII_CXXFLAGS_SVE_GCC               := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DSVE
-RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE -g
-RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -DRIRI  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE ${FUGAKU_HUGEPAGE_LINKER}
+RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -DRIRI  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE ${FUGAKU_HUGEPAGE_LINKER}
 #RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 #RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -march=armv8-a+sve $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -mcpu=a64fx $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
