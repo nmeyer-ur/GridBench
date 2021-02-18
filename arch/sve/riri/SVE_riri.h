@@ -232,20 +232,30 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
 
 
   double usec;
-  for(int rep=0;rep<nrep+1;rep++){
-    if ( rep==1 )
     #ifdef __ARM_FEATURE_SVE
       asm volatile ("isb; mrs %0, cntvct_el0" : "=r" (ts));
     #else
         start = Clock::now();
     #endif
+
+#ifdef OMP
+#pragma omp parallel
+	{
+#endif	
+  for(int rep=0;rep<nrep;rep++){
+    /*if ( rep==1 )
+    #ifdef __ARM_FEATURE_SVE
+      asm volatile ("isb; mrs %0, cntvct_el0" : "=r" (ts));
+    #else
+        start = Clock::now();
+    #endif*/
     //start = Clock::now();
 
 //  int ssU = 0;
 //  int ss  = 0;
 
 #ifdef OMP
-#pragma omp parallel for schedule(static)
+#pragma omp for schedule(static)
 #endif
   for(uint64_t ssite=0;ssite<nsite;ssite++){
       int nmu;
@@ -307,6 +317,9 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
       }
   //}
   }
+#ifdef OMP
+}
+#endif
   #ifdef __ARM_FEATURE_SVE
     asm volatile ("isb; mrs %0, cntvct_el0" : "=r" (te));
     cycles = (unsigned long long)(te - ts);

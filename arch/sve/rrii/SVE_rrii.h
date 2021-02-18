@@ -911,8 +911,15 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   //  Simd complex_i;  vsplat(complex_i, S(0.0, 1.0));
 
   TimePoint start; double usec;
+  start = Clock::now();
+#ifdef OMP
+#ifndef OMP5
+#pragma omp parallel
+  {
+#endif
+#endif
   for(int rep=0;rep<nrep;rep++){
-    if ( rep==1 ) start = Clock::now();
+   // if ( rep==1 ) start = Clock::now();
     //    static_assert(std::is_trivially_constructible<Simd>::value," SIMD is not trivial constructible");
     //    static_assert(std::is_trivially_constructible<SiteSpinor>::value," not trivial constructible");
     //    static_assert(std::is_trivially_constructible<SiteDoubledGaugeField>::value," not trivial constructible");
@@ -926,7 +933,7 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
   #pragma omp target map(in[0:nsite*Ls], out[0:nsite*Ls],U[0:nsite],nbr[0:nsite*8*Ls],prm[0:nsite*8*Ls])
   #pragma omp teams distribute parallel for
   #else
-  #pragma omp parallel for
+  #pragma omp for schedule(static)
   #endif
 #endif
   for(uint64_t ssite=0;ssite<nsite;ssite++){
@@ -960,6 +967,12 @@ double dslash_kernel_cpu(int nrep,SimdVec *Up,SimdVec *outp,SimdVec *inp,uint64_
       }
     }
   }
+#ifdef OMP
+#ifndef OMP5
+  }
+#endif
+#endif
+ 
   Usecs elapsed =std::chrono::duration_cast<Usecs>(Clock::now()-start);
   usec = elapsed.count();
   return usec;
