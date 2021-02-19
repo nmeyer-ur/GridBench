@@ -1,6 +1,7 @@
 
 SIMPLEDATA := arch/sse/static_data.cc
-USE_LIKWID := false
+USE_LIKWID := true
+MEASURE_POWER := false
 CXXFLAGS_SVE_O1 := -O1
 CXXFLAGS_SVE_O3 := -O3
 CXXFLAGS_SVE_NOSCHED_GCC := -O3 -fno-schedule-insns -fno-schedule-insns2
@@ -10,6 +11,10 @@ ifeq (${USE_LIKWID},true)
 	OMP:=-std=c++11 -DSVM -DOMP -fopenmp  -I${LIKWID_INCDIR} -DLIKWID_PERFMON
 else
 	OMP:=-std=c++11 -DSVM -DOMP -fopenmp
+endif
+
+ifeq (${MEASURE_POWER},true)
+	OMP:=${OMP} -I/opt/FJSVtcs/pwrm/aarch64/include -DMEASURE_POWER
 endif
 
 #OMP:=-std=c++11  -O3 -fno-schedule-insns -fno-schedule-insns2 -fno-sched-interblock -DSVM
@@ -104,6 +109,10 @@ ifeq (${USE_LIKWID},true)
 	LDFLAGS   := -llikwid -L${LIKWID_LIBDIR}
 else
 	LDFLAGS   :=
+endif
+
+ifeq (${MEASURE_POWER}, true)
+	LDFLAGS := ${LDFLAGS} -L/opt/FJSVtcs/pwrm/aarch64/lib64 -lpwr
 endif
 
 all: bench.avx512 bench.avx2 bench.avx bench.sse bench.gen bench.simple bench.sycl \
