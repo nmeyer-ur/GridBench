@@ -197,9 +197,17 @@ int main(int argc, char* argv[])
   int psi_pf_dist_L1 = argc > 3 ? atoi(argv[3]) : 1;
   int psi_pf_dist_L2 = argc > 4 ? atoi(argv[4]) : 4;
   int u_pf_dist_L2   = argc > 5 ? atoi(argv[5]) : 0;
+  double freq = argc > 6 ? atof(argv[6]) : 2.2;
+  int eco = argc > 7 ? atoi(argv[7]):0;
 
-
-  // check iterations
+#ifdef MEASURE_POWER
+  freq=freq*1e9;
+  printf("setting freq = %f Hz\n",freq);
+  printf("setting eco = %d\n", eco);
+  PowerAPI_SET_FREQ(freq);
+  PowerAPI_SET_ECOMODE(eco);
+#endif
+   // check iterations
   assert(nrep > 0);
   // check if nreplica is > 0 and power of 2
   assert(nreplica > 0);

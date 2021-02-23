@@ -24,7 +24,7 @@ endif
 #CXX       := mpiicpc
 #CXX       := g++-7
 #CXX        := dpcpp
-CXX       := g++
+CXX       ?= g++
 #CXX       := mpicxx
 #CXX       := clang++-mp-6.0
 #CXXCL     := clang++-mp-7.0
