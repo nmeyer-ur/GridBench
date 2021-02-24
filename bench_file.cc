@@ -47,6 +47,9 @@
 
 #include "Simd.h"
 #include "WilsonKernelsHand.h"
+#ifdef MEASURE_POWER
+#include "powerMeasure.h"
+#endif
 
 #ifdef OMP
 #include <omp.h>
@@ -137,6 +140,10 @@ int main(int argc, char* argv[])
   LIKWID_MARKER_INIT;
 #endif
 
+#ifdef MEASURE_POWER
+  PowerAPI_INIT;
+#endif
+
   std::cout << "Usage: bench.* [<replicas=1>] [<iterations=1000>] [psi PF dist L1] [next psi PF dist L2] [next U PF dist L2]" << std::endl << std::endl;
 
   double frequency = read_freq();
@@ -190,9 +197,17 @@ int main(int argc, char* argv[])
   int psi_pf_dist_L1 = argc > 3 ? atoi(argv[3]) : 1;
   int psi_pf_dist_L2 = argc > 4 ? atoi(argv[4]) : 4;
   int u_pf_dist_L2   = argc > 5 ? atoi(argv[5]) : 0;
+  double freq = argc > 6 ? atof(argv[6]) : 2.2;
+  int eco = argc > 7 ? atoi(argv[7]):0;
 
-
-  // check iterations
+#ifdef MEASURE_POWER
+  freq=freq*1e9;
+  printf("setting freq = %f Hz\n",freq);
+  printf("setting eco = %d\n", eco);
+  PowerAPI_SET_FREQ(freq);
+  PowerAPI_SET_ECOMODE(eco);
+#endif
+   // check iterations
   assert(nrep > 0);
   // check if nreplica is > 0 and power of 2
   assert(nreplica > 0);
@@ -289,6 +304,10 @@ threads = omp_thread_count();
   std::fread(&U_static[0]; sizeof(double), umax, fp);
   std::fclose(fp);
   */
+#pragma omp parallel
+  {
+	  LIKWID_MARKER_REGISTER("dslash_kernel");
+  }
 
   Vector<double>   U(umax*nreplica);
   Vector<double>   Psi(fmax*nreplica);
@@ -393,11 +412,15 @@ threads = omp_thread_count();
   double flops = 1320.0*vol*nreplica;
   //int nrep=1000; // cache warm
 
+#ifdef MEASURE_POWER
+  PowerAPI_START(dslash_kernel)
+#endif
+
 #ifdef LIKWID_PERFMON
-#pragma omp parallel
+/*#pragma omp parallel
   {
 	  LIKWID_MARKER_REGISTER("dslash_kernel");
-  }
+  }*/
 #pragma omp parallel
   {
 	  LIKWID_MARKER_START("dslash_kernel");
@@ -438,6 +461,15 @@ threads = omp_thread_count();
   {
 	  LIKWID_MARKER_STOP("dslash_kernel");
   }
+#endif
+
+
+#ifdef MEASURE_POWER
+  PowerAPI_STOP(dslash_kernel);
+
+  printf("Measured: Power consumption = %f, Energy = %f, Time = %f\n", PowerAPI_GET_POWER(dslash_kernel),  PowerAPI_GET_ENERGY(dslash_kernel),  PowerAPI_GET_TIME(dslash_kernel));
+
+  printf("Estimated: Power consumption = %f, Energy = %f, Time = %f\n", PowerAPI_GET_POWER_EST(dslash_kernel),  PowerAPI_GET_ENERGY_EST(dslash_kernel),  PowerAPI_GET_TIME_EST(dslash_kernel));
 #endif
 
 
@@ -527,6 +559,9 @@ threads = omp_thread_count();
   LIKWID_MARKER_CLOSE;
 #endif
 
+#ifdef MEASURE_POWER
+  PowerAPI_CLOSE;
+#endif
   // Check results
   vComplexD *Psi_p = (vComplexD *) &Psi[0];
   vComplexD *Psi_cpp_p = (vComplexD *) &Psi_cpp[0];

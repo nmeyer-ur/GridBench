@@ -1,6 +1,7 @@
 
 SIMPLEDATA := arch/sse/static_data.cc
-USE_LIKWID := false
+USE_LIKWID := true
+MEASURE_POWER := false
 CXXFLAGS_SVE_O1 := -O1
 CXXFLAGS_SVE_O3 := -O3
 CXXFLAGS_SVE_NOSCHED_GCC := -O3 -fno-schedule-insns -fno-schedule-insns2
@@ -12,6 +13,10 @@ else
 	OMP:=-std=c++11 -DSVM -DOMP -fopenmp
 endif
 
+ifeq (${MEASURE_POWER},true)
+	OMP:=${OMP} -I/opt/FJSVtcs/pwrm/aarch64/include -DMEASURE_POWER
+endif
+
 #OMP:=-std=c++11  -O3 -fno-schedule-insns -fno-schedule-insns2 -fno-sched-interblock -DSVM
 #OMP:=-std=c++11 -O3
 
@@ -19,7 +24,7 @@ endif
 #CXX       := mpiicpc
 #CXX       := g++-7
 #CXX        := dpcpp
-CXX       := g++
+CXX       ?= g++
 #CXX       := mpicxx
 #CXX       := clang++-mp-6.0
 #CXXCL     := clang++-mp-7.0
@@ -60,10 +65,10 @@ RRII_CXXFLAGS     := -DRRII  -mavx2 -mfma  $(OMP) -DGEN_SIMD_WIDTH=64
 RIRI_CXXFLAGS     := -DRIRI  -mavx2 -mfma  $(OMP) -DGEN_SIMD_WIDTH=64 -g
 RRII_CXXFLAGSXX   := -DRRII  -march=knl  $(OMP) -DGEN_SIMD_WIDTH=128
 
-
+FUGAKU_HUGEPAGE_LINKER := -Wl,-T/opt/FJSVxos/mmm/util/bss-2mb.lds -L/opt/FJSVxos/mmm/lib64 -lmpg
 RRII_CXXFLAGS_SVE_GCC               := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DSVE
-RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE -g
-RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -DRIRI  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
+RRII_CXXFLAGS_SVE_INTRIN_GCC        := -DRRII  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE ${FUGAKU_HUGEPAGE_LINKER}
+RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -DRIRI  -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE ${FUGAKU_HUGEPAGE_LINKER}
 #RIRI_CXXFLAGS_SVE_INTRIN_GCC        := -march=armv8-a+sve -msve-vector-bits=512  $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 #RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -march=armv8-a+sve $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
 RRII_CXXFLAGS_SVE_INTRIN_ARMCLANG   := -DRRII  -mcpu=a64fx $(OMP) -DGEN_SIMD_WIDTH=64 -DINTRIN -DSVE
@@ -104,6 +109,10 @@ ifeq (${USE_LIKWID},true)
 	LDFLAGS   := -llikwid -L${LIKWID_LIBDIR}
 else
 	LDFLAGS   :=
+endif
+
+ifeq (${MEASURE_POWER}, true)
+	LDFLAGS := ${LDFLAGS} -L/opt/FJSVtcs/pwrm/aarch64/lib64 -lpwr
 endif
 
 all: bench.avx512 bench.avx2 bench.avx bench.sse bench.gen bench.simple bench.sycl \
