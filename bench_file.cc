@@ -304,11 +304,12 @@ threads = omp_thread_count();
   std::fread(&U_static[0]; sizeof(double), umax, fp);
   std::fclose(fp);
   */
+/*
 #pragma omp parallel
   {
 	  LIKWID_MARKER_REGISTER("dslash_kernel");
   }
-
+*/
   Vector<double>   U(umax*nreplica);
   Vector<double>   Psi(fmax*nreplica);
   Vector<double>   Phi(fmax*nreplica);
@@ -421,11 +422,13 @@ threads = omp_thread_count();
   {
 	  LIKWID_MARKER_REGISTER("dslash_kernel");
   }*/
+
 #pragma omp parallel
   {
 	  LIKWID_MARKER_START("dslash_kernel");
   }
 #endif
+
 
 #ifdef DOUBLE
   double usec;

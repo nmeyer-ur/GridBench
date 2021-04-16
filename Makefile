@@ -1,6 +1,6 @@
 
 SIMPLEDATA := arch/sse/static_data.cc
-USE_LIKWID := true
+USE_LIKWID := false
 MEASURE_POWER := false
 CXXFLAGS_SVE_O1 := -O1
 CXXFLAGS_SVE_O3 := -O3
@@ -143,6 +143,10 @@ bench.rrii.avx512.gccvectors.gcc: bench_file.cc  WilsonKernelsHand.h Makefile ar
 
 bench.riri.avx512.intrinsics.clang: bench_file.cc  WilsonKernelsHand.h Makefile arch/avx512/Simd_avx512.h
 	clang++ -DRIRI -DINTRIN $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.avx512.intrinsics.clang
+
+bench.riri.avx512.intrinsics.gcc: bench_file.cc  WilsonKernelsHand.h Makefile arch/avx512/Simd_avx512.h
+	g++ -DRIRI -DINTRIN $(AVX512_CXXFLAGS) bench_file.cc $(LDLIBS) $(LDFLAGS) -o bench.riri.avx512.intrinsics.gcc
+
 
 
 # SVE RRII
